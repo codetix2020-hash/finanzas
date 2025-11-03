@@ -54,6 +54,10 @@ const nextConfig: NextConfig = {
 
 		return config;
 	},
+	outputFileTracingIncludes: {
+		"/api/**/*": ["../packages/database/prisma/generated/client/**/*"],
+		"/*": ["../packages/database/prisma/generated/client/**/*"],
+	},
 };
 
 export default withContentCollections(withNextIntl(nextConfig));
