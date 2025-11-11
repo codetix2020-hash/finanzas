@@ -1,5 +1,19 @@
 # Changelog
 
+## 2025-11-11 v1.0.6
+
+### Fix content-collections schema
+
+The content-collections schema will soon require the `content` field to be present in the schema, which previously was automatically generated. 
+We have added it to the schema to avoid breaking changes with the upcoming content-collections version.
+
+### Updated production dependencies
+
+All production dependencies have been updated to the latest versions.
+
+### Fixed AI chat component
+
+Fixed a validation issue in the AI chat component that was causing the `addMessageToChat` procedure to fail.
 
 ## 2025-11-11 v1.0.5
 
