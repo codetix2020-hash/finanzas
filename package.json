@@ -30,6 +30,7 @@
 		},
 		"onlyBuiltDependencies": [
 			"@prisma/client",
+			"@prisma/engines",
 			"@swc/core",
 			"prisma",
 			"prisma-zod-generator",
