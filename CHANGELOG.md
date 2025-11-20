@@ -1,5 +1,13 @@
 # Changelog
 
+## 2025-11-20 v1.1.2
+
+### Fix missing organization settings item in navbar
+
+When in the config file the `hideOrganization` option is set to true, the organization settings item was missing in the navbar.
+
+---
+
 ## 2025-11-16 v1.1.1
 
 ### Remove unnecessary font-sans variable
@@ -10,6 +18,8 @@ Removed the unnecessary `--font-sans` variable from the theme.css file as it is 
 
 All production and development dependencies have been updated to the latest versions.
 
+---
+
 ## 2025-11-12 v1.1.0
 
 ### Add claude.md file
@@ -17,11 +27,15 @@ All production and development dependencies have been updated to the latest vers
 For a better coding experience with Claude Code, we have added a `claude.md` file to the root of the repository.
 This file contains the coding guidelines for the project, and is used by Claude Code to generate code.
 
+---
+
 ## 2025-11-12 v1.0.9
 
 ### Fix passkeys reload issue
 
 Fixed an issue where the passkeys list was not being reloaded correctly after adding or deleting a passkey.
+
+---
 
 ## 2025-11-12 v1.0.8
 
@@ -30,11 +44,15 @@ Fixed an issue where the passkeys list was not being reloaded correctly after ad
 Added missing fields (`aaguid` for Passkey and `displayUsername` for User) in the schema.
 This was causing the passkeys creation to fail.
 
+---
+
 ## 2025-11-12 v1.0.7
 
 ### Fixed mobile menu closing issue
 
 Fixed an issue where the mobile menu was not closing when clicking on a menu item.
+
+---
 
 ## 2025-11-11 v1.0.6
 
@@ -51,6 +69,8 @@ All production dependencies have been updated to the latest versions.
 
 Fixed a validation issue in the AI chat component that was causing the `addMessageToChat` procedure to fail.
 
+---
+
 ## 2025-11-11 v1.0.5
 
 ### Fix formatting
@@ -60,6 +80,8 @@ Ran `pnpm format` to fix formatting issues in the codebase.
 ### Updated all dependencies
 
 Production and development dependencies have been updated to the latest versions.
+
+---
 
 ## 2025-11-08 v1.0.4
 
