@@ -6,6 +6,7 @@ import {
 } from "@repo/database";
 import { logger } from "@repo/logs";
 import Stripe from "stripe";
+import { trackStripePayment, updateMRR } from "../../lib/financial-tracking";
 import { setCustomerIdToEntity } from "../../src/lib/customer";
 import type {
 	CancelSubscription,
@@ -151,7 +152,8 @@ export const webhookHandler: WebhookHandler = async (req) => {
 	try {
 		switch (event.type) {
 			case "checkout.session.completed": {
-				const { mode, metadata, customer, id } = event.data.object;
+				const { mode, metadata, customer, id, payment_intent } =
+					event.data.object;
 
 				if (mode === "subscription") {
 					break;
@@ -183,6 +185,42 @@ export const webhookHandler: WebhookHandler = async (req) => {
 					userId: metadata?.user_id,
 				});
 
+				// Trackear pago financiero para pagos one-time
+				const organizationId = metadata?.organization_id;
+				if (organizationId && payment_intent) {
+					const paymentIntentId =
+						typeof payment_intent === "string"
+							? payment_intent
+							: payment_intent.id;
+
+					const paymentIntent =
+						await stripeClient.paymentIntents.retrieve(paymentIntentId);
+
+					if (paymentIntent.status === "succeeded") {
+						await trackStripePayment({
+							organizationId,
+							paymentIntent,
+						});
+					}
+				}
+
+				break;
+			}
+			case "payment_intent.succeeded": {
+				const paymentIntent = event.data.object as Stripe.PaymentIntent;
+
+				// Obtener organizationId del metadata (puede ser organization_id o organizationId)
+				const organizationId =
+					paymentIntent.metadata.organization_id ||
+					paymentIntent.metadata.organizationId;
+
+				if (organizationId) {
+					await trackStripePayment({
+						organizationId,
+						paymentIntent,
+					});
+				}
+
 				break;
 			}
 			case "customer.subscription.created": {
@@ -211,6 +249,15 @@ export const webhookHandler: WebhookHandler = async (req) => {
 					userId: metadata?.user_id,
 				});
 
+				// Actualizar MRR
+				const organizationId = metadata?.organization_id;
+				if (organizationId) {
+					await updateMRR({
+						organizationId,
+						subscription: event.data.object,
+					});
+				}
+
 				break;
 			}
 			case "customer.subscription.updated": {
@@ -224,6 +271,15 @@ export const webhookHandler: WebhookHandler = async (req) => {
 						id: existingPurchase.id,
 						status: event.data.object.status,
 						productId: event.data.object.items?.data[0].price?.id,
+					});
+				}
+
+				// Actualizar MRR
+				const organizationId = event.data.object.metadata?.organization_id;
+				if (organizationId) {
+					await updateMRR({
+						organizationId,
+						subscription: event.data.object,
 					});
 				}
 

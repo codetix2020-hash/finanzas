@@ -1,0 +1,13 @@
+import type { Prisma } from '../../generated/client';
+import * as z from 'zod';
+import { TwoFactorWhereInputObjectSchema as TwoFactorWhereInputObjectSchema } from './objects/TwoFactorWhereInput.schema';
+import { TwoFactorOrderByWithAggregationInputObjectSchema as TwoFactorOrderByWithAggregationInputObjectSchema } from './objects/TwoFactorOrderByWithAggregationInput.schema';
+import { TwoFactorScalarWhereWithAggregatesInputObjectSchema as TwoFactorScalarWhereWithAggregatesInputObjectSchema } from './objects/TwoFactorScalarWhereWithAggregatesInput.schema';
+import { TwoFactorScalarFieldEnumSchema } from './enums/TwoFactorScalarFieldEnum.schema';
+import { TwoFactorCountAggregateInputObjectSchema as TwoFactorCountAggregateInputObjectSchema } from './objects/TwoFactorCountAggregateInput.schema';
+import { TwoFactorMinAggregateInputObjectSchema as TwoFactorMinAggregateInputObjectSchema } from './objects/TwoFactorMinAggregateInput.schema';
+import { TwoFactorMaxAggregateInputObjectSchema as TwoFactorMaxAggregateInputObjectSchema } from './objects/TwoFactorMaxAggregateInput.schema';
+
+export const TwoFactorGroupBySchema: z.ZodType<Prisma.TwoFactorGroupByArgs> = z.object({ where: TwoFactorWhereInputObjectSchema.optional(), orderBy: z.union([TwoFactorOrderByWithAggregationInputObjectSchema, TwoFactorOrderByWithAggregationInputObjectSchema.array()]).optional(), having: TwoFactorScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(TwoFactorScalarFieldEnumSchema), _count: z.union([ z.literal(true), TwoFactorCountAggregateInputObjectSchema ]).optional(), _min: TwoFactorMinAggregateInputObjectSchema.optional(), _max: TwoFactorMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.TwoFactorGroupByArgs>;
+
+export const TwoFactorGroupByZodSchema = z.object({ where: TwoFactorWhereInputObjectSchema.optional(), orderBy: z.union([TwoFactorOrderByWithAggregationInputObjectSchema, TwoFactorOrderByWithAggregationInputObjectSchema.array()]).optional(), having: TwoFactorScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(TwoFactorScalarFieldEnumSchema), _count: z.union([ z.literal(true), TwoFactorCountAggregateInputObjectSchema ]).optional(), _min: TwoFactorMinAggregateInputObjectSchema.optional(), _max: TwoFactorMaxAggregateInputObjectSchema.optional() }).strict();

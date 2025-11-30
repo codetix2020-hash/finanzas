@@ -1,0 +1,14 @@
+import type { Prisma } from '../../generated/client';
+import * as z from 'zod';
+import { PasskeyOrderByWithRelationInputObjectSchema as PasskeyOrderByWithRelationInputObjectSchema } from './objects/PasskeyOrderByWithRelationInput.schema';
+import { PasskeyWhereInputObjectSchema as PasskeyWhereInputObjectSchema } from './objects/PasskeyWhereInput.schema';
+import { PasskeyWhereUniqueInputObjectSchema as PasskeyWhereUniqueInputObjectSchema } from './objects/PasskeyWhereUniqueInput.schema';
+import { PasskeyCountAggregateInputObjectSchema as PasskeyCountAggregateInputObjectSchema } from './objects/PasskeyCountAggregateInput.schema';
+import { PasskeyMinAggregateInputObjectSchema as PasskeyMinAggregateInputObjectSchema } from './objects/PasskeyMinAggregateInput.schema';
+import { PasskeyMaxAggregateInputObjectSchema as PasskeyMaxAggregateInputObjectSchema } from './objects/PasskeyMaxAggregateInput.schema';
+import { PasskeyAvgAggregateInputObjectSchema as PasskeyAvgAggregateInputObjectSchema } from './objects/PasskeyAvgAggregateInput.schema';
+import { PasskeySumAggregateInputObjectSchema as PasskeySumAggregateInputObjectSchema } from './objects/PasskeySumAggregateInput.schema';
+
+export const PasskeyAggregateSchema: z.ZodType<Prisma.PasskeyAggregateArgs> = z.object({ orderBy: z.union([PasskeyOrderByWithRelationInputObjectSchema, PasskeyOrderByWithRelationInputObjectSchema.array()]).optional(), where: PasskeyWhereInputObjectSchema.optional(), cursor: PasskeyWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), PasskeyCountAggregateInputObjectSchema ]).optional(), _min: PasskeyMinAggregateInputObjectSchema.optional(), _max: PasskeyMaxAggregateInputObjectSchema.optional(), _avg: PasskeyAvgAggregateInputObjectSchema.optional(), _sum: PasskeySumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.PasskeyAggregateArgs>;
+
+export const PasskeyAggregateZodSchema = z.object({ orderBy: z.union([PasskeyOrderByWithRelationInputObjectSchema, PasskeyOrderByWithRelationInputObjectSchema.array()]).optional(), where: PasskeyWhereInputObjectSchema.optional(), cursor: PasskeyWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), PasskeyCountAggregateInputObjectSchema ]).optional(), _min: PasskeyMinAggregateInputObjectSchema.optional(), _max: PasskeyMaxAggregateInputObjectSchema.optional(), _avg: PasskeyAvgAggregateInputObjectSchema.optional(), _sum: PasskeySumAggregateInputObjectSchema.optional() }).strict();

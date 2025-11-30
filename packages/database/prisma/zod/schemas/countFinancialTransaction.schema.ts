@@ -1,0 +1,10 @@
+import type { Prisma } from '../../generated/client';
+import * as z from 'zod';
+import { FinancialTransactionOrderByWithRelationInputObjectSchema as FinancialTransactionOrderByWithRelationInputObjectSchema } from './objects/FinancialTransactionOrderByWithRelationInput.schema';
+import { FinancialTransactionWhereInputObjectSchema as FinancialTransactionWhereInputObjectSchema } from './objects/FinancialTransactionWhereInput.schema';
+import { FinancialTransactionWhereUniqueInputObjectSchema as FinancialTransactionWhereUniqueInputObjectSchema } from './objects/FinancialTransactionWhereUniqueInput.schema';
+import { FinancialTransactionCountAggregateInputObjectSchema as FinancialTransactionCountAggregateInputObjectSchema } from './objects/FinancialTransactionCountAggregateInput.schema';
+
+export const FinancialTransactionCountSchema: z.ZodType<Prisma.FinancialTransactionCountArgs> = z.object({ orderBy: z.union([FinancialTransactionOrderByWithRelationInputObjectSchema, FinancialTransactionOrderByWithRelationInputObjectSchema.array()]).optional(), where: FinancialTransactionWhereInputObjectSchema.optional(), cursor: FinancialTransactionWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), FinancialTransactionCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.FinancialTransactionCountArgs>;
+
+export const FinancialTransactionCountZodSchema = z.object({ orderBy: z.union([FinancialTransactionOrderByWithRelationInputObjectSchema, FinancialTransactionOrderByWithRelationInputObjectSchema.array()]).optional(), where: FinancialTransactionWhereInputObjectSchema.optional(), cursor: FinancialTransactionWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), FinancialTransactionCountAggregateInputObjectSchema ]).optional() }).strict();

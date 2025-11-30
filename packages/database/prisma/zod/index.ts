@@ -76,6 +76,30 @@ export const AiChatScalarFieldEnumSchema = z.enum(['id', 'organizationId', 'user
 
 export type AiChatScalarFieldEnum = z.infer<typeof AiChatScalarFieldEnumSchema>;
 
+// File: FinancialTransactionScalarFieldEnum.schema.ts
+
+export const FinancialTransactionScalarFieldEnumSchema = z.enum(['id', 'organizationId', 'type', 'amount', 'currency', 'source', 'metadata', 'createdAt'])
+
+export type FinancialTransactionScalarFieldEnum = z.infer<typeof FinancialTransactionScalarFieldEnumSchema>;
+
+// File: SaasMetricsScalarFieldEnum.schema.ts
+
+export const SaasMetricsScalarFieldEnumSchema = z.enum(['id', 'organizationId', 'date', 'mrr', 'arr', 'totalRevenue', 'totalCosts', 'netProfit', 'roi', 'apiCostsMTD', 'adCostsMTD', 'activeCustomers', 'churnRate', 'status', 'updatedAt'])
+
+export type SaasMetricsScalarFieldEnum = z.infer<typeof SaasMetricsScalarFieldEnumSchema>;
+
+// File: CostTrackingScalarFieldEnum.schema.ts
+
+export const CostTrackingScalarFieldEnumSchema = z.enum(['id', 'organizationId', 'provider', 'requestId', 'inputTokens', 'outputTokens', 'totalTokens', 'estimatedCost', 'endpoint', 'createdAt'])
+
+export type CostTrackingScalarFieldEnum = z.infer<typeof CostTrackingScalarFieldEnumSchema>;
+
+// File: AgentDecisionScalarFieldEnum.schema.ts
+
+export const AgentDecisionScalarFieldEnumSchema = z.enum(['id', 'organizationId', 'agentType', 'decision', 'reasoning', 'metrics', 'executed', 'executedAt', 'createdAt'])
+
+export type AgentDecisionScalarFieldEnum = z.infer<typeof AgentDecisionScalarFieldEnumSchema>;
+
 // File: SortOrder.schema.ts
 
 export const SortOrderSchema = z.enum(['asc', 'desc'])
@@ -87,6 +111,12 @@ export type SortOrder = z.infer<typeof SortOrderSchema>;
 export const JsonNullValueInputSchema = z.enum(['JsonNull'])
 
 export type JsonNullValueInput = z.infer<typeof JsonNullValueInputSchema>;
+
+// File: NullableJsonNullValueInput.schema.ts
+
+export const NullableJsonNullValueInputSchema = z.enum(['DbNull', 'JsonNull'])
+
+export type NullableJsonNullValueInput = z.infer<typeof NullableJsonNullValueInputSchema>;
 
 // File: QueryMode.schema.ts
 
@@ -111,6 +141,30 @@ export type JsonNullValueFilter = z.infer<typeof JsonNullValueFilterSchema>;
 export const PurchaseTypeSchema = z.enum(['SUBSCRIPTION', 'ONE_TIME'])
 
 export type PurchaseType = z.infer<typeof PurchaseTypeSchema>;
+
+// File: TransactionType.schema.ts
+
+export const TransactionTypeSchema = z.enum(['REVENUE', 'COST_API_CLAUDE', 'COST_API_OPENAI', 'COST_STRIPE_FEE', 'COST_ADS'])
+
+export type TransactionType = z.infer<typeof TransactionTypeSchema>;
+
+// File: SaasStatus.schema.ts
+
+export const SaasStatusSchema = z.enum(['ACTIVE', 'PAUSED', 'OPTIMIZING', 'KILLED'])
+
+export type SaasStatus = z.infer<typeof SaasStatusSchema>;
+
+// File: AIProvider.schema.ts
+
+export const AIProviderSchema = z.enum(['CLAUDE_OPUS', 'CLAUDE_SONNET', 'CLAUDE_HAIKU', 'OPENAI_GPT4', 'OPENAI_GPT35'])
+
+export type AIProvider = z.infer<typeof AIProviderSchema>;
+
+// File: Decision.schema.ts
+
+export const DecisionSchema = z.enum(['SCALE', 'MAINTAIN', 'OPTIMIZE', 'KILL'])
+
+export type Decision = z.infer<typeof DecisionSchema>;
 
 // File: User.schema.ts
 
@@ -295,4 +349,78 @@ export const AiChatSchema = z.object({
 });
 
 export type AiChatType = z.infer<typeof AiChatSchema>;
+
+
+// File: FinancialTransaction.schema.ts
+
+export const FinancialTransactionSchema = z.object({
+  id: z.string(),
+  organizationId: z.string(),
+  type: TransactionTypeSchema,
+  amount: z.number(),
+  currency: z.string().default("EUR"),
+  source: z.string(),
+  metadata: z.unknown().refine((val) => { const getDepth = (obj: unknown, depth: number = 0): number => { if (depth > 10) return depth; if (obj === null || typeof obj !== 'object') return depth; const values = Object.values(obj as Record<string, unknown>); if (values.length === 0) return depth; return Math.max(...values.map(v => getDepth(v, depth + 1))); }; return getDepth(val) <= 10; }, "JSON nesting depth exceeds maximum of 10").nullish(),
+  createdAt: z.date(),
+});
+
+export type FinancialTransactionType = z.infer<typeof FinancialTransactionSchema>;
+
+
+// File: SaasMetrics.schema.ts
+
+export const SaasMetricsSchema = z.object({
+  id: z.string(),
+  organizationId: z.string(),
+  date: z.date(),
+  mrr: z.number(),
+  arr: z.number(),
+  totalRevenue: z.number(),
+  totalCosts: z.number(),
+  netProfit: z.number(),
+  roi: z.number(),
+  apiCostsMTD: z.number(),
+  adCostsMTD: z.number(),
+  activeCustomers: z.number().int(),
+  churnRate: z.number(),
+  status: SaasStatusSchema,
+  updatedAt: z.date(),
+});
+
+export type SaasMetricsType = z.infer<typeof SaasMetricsSchema>;
+
+
+// File: CostTracking.schema.ts
+
+export const CostTrackingSchema = z.object({
+  id: z.string(),
+  organizationId: z.string(),
+  provider: AIProviderSchema,
+  requestId: z.string(),
+  inputTokens: z.number().int(),
+  outputTokens: z.number().int(),
+  totalTokens: z.number().int(),
+  estimatedCost: z.number(),
+  endpoint: z.string(),
+  createdAt: z.date(),
+});
+
+export type CostTrackingType = z.infer<typeof CostTrackingSchema>;
+
+
+// File: AgentDecision.schema.ts
+
+export const AgentDecisionSchema = z.object({
+  id: z.string(),
+  organizationId: z.string(),
+  agentType: z.string(),
+  decision: DecisionSchema,
+  reasoning: z.string(),
+  metrics: z.unknown().refine((val) => { const getDepth = (obj: unknown, depth: number = 0): number => { if (depth > 10) return depth; if (obj === null || typeof obj !== 'object') return depth; const values = Object.values(obj as Record<string, unknown>); if (values.length === 0) return depth; return Math.max(...values.map(v => getDepth(v, depth + 1))); }; return getDepth(val) <= 10; }, "JSON nesting depth exceeds maximum of 10"),
+  executed: z.boolean(),
+  executedAt: z.date().nullish(),
+  createdAt: z.date(),
+});
+
+export type AgentDecisionType = z.infer<typeof AgentDecisionSchema>;
 

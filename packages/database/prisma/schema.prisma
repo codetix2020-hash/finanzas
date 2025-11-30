@@ -12,7 +12,8 @@ generator client {
 generator zod {
   provider = "prisma-zod-generator"
   output   = "./zod"
-  config   = "./zod-generator.config.json"
+  useDecimalJs = true
+  prismaJsonNullability = true
 }
 
 model User {
