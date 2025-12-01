@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@ui/components/card";
 import { Badge } from "@ui/components/badge";
 import { Skeleton } from "@ui/components/skeleton";
 import { orpcClient } from "@shared/lib/orpc-client";
+import { getSession } from "@saas/auth/lib/server";
+import { redirect } from "next/navigation";
 import {
   TrendingUp,
   DollarSign,
@@ -256,7 +258,13 @@ function LoadingSkeleton() {
 }
 
 // Export principal
-export default function FinancePage() {
+export default async function FinancePage() {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/auth/login");
+  }
+
   return (
     <div className="container mx-auto py-8 px-4 max-w-7xl">
       <Suspense fallback={<LoadingSkeleton />}>
