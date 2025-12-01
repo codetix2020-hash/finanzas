@@ -18,7 +18,7 @@ export const getOverview = protectedProcedure
 			include: {
 				financialTransactions: {
 					where: {
-						date: {
+						createdAt: {
 							gte: thirtyDaysAgo,
 						},
 					},
@@ -29,21 +29,22 @@ export const getOverview = protectedProcedure
 		const organizationsData = organizations.map((org) => {
 			const transactions = org.financialTransactions;
 			
-			const revenue = transactions
-				.filter((t) => t.type === "REVENUE")
-				.reduce((sum, t) => sum + Number(t.amount), 0);
+		const revenue = transactions
+			.filter((t) => t.type === "REVENUE")
+			.reduce((sum, t) => sum + Number(t.amount), 0);
 
-			const costs = transactions
-				.filter((t) => t.type === "COST")
-				.reduce((sum, t) => sum + Number(t.amount), 0);
+		const costs = transactions
+			.filter((t) => t.type.startsWith("COST_"))
+			.reduce((sum, t) => sum + Number(t.amount), 0);
 
 			const profit = revenue - costs;
 			const roi = costs > 0 ? ((profit / costs) * 100) : 0;
 
-			// Get MRR (recurring revenue)
-			const mrr = transactions
-				.filter((t) => t.type === "REVENUE" && t.category === "SUBSCRIPTION")
-				.reduce((sum, t) => sum + Number(t.amount), 0);
+		// Get MRR (recurring revenue) - for now, all REVENUE is considered MRR
+		// TODO: Add subscription tracking to distinguish one-time vs recurring
+		const mrr = transactions
+			.filter((t) => t.type === "REVENUE")
+			.reduce((sum, t) => sum + Number(t.amount), 0);
 
 			return {
 				id: org.id,
