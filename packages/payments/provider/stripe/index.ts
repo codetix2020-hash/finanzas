@@ -178,6 +178,8 @@ export const webhookHandler: WebhookHandler = async (req) => {
 					customerId: customer as string,
 					type: "ONE_TIME",
 					productId,
+					status: null,
+					subscriptionId: null,
 				});
 
 				await setCustomerIdToEntity(customer as string, {
