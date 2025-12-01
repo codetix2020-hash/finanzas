@@ -1,2 +1,4 @@
 prisma/generated
+prisma/zod/*
+!prisma/zod/index.ts
 .prisma-zod-generator-manifest.json
