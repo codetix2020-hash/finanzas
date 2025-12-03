@@ -18,3 +18,8 @@ export { FinancialTransactionResultSchema } from './FinancialTransaction.result'
 export { SaasMetricsResultSchema } from './SaasMetrics.result';
 export { CostTrackingResultSchema } from './CostTracking.result';
 export { AgentDecisionResultSchema } from './AgentDecision.result';
+export { AttributionEventResultSchema } from './AttributionEvent.result';
+export { CustomerJourneyResultSchema } from './CustomerJourney.result';
+export { CampaignPerformanceResultSchema } from './CampaignPerformance.result';
+export { BudgetAllocationResultSchema } from './BudgetAllocation.result';
+export { IntegrationEventResultSchema } from './IntegrationEvent.result';

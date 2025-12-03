@@ -1,7 +1,21 @@
 import { publicProcedure } from "../../orpc/procedures";
 import { getOverview } from "./procedures/get-overview";
+import { predictMetrics } from "./procedures/predict-metrics";
+import { detectAnomalies } from "./procedures/detect-anomalies";
+import { getCohortAnalysis } from "./procedures/get-cohort-analysis";
+import {
+	calculateUnitEconomics,
+	simulateUnitEconomics,
+} from "./procedures/calculate-unit-economics";
+import { getBenchmarking } from "./procedures/get-benchmarking";
 
 export const financeRouter = publicProcedure.router({
 	getOverview,
+	predictMetrics,
+	detectAnomalies,
+	getCohortAnalysis,
+	calculateUnitEconomics,
+	simulateUnitEconomics,
+	getBenchmarking,
 });
 

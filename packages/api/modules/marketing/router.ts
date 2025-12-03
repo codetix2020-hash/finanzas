@@ -21,6 +21,16 @@ import {
   optimizeGoogleCampaignProcedure,
   syncGoogleMetricsProcedure
 } from './procedures/google-ads';
+import { 
+  createLeadProcedure,
+  scoreLeadProcedure,
+  qualifyLeadProcedure,
+  generateFollowUpProcedure,
+  scoreAllLeadsProcedure,
+  qualifyHotLeadsProcedure,
+  getLeadsProcedure,
+  getLeadStatsProcedure
+} from './procedures/crm';
 
 export const marketingRouter = publicProcedure.router({
   guards: {
@@ -44,6 +54,16 @@ export const marketingRouter = publicProcedure.router({
     generateRSA: generateRSAProcedure,
     optimize: optimizeGoogleCampaignProcedure,
     syncMetrics: syncGoogleMetricsProcedure
+  },
+  crm: {
+    createLead: createLeadProcedure,
+    scoreLead: scoreLeadProcedure,
+    qualifyLead: qualifyLeadProcedure,
+    generateFollowUp: generateFollowUpProcedure,
+    scoreAll: scoreAllLeadsProcedure,
+    qualifyHot: qualifyHotLeadsProcedure,
+    getLeads: getLeadsProcedure,
+    getStats: getLeadStatsProcedure
   }
 });
 

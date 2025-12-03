@@ -1,4 +1,4 @@
-# Supastarter Next.js - Blueprint del Proyecto
+ Supastarter Next.js - Blueprint del Proyecto
 
 Este documento mapea todas las utilidades, componentes y convenciones existentes en el proyecto Supastarter.
 
@@ -478,4 +478,3 @@ const { data } = useQuery(
 ---
 
 **Última actualización**: Basado en la estructura actual del proyecto
-

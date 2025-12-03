@@ -18,3 +18,8 @@ export { FinancialTransactionInputSchema } from './FinancialTransaction.input';
 export { SaasMetricsInputSchema } from './SaasMetrics.input';
 export { CostTrackingInputSchema } from './CostTracking.input';
 export { AgentDecisionInputSchema } from './AgentDecision.input';
+export { AttributionEventInputSchema } from './AttributionEvent.input';
+export { CustomerJourneyInputSchema } from './CustomerJourney.input';
+export { CampaignPerformanceInputSchema } from './CampaignPerformance.input';
+export { BudgetAllocationInputSchema } from './BudgetAllocation.input';
+export { IntegrationEventInputSchema } from './IntegrationEvent.input';

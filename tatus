@@ -1,0 +1,72 @@
+[1mdiff --git a/packages/database/prisma/queries/organizations.ts b/packages/database/prisma/queries/organizations.ts[m
+[1mindex c26b0960..a5a186c8 100644[m
+[1m--- a/packages/database/prisma/queries/organizations.ts[m
+[1m+++ b/packages/database/prisma/queries/organizations.ts[m
+[36m@@ -1,6 +1,5 @@[m
+[31m-import type { z } from "zod";[m
+ import { db } from "../client";[m
+[31m-import type { OrganizationSchema } from "../zod";[m
+[32m+[m[32mimport type { Organization } from "../generated/client";[m
+ [m
+ export async function getOrganizations({[m
+ 	limit,[m
+[36m@@ -115,7 +114,7 @@[m [mexport async function getPendingInvitationByEmail(email: string) {[m
+ }[m
+ [m
+ export async function updateOrganization([m
+[31m-	organization: Partial<z.infer<typeof OrganizationSchema>> & { id: string },[m
+[32m+[m	[32morganization: Partial<Organization> & { id: string },[m
+ ) {[m
+ 	return db.organization.update({[m
+ 		where: {[m
+[1mdiff --git a/packages/database/prisma/queries/purchases.ts b/packages/database/prisma/queries/purchases.ts[m
+[1mindex 71589ac6..5087f3fa 100644[m
+[1m--- a/packages/database/prisma/queries/purchases.ts[m
+[1m+++ b/packages/database/prisma/queries/purchases.ts[m
+[36m@@ -1,6 +1,5 @@[m
+[31m-import type { z } from "zod";[m
+ import { db } from "../client";[m
+[31m-import type { PurchaseSchema } from "../zod";[m
+[32m+[m[32mimport type { Purchase } from "../generated/client";[m
+ [m
+ export async function getPurchaseById(id: string) {[m
+ 	return db.purchase.findUnique({[m
+[36m@@ -34,7 +33,7 @@[m [mexport async function getPurchaseBySubscriptionId(subscriptionId: string) {[m
+ [m
+ export async function createPurchase([m
+ 	purchase: Omit<[m
+[31m-		z.infer<typeof PurchaseSchema>,[m
+[32m+[m		[32mPurchase,[m
+ 		"id" | "createdAt" | "updatedAt"[m
+ 	>,[m
+ ) {[m
+[36m@@ -47,7 +46,7 @@[m [mexport async function createPurchase([m
+ [m
+ export async function updatePurchase([m
+ 	purchase: Partial<[m
+[31m-		Omit<z.infer<typeof PurchaseSchema>, "createdAt" | "updatedAt">[m
+[32m+[m		[32mOmit<Purchase, "createdAt" | "updatedAt">[m
+ 	> & { id: string },[m
+ ) {[m
+ 	const updated = await db.purchase.update({[m
+[1mdiff --git a/packages/database/prisma/queries/users.ts b/packages/database/prisma/queries/users.ts[m
+[1mindex 3908df9b..a9bceca5 100644[m
+[1m--- a/packages/database/prisma/queries/users.ts[m
+[1m+++ b/packages/database/prisma/queries/users.ts[m
+[36m@@ -1,6 +1,5 @@[m
+[31m-import type { z } from "zod";[m
+ import { db } from "../client";[m
+[31m-import type { UserSchema } from "../zod";[m
+[32m+[m[32mimport type { User } from "../generated/client";[m
+ [m
+ export async function getUsers({[m
+ 	limit,[m
+[36m@@ -102,7 +101,7 @@[m [mexport async function createUserAccount({[m
+ }[m
+ [m
+ export async function updateUser([m
+[31m-	user: Partial<z.infer<typeof UserSchema>> & { id: string },[m
+[32m+[m	[32muser: Partial<User> & { id: string },[m
+ ) {[m
+ 	return await db.user.update({[m
+ 		where: {[m

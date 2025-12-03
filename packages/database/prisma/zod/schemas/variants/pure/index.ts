@@ -18,3 +18,8 @@ export { FinancialTransactionModelSchema } from './FinancialTransaction.pure';
 export { SaasMetricsModelSchema } from './SaasMetrics.pure';
 export { CostTrackingModelSchema } from './CostTracking.pure';
 export { AgentDecisionModelSchema } from './AgentDecision.pure';
+export { AttributionEventModelSchema } from './AttributionEvent.pure';
+export { CustomerJourneyModelSchema } from './CustomerJourney.pure';
+export { CampaignPerformanceModelSchema } from './CampaignPerformance.pure';
+export { BudgetAllocationModelSchema } from './BudgetAllocation.pure';
+export { IntegrationEventModelSchema } from './IntegrationEvent.pure';

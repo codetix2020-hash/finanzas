@@ -145,6 +145,12 @@ model Organization {
   saasMetrics          SaasMetrics[]
   costTrackings        CostTracking[]
   agentDecisions       AgentDecision[]
+  saasProducts         SaasProduct[]
+  marketingAdCampaigns MarketingAdCampaign[]
+  marketingContent     MarketingContent[]
+  marketingDecisions   MarketingDecision[]
+  marketingGuards      MarketingGuard[]
+  marketingLeads       MarketingLead[]
 
   @@unique([slug])
   @@map("organization")
@@ -318,4 +324,417 @@ model AgentDecision {
   createdAt      DateTime     @default(now())
 
   @@map("agent_decision")
+}
+
+// ═══════════════════════════════════════════════════════
+// INTEGRATION LAYER: Marketing + Finance Attribution
+// ═══════════════════════════════════════════════════════
+
+model AttributionEvent {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // User Tracking
+  userId       String?
+  sessionId    String
+  visitorId    String // Anonymous tracking
+  organizationId String?
+
+  // Event Data
+  eventType String // 'ad_click', 'page_view', 'signup', 'purchase', 'trial_start'
+  eventValue Float? // Value in euros for purchase events
+
+  // Attribution Data
+  source      String? // 'google_ads', 'meta_ads', 'organic', 'direct', 'referral'
+  medium      String? // 'cpc', 'social', 'email', 'organic'
+  campaign    String? // Campaign name
+  adGroup     String? // Ad group name
+  keyword     String? // Keyword for search ads
+  adId        String? // Specific ad ID
+
+  // Marketing Context
+  landingPage String?
+  referrer    String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmContent  String?
+  utmTerm     String?
+
+  // Device & Location
+  device      String? // 'mobile', 'desktop', 'tablet'
+  country     String?
+  city        String?
+
+  // Metadata
+  metadata    Json?
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([organizationId])
+  @@index([eventType])
+  @@index([source])
+  @@index([campaign])
+  @@index([createdAt])
+  @@map("attribution_event")
+}
+
+model CustomerJourney {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Customer Info
+  userId         String  @unique
+  organizationId String?
+  email          String?
+
+  // Journey Tracking
+  firstTouchSource   String? // First interaction source
+  firstTouchCampaign String?
+  firstTouchDate     DateTime?
+
+  lastTouchSource   String? // Last interaction before conversion
+  lastTouchCampaign String?
+  lastTouchDate     DateTime?
+
+  // Attribution Model Results
+  firstTouchValue Float @default(0) // Revenue attributed to first touch
+  lastTouchValue  Float @default(0) // Revenue attributed to last touch
+  linearValue     Float @default(0) // Revenue distributed linearly
+
+  // Conversion Data
+  hasConverted      Boolean  @default(false)
+  conversionDate    DateTime?
+  conversionValue   Float?
+  lifetimeValue     Float    @default(0)
+
+  // Journey Stats
+  touchpointsCount  Int      @default(0)
+  daysToConversion  Int?
+
+  // Metadata
+  metadata Json?
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([firstTouchSource])
+  @@index([lastTouchSource])
+  @@map("customer_journey")
+}
+
+model CampaignPerformance {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Campaign Info
+  organizationId String
+  campaignId     String // ID from marketing system
+  campaignName   String
+  source         String // 'google_ads', 'meta_ads', etc.
+  status         String // 'active', 'paused', 'completed'
+
+  // Date Range
+  startDate DateTime
+  endDate   DateTime?
+
+  // Spend Data
+  totalSpend      Float @default(0)
+  dailyBudget     Float?
+  budgetRemaining Float?
+
+  // Performance Metrics
+  impressions Int   @default(0)
+  clicks      Int   @default(0)
+  conversions Int   @default(0)
+  revenue     Float @default(0)
+
+  // Calculated Metrics
+  ctr  Float @default(0) // Click-through rate
+  cpc  Float @default(0) // Cost per click
+  cpa  Float @default(0) // Cost per acquisition
+  roas Float @default(0) // Return on ad spend
+  roi  Float @default(0) // Return on investment
+
+  // Attribution Data
+  firstTouchRevenue Float @default(0)
+  lastTouchRevenue  Float @default(0)
+  linearRevenue     Float @default(0)
+
+  // Finance Integration
+  profitMargin    Float?
+  netProfit       Float?
+  ltv             Float?
+  paybackPeriod   Float?
+
+  // AI Recommendations
+  recommendedAction   String? // 'scale', 'maintain', 'optimize', 'pause'
+  recommendedBudget   Float?
+  confidenceScore     Float?
+  lastAnalyzedAt      DateTime?
+
+  // Metadata
+  metadata Json?
+
+  @@index([organizationId])
+  @@index([campaignId])
+  @@index([source])
+  @@index([status])
+  @@index([startDate])
+  @@map("campaign_performance")
+}
+
+model BudgetAllocation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Organization
+  organizationId String
+
+  // Budget Data
+  totalBudget      Float
+  allocatedBudget  Float @default(0)
+  remainingBudget  Float
+
+  // Period
+  period      String // 'monthly', 'weekly', 'daily'
+  periodStart DateTime
+  periodEnd   DateTime
+
+  // Channel Allocation
+  googleAdsBudget  Float @default(0)
+  metaAdsBudget    Float @default(0)
+  contentBudget    Float @default(0)
+  emailBudget      Float @default(0)
+  otherBudget      Float @default(0)
+
+  // Performance Tracking
+  totalSpent       Float @default(0)
+  totalRevenue     Float @default(0)
+  totalROI         Float @default(0)
+
+  // AI Control
+  managedByAI         Boolean @default(false)
+  lastAIAdjustment    DateTime?
+  aiAdjustmentReason  String?
+
+  // Approval
+  requiresApproval Boolean @default(true)
+  approvedBy       String?
+  approvedAt       DateTime?
+
+  // Metadata
+  metadata Json?
+
+  @@index([organizationId])
+  @@index([periodStart])
+  @@map("budget_allocation")
+}
+
+model IntegrationEvent {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Event Info
+  organizationId String
+  eventType      String // 'budget_change', 'campaign_scaled', 'alert_sent', 'action_executed'
+  sourceSystem   String // 'finance', 'marketing', 'integration'
+  targetSystem   String?
+
+  // Event Data
+  title       String
+  description String
+  severity    String // 'info', 'warning', 'critical'
+
+  // Action Taken
+  actionType     String? // 'scale_budget', 'pause_campaign', 'send_alert'
+  actionStatus   String? // 'pending', 'executed', 'failed'
+  actionResult   String?
+
+  // Related Entities
+  campaignId String?
+  budgetId   String?
+
+  // Metadata
+  metadata Json?
+
+  @@index([organizationId])
+  @@index([eventType])
+  @@index([sourceSystem])
+  @@index([createdAt])
+  @@map("integration_event")
+}
+
+// ═══════════════════════════════════════════════════════
+// MARKETING SYSTEM MODELS
+// ═══════════════════════════════════════════════════════
+
+model SaasProduct {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  description    String?  @db.Text
+  targetAudience String?
+  usp            String?
+  pricing        Json?
+  marketingEnabled Boolean @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  campaigns      MarketingAdCampaign[]
+  content        MarketingContent[]
+  leads          MarketingLead[]
+  
+  @@index([organizationId])
+  @@map("saas_product")
+}
+
+model MarketingAdCampaign {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  productId      String?
+  product        SaasProduct? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name           String
+  platform       String   // 'facebook', 'google', 'linkedin', etc.
+  status         String   @default("DRAFT") // DRAFT, ACTIVE, PAUSED, COMPLETED
+  budget         Json?
+  targeting      Json?
+  performance    Json?
+  startDate      DateTime?
+  endDate        DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  @@index([organizationId])
+  @@index([productId])
+  @@index([platform])
+  @@index([status])
+  @@map("marketing_ad_campaign")
+}
+
+model MarketingContent {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  productId      String?
+  product        SaasProduct? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type           String   // 'POST', 'AD', 'EMAIL', etc.
+  platform       String   // 'facebook', 'google', 'linkedin', 'email', etc.
+  title          String?
+  content        Json?
+  status         String   @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+  performance    Json?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  @@index([organizationId])
+  @@index([productId])
+  @@index([platform])
+  @@index([status])
+  @@map("marketing_content")
+}
+
+model MarketingDecision {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  agentType      String   // 'ads', 'content', 'budget', etc.
+  decision       Json
+  reasoning      String?  @db.Text
+  context        Json?
+  executedAt     DateTime?
+  createdAt      DateTime @default(now())
+  
+  @@index([organizationId])
+  @@index([agentType])
+  @@map("marketing_decision")
+}
+
+model MarketingGuard {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  guardType      String   // 'financial', 'reputation', 'legal'
+  metric         String
+  threshold      Float
+  currentValue   Float
+  status         String   // 'ok', 'warning', 'critical'
+  triggered      Boolean  @default(false)
+  action         Json?
+  lastCheck      DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  @@index([organizationId])
+  @@index([guardType])
+  @@index([status])
+  @@map("marketing_guard")
+}
+
+model MarketingLead {
+  id              String   @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  productId       String?
+  product         SaasProduct? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Info del lead
+  email           String
+  name            String?
+  company         String?
+  phone           String?
+  website         String?
+  
+  // Scoring
+  score           Int      @default(0)
+  temperature     String   @default("cold") // cold, warm, hot, qualified
+  stage           String   @default("new") // new, contacted, qualified, proposal, negotiation, won, lost
+  
+  // Source
+  source          String?  // organic, ads, referral, email, social
+  campaign        String?
+  medium          String?
+  
+  // Engagement
+  engagementData  Json?    // { pageViews, emailOpens, clicks, downloads }
+  lastActivity    DateTime?
+  
+  // AI Analysis
+  aiAnalysis      Json?    // { buyIntent, budget, timeline, painPoints }
+  
+  // Assignment
+  assignedTo      String?
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  convertedAt     DateTime?
+  
+  // Relations
+  activities      MarketingLeadActivity[]
+  
+  @@index([organizationId])
+  @@index([productId])
+  @@index([email])
+  @@index([score])
+  @@index([temperature])
+  @@map("marketing_lead")
+}
+
+model MarketingLeadActivity {
+  id        String   @id @default(cuid())
+  leadId    String
+  lead      MarketingLead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  type      String   // email_sent, email_opened, page_view, form_submit, call, meeting, note
+  data      Json?
+  createdAt DateTime @default(now())
+  
+  @@index([leadId])
+  @@map("marketing_lead_activity")
 }
