@@ -38,6 +38,27 @@ import {
   generateInsightsProcedure,
   generateWeeklyReportProcedure
 } from './procedures/analytics';
+import {
+  generateContentProcedure,
+  generateContentVariationsProcedure,
+  optimizeContentForSEOProcedure
+} from './procedures/content';
+import {
+  createEmailCampaignProcedure,
+  sendEmailCampaignProcedure,
+  segmentAudienceProcedure,
+  runABTestProcedure
+} from './procedures/email';
+import {
+  generateSocialPostProcedure,
+  analyzeSocialSentimentProcedure,
+  getBestPostingTimesProcedure
+} from './procedures/social';
+import {
+  coordinateMarketingAgentsProcedure,
+  optimizeBudgetProcedure,
+  generateStrategicReportProcedure
+} from './procedures/strategy';
 
 export const marketingRouter = publicProcedure.router({
   guards: {
@@ -78,6 +99,27 @@ export const marketingRouter = publicProcedure.router({
     campaignROI: getCampaignROIProcedure,
     insights: generateInsightsProcedure,
     weeklyReport: generateWeeklyReportProcedure
+  },
+  content: {
+    generate: generateContentProcedure,
+    generateVariations: generateContentVariationsProcedure,
+    optimizeSEO: optimizeContentForSEOProcedure
+  },
+  email: {
+    createCampaign: createEmailCampaignProcedure,
+    sendCampaign: sendEmailCampaignProcedure,
+    segmentAudience: segmentAudienceProcedure,
+    runABTest: runABTestProcedure
+  },
+  social: {
+    generatePost: generateSocialPostProcedure,
+    analyzeSentiment: analyzeSocialSentimentProcedure,
+    getBestPostingTimes: getBestPostingTimesProcedure
+  },
+  strategy: {
+    coordinateAgents: coordinateMarketingAgentsProcedure,
+    optimizeBudget: optimizeBudgetProcedure,
+    generateReport: generateStrategicReportProcedure
   }
 });
 

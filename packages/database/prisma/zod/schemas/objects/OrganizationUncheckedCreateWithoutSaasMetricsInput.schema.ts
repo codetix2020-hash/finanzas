@@ -6,7 +6,13 @@ import { PurchaseUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema a
 import { AiChatUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as AiChatUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './AiChatUncheckedCreateNestedManyWithoutOrganizationInput.schema';
 import { FinancialTransactionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as FinancialTransactionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './FinancialTransactionUncheckedCreateNestedManyWithoutOrganizationInput.schema';
 import { CostTrackingUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as CostTrackingUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './CostTrackingUncheckedCreateNestedManyWithoutOrganizationInput.schema';
-import { AgentDecisionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as AgentDecisionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './AgentDecisionUncheckedCreateNestedManyWithoutOrganizationInput.schema'
+import { AgentDecisionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as AgentDecisionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './AgentDecisionUncheckedCreateNestedManyWithoutOrganizationInput.schema';
+import { SaasProductUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as SaasProductUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './SaasProductUncheckedCreateNestedManyWithoutOrganizationInput.schema';
+import { MarketingAdCampaignUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingAdCampaignUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingAdCampaignUncheckedCreateNestedManyWithoutOrganizationInput.schema';
+import { MarketingContentUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingContentUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingContentUncheckedCreateNestedManyWithoutOrganizationInput.schema';
+import { MarketingDecisionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingDecisionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingDecisionUncheckedCreateNestedManyWithoutOrganizationInput.schema';
+import { MarketingGuardUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingGuardUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingGuardUncheckedCreateNestedManyWithoutOrganizationInput.schema';
+import { MarketingLeadUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingLeadUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingLeadUncheckedCreateNestedManyWithoutOrganizationInput.schema'
 
 const makeSchema = () => z.object({
   id: z.string().optional(),
@@ -22,7 +28,13 @@ const makeSchema = () => z.object({
   aiChats: z.lazy(() => AiChatUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
   financialTransactions: z.lazy(() => FinancialTransactionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
   costTrackings: z.lazy(() => CostTrackingUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
-  agentDecisions: z.lazy(() => AgentDecisionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional()
+  agentDecisions: z.lazy(() => AgentDecisionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  saasProducts: z.lazy(() => SaasProductUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  marketingAdCampaigns: z.lazy(() => MarketingAdCampaignUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  marketingContent: z.lazy(() => MarketingContentUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  marketingDecisions: z.lazy(() => MarketingDecisionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  marketingGuards: z.lazy(() => MarketingGuardUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  marketingLeads: z.lazy(() => MarketingLeadUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional()
 }).strict();
 export const OrganizationUncheckedCreateWithoutSaasMetricsInputObjectSchema: z.ZodType<Prisma.OrganizationUncheckedCreateWithoutSaasMetricsInput> = makeSchema() as unknown as z.ZodType<Prisma.OrganizationUncheckedCreateWithoutSaasMetricsInput>;
 export const OrganizationUncheckedCreateWithoutSaasMetricsInputObjectZodSchema = makeSchema();

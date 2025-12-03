@@ -25,6 +25,12 @@ export const OrganizationFindManySelectSchema: z.ZodType<Prisma.OrganizationSele
     saasMetrics: z.boolean().optional(),
     costTrackings: z.boolean().optional(),
     agentDecisions: z.boolean().optional(),
+    saasProducts: z.boolean().optional(),
+    marketingAdCampaigns: z.boolean().optional(),
+    marketingContent: z.boolean().optional(),
+    marketingDecisions: z.boolean().optional(),
+    marketingGuards: z.boolean().optional(),
+    marketingLeads: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.OrganizationSelect>;
 
@@ -44,6 +50,12 @@ export const OrganizationFindManySelectZodSchema = z.object({
     saasMetrics: z.boolean().optional(),
     costTrackings: z.boolean().optional(),
     agentDecisions: z.boolean().optional(),
+    saasProducts: z.boolean().optional(),
+    marketingAdCampaigns: z.boolean().optional(),
+    marketingContent: z.boolean().optional(),
+    marketingDecisions: z.boolean().optional(),
+    marketingGuards: z.boolean().optional(),
+    marketingLeads: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
 

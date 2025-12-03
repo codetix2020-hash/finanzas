@@ -8,6 +8,8 @@ import {
 	simulateUnitEconomics,
 } from "./procedures/calculate-unit-economics";
 import { getBenchmarking } from "./procedures/get-benchmarking";
+import { analyzeSaas } from "./procedures/analyze-saas";
+import { executeAction } from "./procedures/execute-action";
 
 export const financeRouter = publicProcedure.router({
 	getOverview,
@@ -17,5 +19,7 @@ export const financeRouter = publicProcedure.router({
 	calculateUnitEconomics,
 	simulateUnitEconomics,
 	getBenchmarking,
+	analyzeSaas,
+	executeAction,
 });
 

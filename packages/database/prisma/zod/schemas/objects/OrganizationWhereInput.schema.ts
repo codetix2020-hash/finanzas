@@ -10,7 +10,13 @@ import { AiChatListRelationFilterObjectSchema as AiChatListRelationFilterObjectS
 import { FinancialTransactionListRelationFilterObjectSchema as FinancialTransactionListRelationFilterObjectSchema } from './FinancialTransactionListRelationFilter.schema';
 import { SaasMetricsListRelationFilterObjectSchema as SaasMetricsListRelationFilterObjectSchema } from './SaasMetricsListRelationFilter.schema';
 import { CostTrackingListRelationFilterObjectSchema as CostTrackingListRelationFilterObjectSchema } from './CostTrackingListRelationFilter.schema';
-import { AgentDecisionListRelationFilterObjectSchema as AgentDecisionListRelationFilterObjectSchema } from './AgentDecisionListRelationFilter.schema'
+import { AgentDecisionListRelationFilterObjectSchema as AgentDecisionListRelationFilterObjectSchema } from './AgentDecisionListRelationFilter.schema';
+import { SaasProductListRelationFilterObjectSchema as SaasProductListRelationFilterObjectSchema } from './SaasProductListRelationFilter.schema';
+import { MarketingAdCampaignListRelationFilterObjectSchema as MarketingAdCampaignListRelationFilterObjectSchema } from './MarketingAdCampaignListRelationFilter.schema';
+import { MarketingContentListRelationFilterObjectSchema as MarketingContentListRelationFilterObjectSchema } from './MarketingContentListRelationFilter.schema';
+import { MarketingDecisionListRelationFilterObjectSchema as MarketingDecisionListRelationFilterObjectSchema } from './MarketingDecisionListRelationFilter.schema';
+import { MarketingGuardListRelationFilterObjectSchema as MarketingGuardListRelationFilterObjectSchema } from './MarketingGuardListRelationFilter.schema';
+import { MarketingLeadListRelationFilterObjectSchema as MarketingLeadListRelationFilterObjectSchema } from './MarketingLeadListRelationFilter.schema'
 
 const organizationwhereinputSchema = z.object({
   AND: z.union([z.lazy(() => OrganizationWhereInputObjectSchema), z.lazy(() => OrganizationWhereInputObjectSchema).array()]).optional(),
@@ -30,7 +36,13 @@ const organizationwhereinputSchema = z.object({
   financialTransactions: z.lazy(() => FinancialTransactionListRelationFilterObjectSchema).optional(),
   saasMetrics: z.lazy(() => SaasMetricsListRelationFilterObjectSchema).optional(),
   costTrackings: z.lazy(() => CostTrackingListRelationFilterObjectSchema).optional(),
-  agentDecisions: z.lazy(() => AgentDecisionListRelationFilterObjectSchema).optional()
+  agentDecisions: z.lazy(() => AgentDecisionListRelationFilterObjectSchema).optional(),
+  saasProducts: z.lazy(() => SaasProductListRelationFilterObjectSchema).optional(),
+  marketingAdCampaigns: z.lazy(() => MarketingAdCampaignListRelationFilterObjectSchema).optional(),
+  marketingContent: z.lazy(() => MarketingContentListRelationFilterObjectSchema).optional(),
+  marketingDecisions: z.lazy(() => MarketingDecisionListRelationFilterObjectSchema).optional(),
+  marketingGuards: z.lazy(() => MarketingGuardListRelationFilterObjectSchema).optional(),
+  marketingLeads: z.lazy(() => MarketingLeadListRelationFilterObjectSchema).optional()
 }).strict();
 export const OrganizationWhereInputObjectSchema: z.ZodType<Prisma.OrganizationWhereInput> = organizationwhereinputSchema as unknown as z.ZodType<Prisma.OrganizationWhereInput>;
 export const OrganizationWhereInputObjectZodSchema = organizationwhereinputSchema;

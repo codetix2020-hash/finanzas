@@ -8,6 +8,12 @@ import { FinancialTransactionFindManySchema as FinancialTransactionFindManySchem
 import { SaasMetricsFindManySchema as SaasMetricsFindManySchema } from '../findManySaasMetrics.schema';
 import { CostTrackingFindManySchema as CostTrackingFindManySchema } from '../findManyCostTracking.schema';
 import { AgentDecisionFindManySchema as AgentDecisionFindManySchema } from '../findManyAgentDecision.schema';
+import { SaasProductFindManySchema as SaasProductFindManySchema } from '../findManySaasProduct.schema';
+import { MarketingAdCampaignFindManySchema as MarketingAdCampaignFindManySchema } from '../findManyMarketingAdCampaign.schema';
+import { MarketingContentFindManySchema as MarketingContentFindManySchema } from '../findManyMarketingContent.schema';
+import { MarketingDecisionFindManySchema as MarketingDecisionFindManySchema } from '../findManyMarketingDecision.schema';
+import { MarketingGuardFindManySchema as MarketingGuardFindManySchema } from '../findManyMarketingGuard.schema';
+import { MarketingLeadFindManySchema as MarketingLeadFindManySchema } from '../findManyMarketingLead.schema';
 import { OrganizationCountOutputTypeArgsObjectSchema as OrganizationCountOutputTypeArgsObjectSchema } from './OrganizationCountOutputTypeArgs.schema'
 
 const makeSchema = () => z.object({
@@ -26,6 +32,12 @@ const makeSchema = () => z.object({
   saasMetrics: z.union([z.boolean(), z.lazy(() => SaasMetricsFindManySchema)]).optional(),
   costTrackings: z.union([z.boolean(), z.lazy(() => CostTrackingFindManySchema)]).optional(),
   agentDecisions: z.union([z.boolean(), z.lazy(() => AgentDecisionFindManySchema)]).optional(),
+  saasProducts: z.union([z.boolean(), z.lazy(() => SaasProductFindManySchema)]).optional(),
+  marketingAdCampaigns: z.union([z.boolean(), z.lazy(() => MarketingAdCampaignFindManySchema)]).optional(),
+  marketingContent: z.union([z.boolean(), z.lazy(() => MarketingContentFindManySchema)]).optional(),
+  marketingDecisions: z.union([z.boolean(), z.lazy(() => MarketingDecisionFindManySchema)]).optional(),
+  marketingGuards: z.union([z.boolean(), z.lazy(() => MarketingGuardFindManySchema)]).optional(),
+  marketingLeads: z.union([z.boolean(), z.lazy(() => MarketingLeadFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => OrganizationCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
 export const OrganizationSelectObjectSchema: z.ZodType<Prisma.OrganizationSelect> = makeSchema() as unknown as z.ZodType<Prisma.OrganizationSelect>;

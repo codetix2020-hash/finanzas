@@ -15,7 +15,13 @@ export const OrganizationFindManyResultSchema = z.object({
   financialTransactions: z.array(z.unknown()),
   saasMetrics: z.array(z.unknown()),
   costTrackings: z.array(z.unknown()),
-  agentDecisions: z.array(z.unknown())
+  agentDecisions: z.array(z.unknown()),
+  saasProducts: z.array(z.unknown()),
+  marketingAdCampaigns: z.array(z.unknown()),
+  marketingContent: z.array(z.unknown()),
+  marketingDecisions: z.array(z.unknown()),
+  marketingGuards: z.array(z.unknown()),
+  marketingLeads: z.array(z.unknown())
 })),
   pagination: z.object({
   page: z.number().int().min(1),

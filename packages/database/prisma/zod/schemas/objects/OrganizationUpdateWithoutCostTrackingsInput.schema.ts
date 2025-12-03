@@ -9,7 +9,13 @@ import { PurchaseUpdateManyWithoutOrganizationNestedInputObjectSchema as Purchas
 import { AiChatUpdateManyWithoutOrganizationNestedInputObjectSchema as AiChatUpdateManyWithoutOrganizationNestedInputObjectSchema } from './AiChatUpdateManyWithoutOrganizationNestedInput.schema';
 import { FinancialTransactionUpdateManyWithoutOrganizationNestedInputObjectSchema as FinancialTransactionUpdateManyWithoutOrganizationNestedInputObjectSchema } from './FinancialTransactionUpdateManyWithoutOrganizationNestedInput.schema';
 import { SaasMetricsUpdateManyWithoutOrganizationNestedInputObjectSchema as SaasMetricsUpdateManyWithoutOrganizationNestedInputObjectSchema } from './SaasMetricsUpdateManyWithoutOrganizationNestedInput.schema';
-import { AgentDecisionUpdateManyWithoutOrganizationNestedInputObjectSchema as AgentDecisionUpdateManyWithoutOrganizationNestedInputObjectSchema } from './AgentDecisionUpdateManyWithoutOrganizationNestedInput.schema'
+import { AgentDecisionUpdateManyWithoutOrganizationNestedInputObjectSchema as AgentDecisionUpdateManyWithoutOrganizationNestedInputObjectSchema } from './AgentDecisionUpdateManyWithoutOrganizationNestedInput.schema';
+import { SaasProductUpdateManyWithoutOrganizationNestedInputObjectSchema as SaasProductUpdateManyWithoutOrganizationNestedInputObjectSchema } from './SaasProductUpdateManyWithoutOrganizationNestedInput.schema';
+import { MarketingAdCampaignUpdateManyWithoutOrganizationNestedInputObjectSchema as MarketingAdCampaignUpdateManyWithoutOrganizationNestedInputObjectSchema } from './MarketingAdCampaignUpdateManyWithoutOrganizationNestedInput.schema';
+import { MarketingContentUpdateManyWithoutOrganizationNestedInputObjectSchema as MarketingContentUpdateManyWithoutOrganizationNestedInputObjectSchema } from './MarketingContentUpdateManyWithoutOrganizationNestedInput.schema';
+import { MarketingDecisionUpdateManyWithoutOrganizationNestedInputObjectSchema as MarketingDecisionUpdateManyWithoutOrganizationNestedInputObjectSchema } from './MarketingDecisionUpdateManyWithoutOrganizationNestedInput.schema';
+import { MarketingGuardUpdateManyWithoutOrganizationNestedInputObjectSchema as MarketingGuardUpdateManyWithoutOrganizationNestedInputObjectSchema } from './MarketingGuardUpdateManyWithoutOrganizationNestedInput.schema';
+import { MarketingLeadUpdateManyWithoutOrganizationNestedInputObjectSchema as MarketingLeadUpdateManyWithoutOrganizationNestedInputObjectSchema } from './MarketingLeadUpdateManyWithoutOrganizationNestedInput.schema'
 
 const makeSchema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -25,7 +31,13 @@ const makeSchema = () => z.object({
   aiChats: z.lazy(() => AiChatUpdateManyWithoutOrganizationNestedInputObjectSchema).optional(),
   financialTransactions: z.lazy(() => FinancialTransactionUpdateManyWithoutOrganizationNestedInputObjectSchema).optional(),
   saasMetrics: z.lazy(() => SaasMetricsUpdateManyWithoutOrganizationNestedInputObjectSchema).optional(),
-  agentDecisions: z.lazy(() => AgentDecisionUpdateManyWithoutOrganizationNestedInputObjectSchema).optional()
+  agentDecisions: z.lazy(() => AgentDecisionUpdateManyWithoutOrganizationNestedInputObjectSchema).optional(),
+  saasProducts: z.lazy(() => SaasProductUpdateManyWithoutOrganizationNestedInputObjectSchema).optional(),
+  marketingAdCampaigns: z.lazy(() => MarketingAdCampaignUpdateManyWithoutOrganizationNestedInputObjectSchema).optional(),
+  marketingContent: z.lazy(() => MarketingContentUpdateManyWithoutOrganizationNestedInputObjectSchema).optional(),
+  marketingDecisions: z.lazy(() => MarketingDecisionUpdateManyWithoutOrganizationNestedInputObjectSchema).optional(),
+  marketingGuards: z.lazy(() => MarketingGuardUpdateManyWithoutOrganizationNestedInputObjectSchema).optional(),
+  marketingLeads: z.lazy(() => MarketingLeadUpdateManyWithoutOrganizationNestedInputObjectSchema).optional()
 }).strict();
 export const OrganizationUpdateWithoutCostTrackingsInputObjectSchema: z.ZodType<Prisma.OrganizationUpdateWithoutCostTrackingsInput> = makeSchema() as unknown as z.ZodType<Prisma.OrganizationUpdateWithoutCostTrackingsInput>;
 export const OrganizationUpdateWithoutCostTrackingsInputObjectZodSchema = makeSchema();

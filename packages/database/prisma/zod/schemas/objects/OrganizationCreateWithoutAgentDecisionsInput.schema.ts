@@ -6,7 +6,13 @@ import { PurchaseCreateNestedManyWithoutOrganizationInputObjectSchema as Purchas
 import { AiChatCreateNestedManyWithoutOrganizationInputObjectSchema as AiChatCreateNestedManyWithoutOrganizationInputObjectSchema } from './AiChatCreateNestedManyWithoutOrganizationInput.schema';
 import { FinancialTransactionCreateNestedManyWithoutOrganizationInputObjectSchema as FinancialTransactionCreateNestedManyWithoutOrganizationInputObjectSchema } from './FinancialTransactionCreateNestedManyWithoutOrganizationInput.schema';
 import { SaasMetricsCreateNestedManyWithoutOrganizationInputObjectSchema as SaasMetricsCreateNestedManyWithoutOrganizationInputObjectSchema } from './SaasMetricsCreateNestedManyWithoutOrganizationInput.schema';
-import { CostTrackingCreateNestedManyWithoutOrganizationInputObjectSchema as CostTrackingCreateNestedManyWithoutOrganizationInputObjectSchema } from './CostTrackingCreateNestedManyWithoutOrganizationInput.schema'
+import { CostTrackingCreateNestedManyWithoutOrganizationInputObjectSchema as CostTrackingCreateNestedManyWithoutOrganizationInputObjectSchema } from './CostTrackingCreateNestedManyWithoutOrganizationInput.schema';
+import { SaasProductCreateNestedManyWithoutOrganizationInputObjectSchema as SaasProductCreateNestedManyWithoutOrganizationInputObjectSchema } from './SaasProductCreateNestedManyWithoutOrganizationInput.schema';
+import { MarketingAdCampaignCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingAdCampaignCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingAdCampaignCreateNestedManyWithoutOrganizationInput.schema';
+import { MarketingContentCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingContentCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingContentCreateNestedManyWithoutOrganizationInput.schema';
+import { MarketingDecisionCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingDecisionCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingDecisionCreateNestedManyWithoutOrganizationInput.schema';
+import { MarketingGuardCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingGuardCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingGuardCreateNestedManyWithoutOrganizationInput.schema';
+import { MarketingLeadCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingLeadCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingLeadCreateNestedManyWithoutOrganizationInput.schema'
 
 const makeSchema = () => z.object({
   id: z.string().optional(),
@@ -22,7 +28,13 @@ const makeSchema = () => z.object({
   aiChats: z.lazy(() => AiChatCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
   financialTransactions: z.lazy(() => FinancialTransactionCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
   saasMetrics: z.lazy(() => SaasMetricsCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
-  costTrackings: z.lazy(() => CostTrackingCreateNestedManyWithoutOrganizationInputObjectSchema).optional()
+  costTrackings: z.lazy(() => CostTrackingCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  saasProducts: z.lazy(() => SaasProductCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  marketingAdCampaigns: z.lazy(() => MarketingAdCampaignCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  marketingContent: z.lazy(() => MarketingContentCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  marketingDecisions: z.lazy(() => MarketingDecisionCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  marketingGuards: z.lazy(() => MarketingGuardCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  marketingLeads: z.lazy(() => MarketingLeadCreateNestedManyWithoutOrganizationInputObjectSchema).optional()
 }).strict();
 export const OrganizationCreateWithoutAgentDecisionsInputObjectSchema: z.ZodType<Prisma.OrganizationCreateWithoutAgentDecisionsInput> = makeSchema() as unknown as z.ZodType<Prisma.OrganizationCreateWithoutAgentDecisionsInput>;
 export const OrganizationCreateWithoutAgentDecisionsInputObjectZodSchema = makeSchema();

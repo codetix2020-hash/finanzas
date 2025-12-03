@@ -22,7 +22,13 @@ export const OrganizationGroupByResultSchema = z.array(z.object({
     financialTransactions: z.number(),
     saasMetrics: z.number(),
     costTrackings: z.number(),
-    agentDecisions: z.number()
+    agentDecisions: z.number(),
+    saasProducts: z.number(),
+    marketingAdCampaigns: z.number(),
+    marketingContent: z.number(),
+    marketingDecisions: z.number(),
+    marketingGuards: z.number(),
+    marketingLeads: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),

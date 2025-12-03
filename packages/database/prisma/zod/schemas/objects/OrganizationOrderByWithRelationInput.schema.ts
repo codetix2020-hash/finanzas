@@ -9,7 +9,13 @@ import { AiChatOrderByRelationAggregateInputObjectSchema as AiChatOrderByRelatio
 import { FinancialTransactionOrderByRelationAggregateInputObjectSchema as FinancialTransactionOrderByRelationAggregateInputObjectSchema } from './FinancialTransactionOrderByRelationAggregateInput.schema';
 import { SaasMetricsOrderByRelationAggregateInputObjectSchema as SaasMetricsOrderByRelationAggregateInputObjectSchema } from './SaasMetricsOrderByRelationAggregateInput.schema';
 import { CostTrackingOrderByRelationAggregateInputObjectSchema as CostTrackingOrderByRelationAggregateInputObjectSchema } from './CostTrackingOrderByRelationAggregateInput.schema';
-import { AgentDecisionOrderByRelationAggregateInputObjectSchema as AgentDecisionOrderByRelationAggregateInputObjectSchema } from './AgentDecisionOrderByRelationAggregateInput.schema'
+import { AgentDecisionOrderByRelationAggregateInputObjectSchema as AgentDecisionOrderByRelationAggregateInputObjectSchema } from './AgentDecisionOrderByRelationAggregateInput.schema';
+import { SaasProductOrderByRelationAggregateInputObjectSchema as SaasProductOrderByRelationAggregateInputObjectSchema } from './SaasProductOrderByRelationAggregateInput.schema';
+import { MarketingAdCampaignOrderByRelationAggregateInputObjectSchema as MarketingAdCampaignOrderByRelationAggregateInputObjectSchema } from './MarketingAdCampaignOrderByRelationAggregateInput.schema';
+import { MarketingContentOrderByRelationAggregateInputObjectSchema as MarketingContentOrderByRelationAggregateInputObjectSchema } from './MarketingContentOrderByRelationAggregateInput.schema';
+import { MarketingDecisionOrderByRelationAggregateInputObjectSchema as MarketingDecisionOrderByRelationAggregateInputObjectSchema } from './MarketingDecisionOrderByRelationAggregateInput.schema';
+import { MarketingGuardOrderByRelationAggregateInputObjectSchema as MarketingGuardOrderByRelationAggregateInputObjectSchema } from './MarketingGuardOrderByRelationAggregateInput.schema';
+import { MarketingLeadOrderByRelationAggregateInputObjectSchema as MarketingLeadOrderByRelationAggregateInputObjectSchema } from './MarketingLeadOrderByRelationAggregateInput.schema'
 
 const makeSchema = () => z.object({
   id: SortOrderSchema.optional(),
@@ -26,7 +32,13 @@ const makeSchema = () => z.object({
   financialTransactions: z.lazy(() => FinancialTransactionOrderByRelationAggregateInputObjectSchema).optional(),
   saasMetrics: z.lazy(() => SaasMetricsOrderByRelationAggregateInputObjectSchema).optional(),
   costTrackings: z.lazy(() => CostTrackingOrderByRelationAggregateInputObjectSchema).optional(),
-  agentDecisions: z.lazy(() => AgentDecisionOrderByRelationAggregateInputObjectSchema).optional()
+  agentDecisions: z.lazy(() => AgentDecisionOrderByRelationAggregateInputObjectSchema).optional(),
+  saasProducts: z.lazy(() => SaasProductOrderByRelationAggregateInputObjectSchema).optional(),
+  marketingAdCampaigns: z.lazy(() => MarketingAdCampaignOrderByRelationAggregateInputObjectSchema).optional(),
+  marketingContent: z.lazy(() => MarketingContentOrderByRelationAggregateInputObjectSchema).optional(),
+  marketingDecisions: z.lazy(() => MarketingDecisionOrderByRelationAggregateInputObjectSchema).optional(),
+  marketingGuards: z.lazy(() => MarketingGuardOrderByRelationAggregateInputObjectSchema).optional(),
+  marketingLeads: z.lazy(() => MarketingLeadOrderByRelationAggregateInputObjectSchema).optional()
 }).strict();
 export const OrganizationOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.OrganizationOrderByWithRelationInput> = makeSchema() as unknown as z.ZodType<Prisma.OrganizationOrderByWithRelationInput>;
 export const OrganizationOrderByWithRelationInputObjectZodSchema = makeSchema();
