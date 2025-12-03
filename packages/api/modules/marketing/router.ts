@@ -5,6 +5,14 @@ import {
   checkLegalGuardProcedure,
   runAllGuardsProcedure
 } from './procedures/guards';
+import { 
+  generateFBStrategyProcedure,
+  createFBCampaignProcedure,
+  generateFBCreativesProcedure,
+  optimizeFBCampaignProcedure,
+  updateFBCampaignStatusProcedure,
+  syncFBMetricsProcedure
+} from './procedures/facebook-ads';
 
 export const marketingRouter = publicProcedure.router({
   guards: {
@@ -12,6 +20,14 @@ export const marketingRouter = publicProcedure.router({
     reputation: checkReputationGuardProcedure,
     legal: checkLegalGuardProcedure,
     runAll: runAllGuardsProcedure
+  },
+  facebookAds: {
+    generateStrategy: generateFBStrategyProcedure,
+    createCampaign: createFBCampaignProcedure,
+    generateCreatives: generateFBCreativesProcedure,
+    optimize: optimizeFBCampaignProcedure,
+    updateStatus: updateFBCampaignStatusProcedure,
+    syncMetrics: syncFBMetricsProcedure
   }
 });
 
