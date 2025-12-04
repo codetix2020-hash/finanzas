@@ -170,7 +170,7 @@ export const testStripe = protectedProcedure
 			}
 
 			const stripe = new Stripe(secretKey, {
-				apiVersion: "2024-11-20.acacia",
+				apiVersion: "2025-10-29.clover",
 			});
 
 			// Test: obtener balance de la cuenta
