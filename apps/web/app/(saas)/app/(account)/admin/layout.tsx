@@ -11,15 +11,15 @@ import type { PropsWithChildren } from "react";
 
 export default async function AdminLayout({ children }: PropsWithChildren) {
 	const t = await getTranslations();
-	const session = await getSession();
-
-	if (!session) {
-		redirect("/auth/login");
-	}
-
-	if (session.user?.role !== "admin") {
-		redirect("/app");
-	}
+	// AUTENTICACIÓN DESHABILITADA
+	// const session = await getSession();
+	// if (!session) {
+	// 	redirect("/auth/login");
+	// }
+	// if (session.user?.role !== "admin") {
+	// 	redirect("/app");
+	// }
+	const session = null; // Mock para compatibilidad
 
 	return (
 		<>

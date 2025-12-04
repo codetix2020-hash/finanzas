@@ -17,14 +17,12 @@ import type { PropsWithChildren } from "react";
 export default async function SaaSLayout({ children }: PropsWithChildren) {
 	const locale = await getLocale();
 	const messages = await getMessages();
-	const session = await getSession();
-
-	if (!session) {
-		redirect("/auth/login");
-	}
+	// AUTENTICACIÓN DESHABILITADA - session mock para compatibilidad
+	const session = null;
 
 	const queryClient = getServerQueryClient();
 
+	// Prefetch queries sin validación de auth
 	await queryClient.prefetchQuery({
 		queryKey: sessionQueryKey,
 		queryFn: () => session,

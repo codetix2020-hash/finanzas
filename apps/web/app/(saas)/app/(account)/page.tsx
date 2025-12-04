@@ -6,13 +6,14 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 export default async function AppStartPage() {
-	const session = await getSession();
-
-	if (!session) {
-		redirect("/auth/login");
-	}
-
-	const organizations = await getOrganizationList();
+	// AUTENTICACIÓN DESHABILITADA
+	// const session = await getSession();
+	// if (!session) {
+	// 	redirect("/auth/login");
+	// }
+	const session = null; // Mock para compatibilidad
+	const organizations: any[] = []; // Mock para compatibilidad
+	// const organizations = await getOrganizationList();
 
 	if (
 		config.organizations.enable &&

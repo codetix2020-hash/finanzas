@@ -1797,7 +1797,7 @@ export default function TestFinancePage() {
 											borderRadius: "2px",
 										}}
 									></div>
-									<40%
+									{'<'}40%
 								</span>
 							</div>
 						</div>

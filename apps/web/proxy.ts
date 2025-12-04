@@ -1,63 +1,21 @@
 import { routing } from "@i18n/routing";
-import { config as appConfig } from "@repo/config";
-import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
-import { withQuery } from "ufo";
 
 const intlMiddleware = createMiddleware(routing);
 
+// AUTENTICACIÓN COMPLETAMENTE DESHABILITADA
+// Todas las validaciones de sesión y auth eliminadas
 export default async function proxy(req: NextRequest) {
-	const { pathname, origin } = req.nextUrl;
+	const { pathname } = req.nextUrl;
 
-	const sessionCookie = getSessionCookie(req);
-
-	if (pathname.startsWith("/app")) {
-		const response = NextResponse.next();
-
-		if (!appConfig.ui.saas.enabled) {
-			return NextResponse.redirect(new URL("/", origin));
-		}
-
-		// AUTENTICACIÓN DESHABILITADA - Acceso directo permitido
-		// if (!sessionCookie) {
-		// 	return NextResponse.redirect(
-		// 		new URL(
-		// 			withQuery("/auth/login", {
-		// 				redirectTo: pathname,
-		// 			}),
-		// 			origin,
-		// 		),
-		// 	);
-		// }
-
-		return response;
+	// Aplicar middleware de internacionalización solo para rutas con locale
+	if (pathname.startsWith("/en/") || pathname.startsWith("/es/")) {
+		return intlMiddleware(req);
 	}
 
-	if (pathname.startsWith("/auth")) {
-		if (!appConfig.ui.saas.enabled) {
-			return NextResponse.redirect(new URL("/", origin));
-		}
-
-		return NextResponse.next();
-	}
-
-	const pathsWithoutLocale = [
-		"/onboarding",
-		"/new-organization",
-		"/choose-plan",
-		"/organization-invitation",
-	];
-
-	if (pathsWithoutLocale.some((path) => pathname.startsWith(path))) {
-		return NextResponse.next();
-	}
-
-	if (!appConfig.ui.marketing.enabled) {
-		return NextResponse.redirect(new URL("/app", origin));
-	}
-
-	return intlMiddleware(req);
+	// Para todas las demás rutas (/app, /auth, etc), permitir acceso directo sin validación
+	return NextResponse.next();
 }
 
 export const config = {
