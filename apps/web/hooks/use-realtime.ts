@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { io, Socket } from "socket.io-client";
+import { useState, useCallback } from "react";
+// WebSockets deshabilitados en producción (Railway no soporta socket.io)
+// import { io, Socket } from "socket.io-client";
 
 interface RealtimeEvent {
 	type:
@@ -17,66 +18,27 @@ interface RealtimeEvent {
 }
 
 export function useRealtime(organizationId: string) {
-	const [socket, setSocket] = useState<Socket | null>(null);
-	const [isConnected, setIsConnected] = useState(false);
-	const [events, setEvents] = useState<RealtimeEvent[]>([]);
-	const [notifications, setNotifications] = useState<RealtimeEvent[]>([]);
+	// WebSockets deshabilitados - retornar valores mock
+	const [socket] = useState<null>(null);
+	const [isConnected] = useState(false);
+	const [events] = useState<RealtimeEvent[]>([]);
+	const [notifications] = useState<RealtimeEvent[]>([]);
 
-	useEffect(() => {
-		// Initialize socket connection
-		const socketInstance = io(window.location.origin, {
-			path: "/api/socket",
-		});
-
-		socketInstance.on("connect", () => {
-			console.log("WebSocket connected");
-			setIsConnected(true);
-
-			// Join organization room
-			socketInstance.emit("join-organization", organizationId);
-		});
-
-		socketInstance.on("disconnect", () => {
-			console.log("WebSocket disconnected");
-			setIsConnected(false);
-		});
-
-		// Listen for all event types
-		socketInstance.on("metric_update", (event: RealtimeEvent) => {
-			setEvents((prev) => [event, ...prev].slice(0, 50)); // Keep last 50 events
-		});
-
-		socketInstance.on("campaign_change", (event: RealtimeEvent) => {
-			setEvents((prev) => [event, ...prev].slice(0, 50));
-		});
-
-		socketInstance.on("budget_change", (event: RealtimeEvent) => {
-			setEvents((prev) => [event, ...prev].slice(0, 50));
-		});
-
-		socketInstance.on("notification", (event: RealtimeEvent) => {
-			setNotifications((prev) => [event, ...prev].slice(0, 20));
-			setEvents((prev) => [event, ...prev].slice(0, 50));
-		});
-
-		socketInstance.on("transaction", (event: RealtimeEvent) => {
-			setEvents((prev) => [event, ...prev].slice(0, 50));
-		});
-
-		setSocket(socketInstance);
-
-		return () => {
-			socketInstance.emit("leave-organization", organizationId);
-			socketInstance.disconnect();
-		};
-	}, [organizationId]);
+	// useEffect comentado - WebSockets no disponibles en producción
+	// useEffect(() => {
+	// 	// Initialize socket connection
+	// 	const socketInstance = io(window.location.origin, {
+	// 		path: "/api/socket",
+	// 	});
+	// 	// ... resto del código de WebSocket
+	// }, [organizationId]);
 
 	const clearNotifications = useCallback(() => {
-		setNotifications([]);
+		// No-op: WebSockets deshabilitados
 	}, []);
 
 	const dismissNotification = useCallback((index: number) => {
-		setNotifications((prev) => prev.filter((_, i) => i !== index));
+		// No-op: WebSockets deshabilitados
 	}, []);
 
 	return {
