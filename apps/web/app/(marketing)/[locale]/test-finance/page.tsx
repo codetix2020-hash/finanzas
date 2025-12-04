@@ -1035,51 +1035,157 @@ export default function TestFinancePage() {
 				style={{
 					background: "white",
 					borderRadius: "16px",
-					padding: "1.5rem",
 					boxShadow: "0 4px 6px rgba(0,0,0,0.07)",
 					marginBottom: "2rem",
 					border: "2px solid #ef4444",
+					overflow: 'hidden',
 				}}
 			>
 				<div
 					style={{
-						display: "flex",
-						justifyContent: "space-between",
-						alignItems: "center",
-						marginBottom: "1rem",
+						padding: "1.5rem",
+						background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+						color: "white",
+						cursor: "pointer",
 					}}
+					onClick={() => toggleSection('anomaly')}
 				>
-					<h2 style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-						🚨 Anomaly Detection
-					</h2>
-
-					<button
-						onClick={detectAnomaliesNow}
-						disabled={detectingAnomalies}
+					<div
 						style={{
-							padding: "0.75rem 1.5rem",
-							background: detectingAnomalies
-								? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
-								: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
-							color: "white",
-							border: "none",
-							borderRadius: "12px",
-							fontSize: "0.875rem",
-							fontWeight: "bold",
-							cursor: detectingAnomalies ? "not-allowed" : "pointer",
-							transition: "all 0.2s",
+							display: "flex",
+							justifyContent: "space-between",
+							alignItems: "center",
 						}}
-						onMouseEnter={(e) =>
-							!detectingAnomalies &&
-							(e.currentTarget.style.transform = "scale(1.05)")
-						}
-						onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
 					>
-						{detectingAnomalies ? "⏳ Analizando..." : "🚨 Detectar Anomalías"}
-					</button>
+						<div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+							<span style={{ fontSize: '1.5rem' }}>🚨</span>
+							<h2 style={{ fontSize: "1.25rem", fontWeight: "bold", margin: 0 }}>
+								Anomaly Detection
+							</h2>
+						</div>
+						<button
+							onClick={(e) => { e.stopPropagation(); detectAnomaliesNow(); }}
+							disabled={detectingAnomalies}
+							style={{
+								padding: "0.75rem 1.5rem",
+								background: detectingAnomalies ? "#9ca3af" : "white",
+								color: detectingAnomalies ? "#6b7280" : "#ef4444",
+								border: "none",
+								borderRadius: "8px",
+								fontSize: "0.875rem",
+								fontWeight: "bold",
+								cursor: detectingAnomalies ? "not-allowed" : "pointer",
+							}}
+						>
+							{detectingAnomalies ? "⏳ Analizando..." : "🚨 Detectar Anomalías"}
+						</button>
+					</div>
 				</div>
 
-				{!anomalies && !detectingAnomalies && (
+				{expandedSection === 'anomaly' && (
+					<div style={{ padding: '2rem' }}>
+						<div style={{ marginBottom: '2rem' }}>
+							<h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>📊 Timeline de Anomalías</h3>
+							<ResponsiveContainer width="100%" height={250}>
+								<LineChart data={[
+									{ date: 'Nov 20', mrr: 13200, anomaly: null },
+									{ date: 'Nov 22', mrr: 13400, anomaly: null },
+									{ date: 'Nov 25', mrr: 13700, anomaly: null },
+									{ date: 'Nov 28', mrr: 12800, anomaly: 12800 },
+									{ date: 'Nov 30', mrr: 13100, anomaly: null },
+									{ date: 'Dec 01', mrr: 12200, anomaly: 12200 },
+									{ date: 'Dec 03', mrr: 14100, anomaly: null },
+									{ date: 'Dec 04', mrr: 15420, anomaly: null },
+								]}>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="date" />
+									<YAxis />
+									<Tooltip />
+									<Line type="monotone" dataKey="mrr" stroke="#3b82f6" strokeWidth={2} />
+									<Line type="monotone" dataKey="anomaly" stroke="#ef4444" strokeWidth={4} dot={{ r: 8 }} />
+								</LineChart>
+							</ResponsiveContainer>
+						</div>
+
+						<div style={{ marginBottom: '2rem' }}>
+							<h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>⚠️ Anomalías Detectadas</h3>
+							<div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+								{[
+									{ 
+										date: '2024-12-01', 
+										type: 'MRR Drop', 
+										severity: 'critical', 
+										impact: '-€2,300', 
+										cause: 'Churn spike - 8 customers',
+										action: 'Alerta enviada + Análisis iniciado'
+									},
+									{ 
+										date: '2024-11-28', 
+										type: 'Conversion Drop', 
+										severity: 'high', 
+										impact: '-€1,100', 
+										cause: 'Landing page issue detected',
+										action: 'Dev team notified'
+									},
+									{ 
+										date: '2024-11-25', 
+										type: 'Payment Failure Spike', 
+										severity: 'medium', 
+										impact: '-€850', 
+										cause: '12 failed payments',
+										action: 'Retry emails sent'
+									},
+								].map((anomaly, idx) => (
+									<div 
+										key={idx} 
+										style={{ 
+											padding: '1rem', 
+											background: anomaly.severity === 'critical' ? '#fee2e2' : anomaly.severity === 'high' ? '#fed7aa' : '#fef3c7',
+											borderLeft: `4px solid ${anomaly.severity === 'critical' ? '#dc2626' : anomaly.severity === 'high' ? '#ea580c' : '#f59e0b'}`,
+											borderRadius: '8px'
+										}}
+									>
+										<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.5rem' }}>
+											<div>
+												<div style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>
+													{anomaly.severity === 'critical' ? '🔴' : anomaly.severity === 'high' ? '🟠' : '🟡'} {anomaly.type}
+												</div>
+												<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{anomaly.date}</div>
+											</div>
+											<div style={{ fontSize: '1rem', fontWeight: 'bold', color: '#dc2626' }}>{anomaly.impact}</div>
+										</div>
+										<div style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+											<strong>Causa probable:</strong> {anomaly.cause}
+										</div>
+										<div style={{ fontSize: '0.875rem', color: '#059669' }}>
+											<strong>✅ Acción:</strong> {anomaly.action}
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+
+						<div style={{ background: '#f3f4f6', borderRadius: '8px', padding: '1.5rem' }}>
+							<div style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>📈 Estadísticas de Detección</div>
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+								<div style={{ textAlign: 'center' }}>
+									<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ef4444' }}>23</div>
+									<div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Anomalías este mes</div>
+								</div>
+								<div style={{ textAlign: 'center' }}>
+									<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#f59e0b' }}>156 min</div>
+									<div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Tiempo promedio detección</div>
+								</div>
+								<div style={{ textAlign: 'center' }}>
+									<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#10b981' }}>€8.5k</div>
+									<div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Pérdidas evitadas</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				)}
+
+				{!anomalies && !detectingAnomalies && expandedSection !== 'anomaly' && (
 					<div style={{ textAlign: "center", padding: "3rem", color: "#6b7280" }}>
 						<div style={{ fontSize: "4rem", marginBottom: "1rem" }}>🔍</div>
 						<div
@@ -1448,56 +1554,248 @@ export default function TestFinancePage() {
 				)}
 			</div>
 
+			{/* Segmentación & Breakdown */}
+			<div style={{ marginBottom: '2rem', background: 'white', borderRadius: '12px', border: '2px solid #f59e0b', overflow: 'hidden' }}>
+				<div style={{ padding: '1.5rem', background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', color: 'white', cursor: 'pointer' }} onClick={() => toggleSection('segmentation')}>
+					<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+						<div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+							<span style={{ fontSize: '1.5rem' }}>🎯</span>
+							<h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0 }}>Segmentación & Breakdown</h2>
+						</div>
+					</div>
+				</div>
+				{expandedSection === 'segmentation' && (
+					<div style={{ padding: '2rem' }}>
+						{/* MRR by Plan */}
+						<div style={{ marginBottom: '2rem' }}>
+							<h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>💎 MRR por Plan</h3>
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
+								<div style={{ padding: '1rem', background: '#fef3c7', borderRadius: '8px' }}>
+									<div style={{ fontSize: '0.875rem', color: '#92400e', marginBottom: '0.5rem' }}>Enterprise</div>
+									<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#92400e' }}>€8,500</div>
+									<div style={{ fontSize: '0.75rem', color: '#92400e' }}>55% del MRR • 12 customers</div>
+								</div>
+								<div style={{ padding: '1rem', background: '#dbeafe', borderRadius: '8px' }}>
+									<div style={{ fontSize: '0.875rem', color: '#1e3a8a', marginBottom: '0.5rem' }}>Pro</div>
+									<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1e3a8a' }}>€4,200</div>
+									<div style={{ fontSize: '0.75rem', color: '#1e3a8a' }}>27% del MRR • 28 customers</div>
+								</div>
+								<div style={{ padding: '1rem', background: '#f3f4f6', borderRadius: '8px' }}>
+									<div style={{ fontSize: '0.875rem', color: '#374151', marginBottom: '0.5rem' }}>Starter</div>
+									<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#374151' }}>€2,720</div>
+									<div style={{ fontSize: '0.75rem', color: '#374151' }}>18% del MRR • 68 customers</div>
+								</div>
+							</div>
+							<ResponsiveContainer width="100%" height={200}>
+								<BarChart data={[
+									{ plan: 'Enterprise', mrr: 8500, customers: 12 },
+									{ plan: 'Pro', mrr: 4200, customers: 28 },
+									{ plan: 'Starter', mrr: 2720, customers: 68 },
+								]} layout="vertical">
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis type="number" />
+									<YAxis type="category" dataKey="plan" />
+									<Tooltip />
+									<Bar dataKey="mrr" fill="#f59e0b" />
+								</BarChart>
+							</ResponsiveContainer>
+						</div>
+
+						{/* By Channel */}
+						<div style={{ marginBottom: '2rem' }}>
+							<h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>📊 Por Canal de Adquisición</h3>
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+								{[
+									{ channel: 'Paid Ads', customers: 45, cac: '€1,450', ltv: '€4,800', roi: '231%' },
+									{ channel: 'Organic', customers: 38, cac: '€850', ltv: '€4,200', roi: '394%' },
+									{ channel: 'Referral', customers: 18, cac: '€320', ltv: '€5,100', roi: '1,494%' },
+									{ channel: 'Direct', customers: 7, cac: '€0', ltv: '€3,900', roi: '∞' },
+								].map((channel, idx) => (
+									<div key={idx} style={{ padding: '1rem', background: '#f9fafb', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+										<div style={{ fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{channel.channel}</div>
+										<div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>{channel.customers} customers</div>
+										<div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>CAC: {channel.cac}</div>
+										<div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>LTV: {channel.ltv}</div>
+										<div style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#10b981' }}>ROI: {channel.roi}</div>
+									</div>
+								))}
+							</div>
+						</div>
+
+						{/* By Geography */}
+						<div>
+							<h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>🌍 Por Región</h3>
+							<ResponsiveContainer width="100%" height={250}>
+								<PieChart>
+									<Pie
+										data={[
+											{ region: 'Europe', value: 6800, color: '#3b82f6' },
+											{ region: 'North America', value: 5200, color: '#8b5cf6' },
+											{ region: 'Asia Pacific', value: 2400, color: '#10b981' },
+											{ region: 'LATAM', value: 1020, color: '#f59e0b' },
+										]}
+										dataKey="value"
+										nameKey="region"
+										cx="50%"
+										cy="50%"
+										outerRadius={80}
+										label
+									>
+										{[
+											{ region: 'Europe', value: 6800, color: '#3b82f6' },
+											{ region: 'North America', value: 5200, color: '#8b5cf6' },
+											{ region: 'Asia Pacific', value: 2400, color: '#10b981' },
+											{ region: 'LATAM', value: 1020, color: '#f59e0b' },
+										].map((entry, index) => (
+											<Cell key={`cell-${index}`} fill={entry.color} />
+										))}
+									</Pie>
+									<Tooltip />
+									<Legend />
+								</PieChart>
+							</ResponsiveContainer>
+						</div>
+					</div>
+				)}
+			</div>
+
 			{/* Panel de Cohort Analysis */}
 			<div
 				style={{
 					background: "white",
 					borderRadius: "16px",
-					padding: "1.5rem",
 					boxShadow: "0 4px 6px rgba(0,0,0,0.07)",
 					marginBottom: "2rem",
 					border: "2px solid #8b5cf6",
+					overflow: 'hidden',
 				}}
 			>
 				<div
 					style={{
-						display: "flex",
-						justifyContent: "space-between",
-						alignItems: "center",
-						marginBottom: "1rem",
+						padding: "1.5rem",
+						background: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)",
+						color: "white",
+						cursor: "pointer",
 					}}
+					onClick={() => toggleSection('cohort')}
 				>
-					<h2 style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-						📊 Cohort Analysis & Retention
-					</h2>
-
-					<button
-						onClick={loadCohortAnalysis}
-						disabled={loadingCohorts}
+					<div
 						style={{
-							padding: "0.75rem 1.5rem",
-							background: loadingCohorts
-								? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
-								: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)",
-							color: "white",
-							border: "none",
-							borderRadius: "12px",
-							fontSize: "0.875rem",
-							fontWeight: "bold",
-							cursor: loadingCohorts ? "not-allowed" : "pointer",
-							transition: "all 0.2s",
+							display: "flex",
+							justifyContent: "space-between",
+							alignItems: "center",
 						}}
-						onMouseEnter={(e) =>
-							!loadingCohorts &&
-							(e.currentTarget.style.transform = "scale(1.05)")
-						}
-						onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
 					>
-						{loadingCohorts ? "⏳ Cargando..." : "📊 Cargar Cohort Analysis"}
-					</button>
+						<div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+							<span style={{ fontSize: '1.5rem' }}>📊</span>
+							<h2 style={{ fontSize: "1.25rem", fontWeight: "bold", margin: 0 }}>
+								Cohort Analysis & Retention
+							</h2>
+						</div>
+						<button
+							onClick={(e) => { e.stopPropagation(); loadCohortAnalysis(); }}
+							disabled={loadingCohorts}
+							style={{
+								padding: "0.75rem 1.5rem",
+								background: loadingCohorts ? "#9ca3af" : "white",
+								color: loadingCohorts ? "#6b7280" : "#8b5cf6",
+								border: "none",
+								borderRadius: "8px",
+								fontSize: "0.875rem",
+								fontWeight: "bold",
+								cursor: loadingCohorts ? "not-allowed" : "pointer",
+							}}
+						>
+							{loadingCohorts ? "⏳ Cargando..." : "📊 Cargar Cohort Analysis"}
+						</button>
+					</div>
 				</div>
 
-				{!cohortData && !loadingCohorts && (
+				{expandedSection === 'cohort' && (
+					<div style={{ padding: '2rem' }}>
+						<div style={{ marginBottom: '2rem' }}>
+							<h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>📊 Tabla de Retención por Cohorte</h3>
+							<div style={{ overflowX: 'auto' }}>
+								<table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
+									<thead>
+										<tr style={{ background: '#f3f4f6' }}>
+											<th style={{ padding: '0.75rem', textAlign: 'left', border: '1px solid #e5e7eb' }}>Cohorte</th>
+											<th style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #e5e7eb' }}>M0</th>
+											<th style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #e5e7eb' }}>M1</th>
+											<th style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #e5e7eb' }}>M2</th>
+											<th style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #e5e7eb' }}>M3</th>
+											<th style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #e5e7eb' }}>M6</th>
+											<th style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #e5e7eb' }}>M12</th>
+										</tr>
+									</thead>
+									<tbody>
+										{[
+											{ month: 'Jan 2024', m0: 100, m1: 92, m2: 88, m3: 85, m6: 78, m12: 72, isGolden: true },
+											{ month: 'Feb 2024', m0: 100, m1: 89, m2: 84, m3: 80, m6: 74, m12: 68, isGolden: false },
+											{ month: 'Mar 2024', m0: 100, m1: 91, m2: 86, m3: 82, m6: 76, m12: null, isGolden: false },
+											{ month: 'Apr 2024', m0: 100, m1: 87, m2: 82, m3: 78, m6: 71, m12: null, isGolden: false },
+											{ month: 'May 2024', m0: 100, m1: 93, m2: 89, m3: 85, m6: null, m12: null, isGolden: false },
+											{ month: 'Jun 2024', m0: 100, m1: 90, m2: 85, m3: null, m6: null, m12: null, isGolden: false },
+										].map((cohort, idx) => (
+											<tr key={idx} style={{ background: cohort.isGolden ? '#fef3c7' : 'white' }}>
+												<td style={{ padding: '0.75rem', border: '1px solid #e5e7eb', fontWeight: cohort.isGolden ? 'bold' : 'normal' }}>
+													{cohort.month} {cohort.isGolden && '⭐'}
+												</td>
+												<td style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #e5e7eb', background: '#dcfce7' }}>{cohort.m0}%</td>
+												<td style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #e5e7eb', background: cohort.m1 >= 90 ? '#bbf7d0' : '#d1fae5' }}>{cohort.m1}%</td>
+												<td style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #e5e7eb', background: cohort.m2 >= 85 ? '#bbf7d0' : '#d1fae5' }}>{cohort.m2}%</td>
+												<td style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #e5e7eb', background: cohort.m3 >= 80 ? '#bbf7d0' : '#d1fae5' }}>{cohort.m3 || '-'}%</td>
+												<td style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #e5e7eb', background: cohort.m6 >= 75 ? '#bbf7d0' : cohort.m6 ? '#fef3c7' : '#f3f4f6' }}>{cohort.m6 ? `${cohort.m6}%` : '-'}</td>
+												<td style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #e5e7eb', background: cohort.m12 >= 70 ? '#bbf7d0' : cohort.m12 ? '#fef3c7' : '#f3f4f6' }}>{cohort.m12 ? `${cohort.m12}%` : '-'}</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+							<div style={{ padding: '1.5rem', background: '#fef3c7', borderRadius: '8px', border: '2px solid #f59e0b' }}>
+								<div style={{ fontSize: '0.875rem', color: '#92400e', marginBottom: '0.5rem' }}>⭐ Golden Cohort</div>
+								<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#92400e', marginBottom: '0.5rem' }}>Jan 2024</div>
+								<div style={{ fontSize: '0.75rem', color: '#92400e' }}>72% retención a 12 meses</div>
+								<div style={{ fontSize: '0.75rem', color: '#92400e' }}>€5,200 LTV promedio</div>
+							</div>
+							<div style={{ padding: '1.5rem', background: '#dcfce7', borderRadius: '8px' }}>
+								<div style={{ fontSize: '0.875rem', color: '#065f46', marginBottom: '0.5rem' }}>Net Revenue Retention</div>
+								<div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#065f46' }}>115%</div>
+								<div style={{ fontSize: '0.75rem', color: '#065f46' }}>Target: >110%</div>
+							</div>
+							<div style={{ padding: '1.5rem', background: '#dbeafe', borderRadius: '8px' }}>
+								<div style={{ fontSize: '0.875rem', color: '#1e3a8a', marginBottom: '0.5rem' }}>Quick Ratio</div>
+								<div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1e3a8a' }}>4.2</div>
+								<div style={{ fontSize: '0.75rem', color: '#1e3a8a' }}>Target: >4.0 ✅</div>
+							</div>
+						</div>
+
+						<div style={{ background: '#f3f4f6', borderRadius: '8px', padding: '1.5rem' }}>
+							<h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>📈 NRR Trend</h3>
+							<ResponsiveContainer width="100%" height={200}>
+								<LineChart data={[
+									{ month: 'Jul', nrr: 108 },
+									{ month: 'Aug', nrr: 111 },
+									{ month: 'Sep', nrr: 113 },
+									{ month: 'Oct', nrr: 112 },
+									{ month: 'Nov', nrr: 114 },
+									{ month: 'Dec', nrr: 115 },
+								]}>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="month" />
+									<YAxis domain={[100, 120]} />
+									<Tooltip />
+									<Line type="monotone" dataKey="nrr" stroke="#10b981" strokeWidth={2} />
+								</LineChart>
+							</ResponsiveContainer>
+						</div>
+					</div>
+				)}
+
+				{!cohortData && !loadingCohorts && expandedSection !== 'cohort' && (
 					<div style={{ textAlign: "center", padding: "3rem", color: "#6b7280" }}>
 						<div style={{ fontSize: "4rem", marginBottom: "1rem" }}>📊</div>
 						<div
@@ -2952,6 +3250,69 @@ export default function TestFinancePage() {
 							)}
 						</div>
 					</>
+				)}
+			</div>
+
+			{/* Cash Flow & Burn */}
+			<div style={{ marginBottom: '2rem', background: 'white', borderRadius: '12px', border: '2px solid #dc2626', overflow: 'hidden' }}>
+				<div style={{ padding: '1.5rem', background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)', color: 'white', cursor: 'pointer' }} onClick={() => toggleSection('cashflow')}>
+					<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+						<div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+							<span style={{ fontSize: '1.5rem' }}>💰</span>
+							<h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0 }}>Cash Flow & Burn</h2>
+						</div>
+					</div>
+				</div>
+				{expandedSection === 'cashflow' && (
+					<div style={{ padding: '2rem' }}>
+						<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+							<div style={{ padding: '1.5rem', background: '#fee2e2', borderRadius: '8px' }}>
+								<div style={{ fontSize: '0.875rem', color: '#991b1b', marginBottom: '0.5rem' }}>Current Cash</div>
+								<div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#991b1b' }}>€450k</div>
+							</div>
+							<div style={{ padding: '1.5rem', background: '#fed7aa', borderRadius: '8px' }}>
+								<div style={{ fontSize: '0.875rem', color: '#9a3412', marginBottom: '0.5rem' }}>Monthly Burn</div>
+								<div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#9a3412' }}>€45k</div>
+							</div>
+							<div style={{ padding: '1.5rem', background: '#fef3c7', borderRadius: '8px' }}>
+								<div style={{ fontSize: '0.875rem', color: '#92400e', marginBottom: '0.5rem' }}>Runway</div>
+								<div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#92400e' }}>10 meses</div>
+								<div style={{ fontSize: '0.75rem', color: '#92400e' }}>⚠️ < 12 meses</div>
+							</div>
+						</div>
+
+						<div style={{ marginBottom: '2rem' }}>
+							<h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>💸 Monthly Burn Breakdown</h3>
+							<ResponsiveContainer width="100%" height={250}>
+								<BarChart data={[
+									{ category: 'Salaries', amount: 28000 },
+									{ category: 'Marketing', amount: 12000 },
+									{ category: 'Infrastructure', amount: 5000 },
+								]}>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="category" />
+									<YAxis />
+									<Tooltip />
+									<Bar dataKey="amount" fill="#dc2626" />
+								</BarChart>
+							</ResponsiveContainer>
+							<div style={{ marginTop: '1rem', padding: '1rem', background: '#f3f4f6', borderRadius: '8px' }}>
+								<div style={{ marginBottom: '0.5rem' }}>▓▓▓▓▓▓ <strong>Salaries:</strong> €28k (62%)</div>
+								<div style={{ marginBottom: '0.5rem' }}>▓▓▓ <strong>Marketing:</strong> €12k (27%)</div>
+								<div>▓ <strong>Infrastructure:</strong> €5k (11%)</div>
+							</div>
+						</div>
+
+						<div style={{ background: '#fee2e2', borderRadius: '8px', padding: '1.5rem', border: '2px solid #dc2626' }}>
+							<div style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem', color: '#991b1b' }}>⚠️ ALERTA: Runway < 12 meses</div>
+							<div style={{ fontSize: '0.875rem', color: '#991b1b', marginBottom: '0.5rem' }}>
+								💡 <strong>Sugerencia 1:</strong> Reducir marketing spend 15% → Runway +2 meses
+							</div>
+							<div style={{ fontSize: '0.875rem', color: '#991b1b' }}>
+								💡 <strong>Sugerencia 2:</strong> Raise €300k dentro de 6 meses → Runway +7 meses
+							</div>
+						</div>
+					</div>
 				)}
 			</div>
 
