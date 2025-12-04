@@ -22,7 +22,10 @@ export default async function SettingsLayout({
 	params: Promise<{ organizationSlug: string }>;
 }>) {
 	const t = await getTranslations();
-	const session = await getSession();
+	// AUTENTICACIÓN DESHABILITADA
+	// const session = await getSession();
+	const session = null; // Mock para compatibilidad
+	
 	const { organizationSlug } = await params;
 	const organization = await getActiveOrganization(organizationSlug);
 
@@ -30,10 +33,8 @@ export default async function SettingsLayout({
 		redirect("/app");
 	}
 
-	const userIsOrganizationAdmin = isOrganizationAdmin(
-		organization,
-		session?.user,
-	);
+	// Sin validación de admin - permitir acceso a todo
+	const userIsOrganizationAdmin = true;
 
 	const organizationSettingsBasePath = `/app/${organizationSlug}/settings`;
 

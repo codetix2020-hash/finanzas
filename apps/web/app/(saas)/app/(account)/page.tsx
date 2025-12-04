@@ -15,28 +15,27 @@ export default async function AppStartPage() {
 	const organizations: any[] = []; // Mock para compatibilidad
 	// const organizations = await getOrganizationList();
 
-	if (
-		config.organizations.enable &&
-		config.organizations.requireOrganization
-	) {
-		const organization =
-			organizations.find(
-				(org) => org.id === session?.session.activeOrganizationId,
-			) || organizations[0];
-
-		if (!organization) {
-			redirect("/new-organization");
-		}
-
-		redirect(`/app/${organization.slug}`);
-	}
+	// Sin validación de organizaciones - acceso directo permitido
+	// if (
+	// 	config.organizations.enable &&
+	// 	config.organizations.requireOrganization
+	// ) {
+	// 	const organization =
+	// 		organizations.find(
+	// 			(org) => org.id === session?.session.activeOrganizationId,
+	// 		) || organizations[0];
+	// 	if (!organization) {
+	// 		redirect("/new-organization");
+	// 	}
+	// 	redirect(`/app/${organization.slug}`);
+	// }
 
 	const t = await getTranslations();
 
 	return (
 		<div className="">
 			<PageHeader
-				title={t("start.welcome", { name: session?.user.name })}
+				title={t("start.welcome", { name: "Usuario" })}
 				subtitle={t("start.subtitle")}
 			/>
 

@@ -18,7 +18,10 @@ export default async function OrganizationSettingsPage({
 }: {
 	params: Promise<{ organizationSlug: string }>;
 }) {
-	const session = await getSession();
+	// AUTENTICACIÓN DESHABILITADA
+	// const session = await getSession();
+	const session = null; // Mock para compatibilidad
+	
 	const { organizationSlug } = await params;
 	const organization = await getActiveOrganization(organizationSlug);
 
@@ -28,9 +31,8 @@ export default async function OrganizationSettingsPage({
 
 	return (
 		<SettingsList>
-			{isOrganizationAdmin(organization, session?.user) && (
-				<InviteMemberForm organizationId={organization.id} />
-			)}
+			{/* Sin validación de admin - mostrar siempre */}
+			<InviteMemberForm organizationId={organization.id} />
 			<OrganizationMembersBlock organizationId={organization.id} />
 		</SettingsList>
 	);

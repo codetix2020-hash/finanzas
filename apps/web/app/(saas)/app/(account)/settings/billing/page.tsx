@@ -18,7 +18,10 @@ export async function generateMetadata() {
 }
 
 export default async function BillingSettingsPage() {
-	const session = await getSession();
+	// AUTENTICACIÓN DESHABILITADA
+	// const session = await getSession();
+	const session = null; // Mock para compatibilidad
+	
 	const [error, data] = await attemptAsync(() =>
 		orpcClient.payments.listPurchases({}),
 	);
@@ -44,7 +47,7 @@ export default async function BillingSettingsPage() {
 		<SettingsList>
 			{activePlan && <ActivePlan />}
 			<ChangePlan
-				userId={session?.user.id}
+				userId={undefined}
 				activePlanId={activePlan?.id}
 			/>
 		</SettingsList>
