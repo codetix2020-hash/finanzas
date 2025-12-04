@@ -477,9 +477,9 @@ export default function TestFinancePage() {
                   <tbody>
                     {[
                       { metric: 'LTV', value: '€5,200', benchmark: '€3,000+', status: '✅' },
-                      { metric: 'CAC', value: '€1,470', benchmark: `${'<'}€2,000`, status: '✅' },
-                      { metric: 'LTV/CAC', value: '3.54', benchmark: `${'>'}3x`, status: '✅' },
-                      { metric: 'Payback Period', value: '8.2m', benchmark: `${'<'}12m`, status: '✅' },
+                      { metric: 'CAC', value: '€1,470', benchmark: '<€2,000', status: '✅' },
+                      { metric: 'LTV/CAC', value: '3.54', benchmark: '>3x', status: '✅' },
+                      { metric: 'Payback Period', value: '8.2m', benchmark: '<12m', status: '✅' },
                     ].map((row, idx) => (
                       <tr key={idx} style={{ background: idx % 2 === 0 ? 'white' : '#f9fafb' }}>
                         <td style={{ padding: '0.75rem', border: '1px solid #e5e7eb', fontWeight: '500' }}>{row.metric}</td>
