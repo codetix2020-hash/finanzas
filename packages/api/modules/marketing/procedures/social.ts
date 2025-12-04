@@ -10,7 +10,7 @@ export const generateSocialPostProcedure = protectedProcedure
     includeHashtags: z.boolean().optional(),
     includeEmojis: z.boolean().optional(),
   }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const agent = new SocialAgent();
     const post = await agent.generatePost(input);
     
@@ -24,7 +24,7 @@ export const analyzeSocialSentimentProcedure = protectedProcedure
   .input(z.object({
     comments: z.array(z.string()),
   }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const agent = new SocialAgent();
     const analysis = await agent.analyzeSentiment(input.comments);
     
@@ -39,7 +39,7 @@ export const getBestPostingTimesProcedure = protectedProcedure
     platform: z.string(),
     timezone: z.string(),
   }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const agent = new SocialAgent();
     const times = await agent.getBestPostingTimes(input);
     

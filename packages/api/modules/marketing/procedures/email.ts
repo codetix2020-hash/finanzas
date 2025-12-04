@@ -8,7 +8,7 @@ export const createEmailCampaignProcedure = protectedProcedure
     segment: z.string(),
     goal: z.string(),
   }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const agent = new EmailAgent();
     const campaign = await agent.createCampaign(input);
     
@@ -23,7 +23,7 @@ export const sendEmailCampaignProcedure = protectedProcedure
     campaign: z.any(),
     recipients: z.array(z.string()),
   }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const agent = new EmailAgent();
     const result = await agent.sendCampaign(input.campaign, input.recipients);
     
@@ -41,7 +41,7 @@ export const segmentAudienceProcedure = protectedProcedure
       score: z.number(),
     })),
   }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const agent = new EmailAgent();
     const segments = await agent.segmentAudience(input.leads);
     
@@ -63,7 +63,7 @@ export const runABTestProcedure = protectedProcedure
     }),
     recipients: z.array(z.string()),
   }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const agent = new EmailAgent();
     const result = await agent.runABTest(input);
     

@@ -12,7 +12,7 @@ export const coordinateMarketingAgentsProcedure = protectedProcedure
     totalBudget: z.number(),
     goals: z.array(z.string()),
   }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const agent = new StrategyAgent();
     const result = await agent.coordinateAgents(input);
     
@@ -34,7 +34,7 @@ export const optimizeBudgetProcedure = protectedProcedure
       maxSpendPerChannel: z.number().optional(),
     }).optional(),
   }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const agent = new StrategyAgent();
     const result = await agent.optimizeBudgetAllocation(input);
     
@@ -49,7 +49,7 @@ export const generateStrategicReportProcedure = protectedProcedure
     period: z.string(),
     metrics: z.record(z.string(), z.any()),
   }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const agent = new StrategyAgent();
     const report = await agent.generateStrategicReport(input);
     

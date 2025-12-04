@@ -26,42 +26,42 @@ export const createLeadProcedure = protectedProcedure
       medium: z.string().optional()
     })
   )
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await createLead(input)
     return { success: true, lead: result }
   })
 
 export const scoreLeadProcedure = protectedProcedure
   .input(z.object({ leadId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await calculateLeadScore(input.leadId)
     return { success: true, ...result }
   })
 
 export const qualifyLeadProcedure = protectedProcedure
   .input(z.object({ leadId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await qualifyLeadWithAI(input.leadId)
     return { success: true, analysis: result }
   })
 
 export const generateFollowUpProcedure = protectedProcedure
   .input(z.object({ leadId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await generateFollowUp(input.leadId)
     return { success: true, followUp: result }
   })
 
 export const scoreAllLeadsProcedure = protectedProcedure
   .input(z.object({ organizationId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await scoreAllLeads(input.organizationId)
     return { success: true, ...result }
   })
 
 export const qualifyHotLeadsProcedure = protectedProcedure
   .input(z.object({ organizationId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await qualifyHotLeads(input.organizationId)
     return { success: true, ...result }
   })

@@ -46,14 +46,14 @@ export const getCampaignROIProcedure = protectedProcedure
 
 export const generateInsightsProcedure = protectedProcedure
   .input(z.object({ organizationId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await generateAIInsights(input.organizationId)
     return { success: true, insights: result }
   })
 
 export const generateWeeklyReportProcedure = protectedProcedure
   .input(z.object({ organizationId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await generateWeeklyReport(input.organizationId)
     return { success: true, report: result }
   })

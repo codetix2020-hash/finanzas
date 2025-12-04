@@ -11,14 +11,14 @@ import {
 
 export const generateKeywordResearchProcedure = protectedProcedure
   .input(z.object({ productId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await generateKeywordResearch(input.productId)
     return { success: true, research: result }
   })
 
 export const generateGoogleStrategyProcedure = protectedProcedure
   .input(z.object({ productId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await generateGoogleAdsStrategy(input.productId)
     return { success: true, strategy: result }
   })
@@ -50,7 +50,7 @@ export const createGoogleCampaignProcedure = protectedProcedure
       })
     })
   )
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await createGoogleCampaign(input)
     return { success: true, campaign: result }
   })
@@ -63,21 +63,21 @@ export const generateRSAProcedure = protectedProcedure
       count: z.number().min(1).max(5).optional()
     })
   )
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await generateResponsiveSearchAds(input)
     return { success: true, ads: result }
   })
 
 export const optimizeGoogleCampaignProcedure = protectedProcedure
   .input(z.object({ campaignId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await optimizeGoogleCampaign(input.campaignId)
     return { success: true, optimization: result }
   })
 
 export const syncGoogleMetricsProcedure = protectedProcedure
   .input(z.object({ campaignId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await syncGoogleMetrics(input.campaignId)
     return { success: true, ...result }
   })

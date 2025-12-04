@@ -13,7 +13,7 @@ const generateContentSchema = z.object({
 
 export const generateContentProcedure = protectedProcedure
   .input(generateContentSchema)
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const agent = new ContentAgent();
     const content = await agent.generateContent(input);
     
@@ -28,7 +28,7 @@ export const generateContentVariationsProcedure = protectedProcedure
   .input(generateContentSchema.extend({
     count: z.number().min(1).max(5).default(3),
   }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const agent = new ContentAgent();
     const { count, ...request } = input;
     const variations = await agent.generateVariations(request, count);
@@ -45,7 +45,7 @@ export const optimizeContentForSEOProcedure = protectedProcedure
     content: z.string(),
     keywords: z.array(z.string()),
   }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const agent = new ContentAgent();
     const optimized = await agent.optimizeForSEO(input.content, input.keywords);
     

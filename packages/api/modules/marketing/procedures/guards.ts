@@ -14,7 +14,7 @@ export const checkFinancialGuardProcedure = protectedProcedure
       productId: z.string().optional()
     })
   )
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await checkFinancialGuard(input)
     return { success: true, ...result }
   })
@@ -26,7 +26,7 @@ export const checkReputationGuardProcedure = protectedProcedure
       productId: z.string().optional()
     })
   )
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await checkReputationGuard(input)
     return { success: true, ...result }
   })
@@ -38,7 +38,7 @@ export const checkLegalGuardProcedure = protectedProcedure
       productId: z.string().optional()
     })
   )
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await checkLegalGuard(input)
     return { success: true, ...result }
   })
@@ -49,7 +49,7 @@ export const runAllGuardsProcedure = protectedProcedure
       organizationId: z.string()
     })
   )
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await runAllGuards(input.organizationId)
     return { success: true, ...result }
   })

@@ -11,7 +11,7 @@ import {
 
 export const generateFBStrategyProcedure = protectedProcedure
   .input(z.object({ productId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await generateCampaignStrategy(input.productId)
     return { success: true, strategy: result }
   })
@@ -39,7 +39,7 @@ export const createFBCampaignProcedure = protectedProcedure
       })
     })
   )
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await createCampaign(input)
     return { success: true, campaign: result }
   })
@@ -52,14 +52,14 @@ export const generateFBCreativesProcedure = protectedProcedure
       count: z.number().min(1).max(10).optional()
     })
   )
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await generateAdCreatives(input)
     return { success: true, creatives: result }
   })
 
 export const optimizeFBCampaignProcedure = protectedProcedure
   .input(z.object({ campaignId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await optimizeCampaign(input.campaignId)
     return { success: true, optimization: result }
   })
@@ -71,14 +71,14 @@ export const updateFBCampaignStatusProcedure = protectedProcedure
       status: z.enum(['ACTIVE', 'PAUSED', 'DRAFT'])
     })
   )
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await updateCampaignStatus(input.campaignId, input.status)
     return { success: true, campaign: result }
   })
 
 export const syncFBMetricsProcedure = protectedProcedure
   .input(z.object({ campaignId: z.string() }))
-  .mutation(async ({ input }) => {
+  .handler(async ({ input }) => {
     const result = await syncCampaignMetrics(input.campaignId)
     return { success: true, ...result }
   })
