@@ -117,6 +117,24 @@ export default function TestFinancePage() {
 	});
 	const [benchmarking, setBenchmarking] = useState<any>(null);
 	const [loadingBenchmark, setLoadingBenchmark] = useState(false);
+	
+	// Estados para secciones colapsables y acciones
+	const [expandedSection, setExpandedSection] = useState<string | null>(null);
+	const [isGenerating, setIsGenerating] = useState(false);
+
+	// Función para toggle de secciones
+	const toggleSection = (section: string) => {
+		setExpandedSection(expandedSection === section ? null : section);
+	};
+
+	// Función para manejar acciones de botones
+	const handleAction = async (action: string) => {
+		setIsGenerating(true);
+		// Simular carga
+		await new Promise(resolve => setTimeout(resolve, 1000));
+		setIsGenerating(false);
+		alert(`${action} - Funcionalidad en desarrollo`);
+	};
 
 	const getPredictions = async () => {
 		setLoadingPredictions(true);
