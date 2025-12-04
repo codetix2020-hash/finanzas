@@ -406,7 +406,7 @@ export async function qualifyHotLeads(organizationId: string) {
     where: {
       organizationId,
       temperature: { in: ['warm', 'hot'] },
-      aiAnalysis: null // No qualificados aún
+      aiAnalysis: { equals: null } // No qualificados aún
     },
     take: 10
   })
