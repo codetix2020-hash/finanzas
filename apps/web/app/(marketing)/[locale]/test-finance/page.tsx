@@ -4274,6 +4274,261 @@ export default function TestFinancePage() {
 				)}
 			</div>
 
+			{/* Competitive Intelligence */}
+			<div style={{ marginBottom: '2rem', background: 'white', borderRadius: '12px', border: '2px solid #14b8a6', overflow: 'hidden' }}>
+				<div style={{ padding: '1.5rem', background: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)', color: 'white', cursor: 'pointer' }} onClick={() => toggleSection('competitive')}>
+					<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+						<div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+							<span style={{ fontSize: '1.5rem' }}>🔍</span>
+							<h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0 }}>Competitive Intelligence</h2>
+						</div>
+					</div>
+				</div>
+				{expandedSection === 'competitive' && (
+					<div style={{ padding: '2rem' }}>
+						<div style={{ marginBottom: '2rem' }}>
+							<h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>🏆 Competitive Matrix</h3>
+							<div style={{ overflowX: 'auto' }}>
+								<table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
+									<thead>
+										<tr style={{ background: '#f3f4f6' }}>
+											<th style={{ padding: '1rem', textAlign: 'left', border: '1px solid #e5e7eb' }}>Category</th>
+											<th style={{ padding: '1rem', textAlign: 'center', border: '1px solid #e5e7eb', background: '#dcfce7' }}>You</th>
+											<th style={{ padding: '1rem', textAlign: 'center', border: '1px solid #e5e7eb' }}>Competitor A</th>
+											<th style={{ padding: '1rem', textAlign: 'center', border: '1px solid #e5e7eb' }}>Competitor B</th>
+											<th style={{ padding: '1rem', textAlign: 'center', border: '1px solid #e5e7eb' }}>Competitor C</th>
+										</tr>
+									</thead>
+									<tbody>
+										{[
+											{ category: 'Pricing', you: '✅', compA: '✅', compB: '⚠️', compC: '❌' },
+											{ category: 'Features', you: '✅', compA: '⚠️', compB: '✅', compC: '✅' },
+											{ category: 'Support', you: '✅', compA: '✅', compB: '⚠️', compC: '⚠️' },
+											{ category: 'Integrations', you: '⚠️', compA: '✅', compB: '✅', compC: '⚠️' },
+											{ category: 'UX/UI', you: '✅', compA: '⚠️', compB: '✅', compC: '❌' },
+											{ category: 'Market Position', you: '#3', compA: '#1', compB: '#2', compC: '#5' },
+										].map((row, idx) => (
+											<tr key={idx} style={{ background: idx % 2 === 0 ? 'white' : '#f9fafb' }}>
+												<td style={{ padding: '1rem', border: '1px solid #e5e7eb', fontWeight: '500' }}>{row.category}</td>
+												<td style={{ padding: '1rem', textAlign: 'center', border: '1px solid #e5e7eb', background: '#f0fdf4', fontWeight: 'bold' }}>{row.you}</td>
+												<td style={{ padding: '1rem', textAlign: 'center', border: '1px solid #e5e7eb' }}>{row.compA}</td>
+												<td style={{ padding: '1rem', textAlign: 'center', border: '1px solid #e5e7eb' }}>{row.compB}</td>
+												<td style={{ padding: '1rem', textAlign: 'center', border: '1px solid #e5e7eb' }}>{row.compC}</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div style={{ marginBottom: '2rem' }}>
+							<h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>💰 Pricing Comparison</h3>
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+								{[
+									{ company: 'You', starter: '€49', pro: '€149', enterprise: '€499', color: '#10b981' },
+									{ company: 'Comp A', starter: '€59', pro: '€179', enterprise: '€599', color: '#6b7280' },
+									{ company: 'Comp B', starter: '€39', pro: '€129', enterprise: '€449', color: '#6b7280' },
+									{ company: 'Comp C', starter: '€69', pro: '€199', enterprise: '€699', color: '#6b7280' },
+								].map((comp, idx) => (
+									<div key={idx} style={{ padding: '1rem', background: '#f9fafb', borderRadius: '8px', border: idx === 0 ? '2px solid #10b981' : '1px solid #e5e7eb' }}>
+										<div style={{ fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.75rem', color: comp.color }}>{comp.company}</div>
+										<div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>Starter: {comp.starter}/mo</div>
+										<div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>Pro: {comp.pro}/mo</div>
+										<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>Enterprise: {comp.enterprise}/mo</div>
+									</div>
+								))}
+							</div>
+						</div>
+
+						<div style={{ marginBottom: '2rem' }}>
+							<h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>📊 Win/Loss Analysis</h3>
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+								<div style={{ padding: '1.5rem', background: '#dcfce7', borderRadius: '8px' }}>
+									<div style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#065f46' }}>
+										✅ Why You Win
+									</div>
+									<ul style={{ margin: 0, paddingLeft: '1.25rem', fontSize: '0.875rem', color: '#065f46' }}>
+										<li>Better pricing than Comp A & C</li>
+										<li>Superior support vs Comp B & C</li>
+										<li>Cleaner UX than Comp A & C</li>
+										<li>Faster onboarding process</li>
+									</ul>
+								</div>
+								<div style={{ padding: '1.5rem', background: '#fee2e2', borderRadius: '8px' }}>
+									<div style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#991b1b' }}>
+										❌ Why You Lose
+									</div>
+									<ul style={{ margin: 0, paddingLeft: '1.25rem', fontSize: '0.875rem', color: '#991b1b' }}>
+										<li>Fewer integrations than Comp A & B</li>
+										<li>Lower brand recognition vs Comp A</li>
+										<li>Missing some features vs Comp B</li>
+										<li>Enterprise credibility gaps</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+
+						<div style={{ background: '#f3f4f6', borderRadius: '8px', padding: '1.5rem' }}>
+							<div style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>🎯 Strategic Recommendations</div>
+							<div style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+								1. <strong>Short-term:</strong> Add 5 key integrations to match Comp A (Salesforce, HubSpot, Slack, Teams, Zapier)
+							</div>
+							<div style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+								2. <strong>Medium-term:</strong> Build enterprise credibility with case studies and security certifications
+							</div>
+							<div style={{ fontSize: '0.875rem' }}>
+								3. <strong>Long-term:</strong> Maintain pricing advantage while adding premium features to justify higher Enterprise tier
+							</div>
+						</div>
+					</div>
+				)}
+			</div>
+
+			{/* Reports & Exports */}
+			<div style={{ marginBottom: '3rem', background: 'white', borderRadius: '12px', border: '2px solid #6366f1', overflow: 'hidden' }}>
+				<div style={{ padding: '1.5rem', background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)', color: 'white', cursor: 'pointer' }} onClick={() => toggleSection('reports')}>
+					<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+						<div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+							<span style={{ fontSize: '1.5rem' }}>📄</span>
+							<h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0 }}>Reports & Exports</h2>
+						</div>
+					</div>
+				</div>
+				{expandedSection === 'reports' && (
+					<div style={{ padding: '2rem' }}>
+						<div style={{ marginBottom: '2rem' }}>
+							<h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>⚡ Quick Reports</h3>
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+								<button
+									onClick={() => alert('Generate Board Deck - Funcionalidad en desarrollo')}
+									style={{
+										padding: '1.5rem',
+										background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+										color: 'white',
+										border: 'none',
+										borderRadius: '8px',
+										fontWeight: 'bold',
+										cursor: 'pointer',
+										fontSize: '1rem',
+									}}
+								>
+									📊 Generate Board Deck
+								</button>
+								<button
+									onClick={() => alert('Send Investor Update - Funcionalidad en desarrollo')}
+									style={{
+										padding: '1.5rem',
+										background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+										color: 'white',
+										border: 'none',
+										borderRadius: '8px',
+										fontWeight: 'bold',
+										cursor: 'pointer',
+										fontSize: '1rem',
+									}}
+								>
+									📧 Send Investor Update
+								</button>
+								<button
+									onClick={() => alert('Export to CSV - Funcionalidad en desarrollo')}
+									style={{
+										padding: '1.5rem',
+										background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+										color: 'white',
+										border: 'none',
+										borderRadius: '8px',
+										fontWeight: 'bold',
+										cursor: 'pointer',
+										fontSize: '1rem',
+									}}
+								>
+									📈 Export Analytics to CSV
+								</button>
+							</div>
+						</div>
+
+						<div style={{ marginBottom: '2rem' }}>
+							<h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>⏰ Scheduled Reports</h3>
+							<div style={{ background: '#f3f4f6', borderRadius: '8px', padding: '1.5rem' }}>
+								<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #e5e7eb' }}>
+									<div>
+										<div style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.25rem' }}>Daily Digest</div>
+										<div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Key metrics summary every morning</div>
+									</div>
+									<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+										<span style={{ fontSize: '0.875rem', color: '#10b981' }}>✅ Active</span>
+										<span style={{ fontSize: '0.875rem', color: '#6b7280' }}>8:00 AM</span>
+									</div>
+								</div>
+								<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #e5e7eb' }}>
+									<div>
+										<div style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.25rem' }}>Weekly Summary</div>
+										<div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Performance trends and highlights</div>
+									</div>
+									<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+										<span style={{ fontSize: '0.875rem', color: '#10b981' }}>✅ Active</span>
+										<span style={{ fontSize: '0.875rem', color: '#6b7280' }}>Mon 9:00 AM</span>
+									</div>
+								</div>
+								<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+									<div>
+										<div style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.25rem' }}>Monthly Report</div>
+										<div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Comprehensive monthly analysis</div>
+									</div>
+									<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+										<span style={{ fontSize: '0.875rem', color: '#10b981' }}>✅ Active</span>
+										<span style={{ fontSize: '0.875rem', color: '#6b7280' }}>1st of month</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div style={{ marginBottom: '2rem' }}>
+							<h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>📋 Last Generated Reports</h3>
+							<div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+								{[
+									{ type: 'Board Deck', date: '2024-12-01', size: '2.4 MB', format: 'PDF' },
+									{ type: 'Investor Update', date: '2024-11-28', size: '1.1 MB', format: 'PDF' },
+									{ type: 'Analytics Export', date: '2024-11-25', size: '450 KB', format: 'CSV' },
+									{ type: 'Monthly Report', date: '2024-12-01', size: '3.2 MB', format: 'PDF' },
+								].map((report, idx) => (
+									<div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: '#f9fafb', borderRadius: '8px' }}>
+										<div>
+											<div style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>{report.type}</div>
+											<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{report.date} • {report.size}</div>
+										</div>
+										<button
+											onClick={() => alert(`Download ${report.type} - Funcionalidad en desarrollo`)}
+											style={{
+												padding: '0.5rem 1rem',
+												background: '#6366f1',
+												color: 'white',
+												border: 'none',
+												borderRadius: '6px',
+												fontSize: '0.875rem',
+												fontWeight: '500',
+												cursor: 'pointer',
+											}}
+										>
+											📥 Download {report.format}
+										</button>
+									</div>
+								))}
+							</div>
+						</div>
+
+						<div style={{ background: '#eff6ff', borderRadius: '8px', padding: '1.5rem', border: '2px solid #3b82f6' }}>
+							<div style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#1e3a8a' }}>
+								💡 Pro Tip: API Access Available
+							</div>
+							<div style={{ fontSize: '0.875rem', color: '#1e3a8a' }}>
+								Connect your data warehouse or BI tools via our REST API. Documentation available at <strong>api.finanzadios.com/docs</strong>
+							</div>
+						</div>
+					</div>
+				)}
+			</div>
+
 			{/* Mensaje de éxito */}
 			<div
 				style={{
