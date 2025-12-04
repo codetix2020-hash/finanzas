@@ -1,6 +1,9 @@
-"use client";
+// @ts-nocheck
 
-import { useState } from "react";
+'use client';
+
+import { useState } from 'react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 
 // Datos mock
 const mockData = {
@@ -416,75 +419,253 @@ export default function TestFinancePage() {
 				</div>
 			</div>
 
+			{/* Comparaciones Temporales */}
+			<div style={{ marginBottom: '2rem', background: 'white', borderRadius: '12px', border: '2px solid #6366f1', overflow: 'hidden' }}>
+				<div style={{ padding: '1.5rem', background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)', color: 'white', cursor: 'pointer' }} onClick={() => toggleSection('comparisons')}>
+					<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+						<div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+							<span style={{ fontSize: '1.5rem' }}>⏱️</span>
+							<h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0 }}>Comparaciones Temporales</h2>
+						</div>
+					</div>
+				</div>
+				{expandedSection === 'comparisons' && (
+					<div style={{ padding: '2rem' }}>
+						<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+							<div style={{ padding: '1rem', background: '#f3f4f6', borderRadius: '8px' }}>
+								<div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>MoM (Month over Month)</div>
+								<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#10b981' }}>+12.5%</div>
+								<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>vs November 2024</div>
+							</div>
+							<div style={{ padding: '1rem', background: '#f3f4f6', borderRadius: '8px' }}>
+								<div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>QoQ (Quarter over Quarter)</div>
+								<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#10b981' }}>+28.3%</div>
+								<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>vs Q3 2024</div>
+							</div>
+							<div style={{ padding: '1rem', background: '#f3f4f6', borderRadius: '8px' }}>
+								<div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>YoY (Year over Year)</div>
+								<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#10b981' }}>+156%</div>
+								<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>vs December 2023</div>
+							</div>
+						</div>
+						
+						<ResponsiveContainer width="100%" height={300}>
+							<BarChart data={[
+								{ month: 'Jul', mrr: 8500 },
+								{ month: 'Aug', mrr: 10200 },
+								{ month: 'Sep', mrr: 11800 },
+								{ month: 'Oct', mrr: 12900 },
+								{ month: 'Nov', mrr: 13700 },
+								{ month: 'Dec', mrr: 15420 },
+							]}>
+								<CartesianGrid strokeDasharray="3 3" />
+								<XAxis dataKey="month" />
+								<YAxis />
+								<Tooltip />
+								<Bar dataKey="mrr" fill="#6366f1" />
+							</BarChart>
+						</ResponsiveContainer>
+					</div>
+				)}
+			</div>
+
+			{/* Autonomous Executor */}
+			<div style={{ marginBottom: '2rem', background: 'white', borderRadius: '12px', border: '2px solid #10b981', overflow: 'hidden' }}>
+				<div style={{ padding: '1.5rem', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', cursor: 'pointer' }} onClick={() => toggleSection('executor')}>
+					<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+						<div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+							<span style={{ fontSize: '1.5rem' }}>🤖</span>
+							<h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0 }}>Autonomous Executor</h2>
+						</div>
+						<button
+							onClick={(e) => { e.stopPropagation(); alert('Ver Log de Acciones - Funcionalidad en desarrollo'); }}
+							style={{
+								padding: '0.75rem 1.5rem',
+								background: 'white',
+								color: '#10b981',
+								border: 'none',
+								borderRadius: '8px',
+								fontWeight: 'bold',
+								cursor: 'pointer',
+							}}
+						>
+							📋 Ver Log de Acciones
+						</button>
+					</div>
+				</div>
+				{expandedSection === 'executor' && (
+					<div style={{ padding: '2rem' }}>
+						<div style={{ marginBottom: '2rem' }}>
+							<div style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>Acciones Ejecutadas (últimas 10)</div>
+							<div style={{ background: '#f9fafb', borderRadius: '8px', padding: '1rem' }}>
+								{[
+									{ time: '2024-12-04 18:45', action: 'Alerta Slack enviada', status: 'success', impact: 'MRR drop detectado' },
+									{ time: '2024-12-04 14:20', action: 'Precio ajustado en Stripe', status: 'success', impact: '+€250/month' },
+									{ time: '2024-12-03 22:10', action: 'Email de retención enviado', status: 'success', impact: '3 customers saved' },
+									{ time: '2024-12-03 15:30', action: 'Notificación de anomalía', status: 'success', impact: 'Churn spike detected' },
+									{ time: '2024-12-02 09:15', action: 'Upgrade sugerido', status: 'pending', impact: '€450 potential ARR' },
+								].map((log, idx) => (
+									<div key={idx} style={{ padding: '0.75rem', borderBottom: idx < 4 ? '1px solid #e5e7eb' : 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+										<div>
+											<div style={{ fontSize: '0.875rem', fontWeight: '500' }}>{log.action}</div>
+											<div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{log.time} • {log.impact}</div>
+										</div>
+										<div style={{ 
+											padding: '0.25rem 0.75rem', 
+											borderRadius: '12px', 
+											fontSize: '0.75rem',
+											background: log.status === 'success' ? '#d1fae5' : '#fef3c7',
+											color: log.status === 'success' ? '#065f46' : '#92400e'
+										}}>
+											{log.status === 'success' ? '✅ Completado' : '⏳ Pendiente'}
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+						<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+							<div style={{ padding: '1rem', background: '#f3f4f6', borderRadius: '8px', textAlign: 'center' }}>
+								<div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#10b981' }}>47</div>
+								<div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Acciones este mes</div>
+							</div>
+							<div style={{ padding: '1rem', background: '#f3f4f6', borderRadius: '8px', textAlign: 'center' }}>
+								<div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#10b981' }}>98.3%</div>
+								<div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Success Rate</div>
+							</div>
+							<div style={{ padding: '1rem', background: '#f3f4f6', borderRadius: '8px', textAlign: 'center' }}>
+								<div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#10b981' }}>€12.5k</div>
+								<div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Impacto financiero</div>
+							</div>
+						</div>
+					</div>
+				)}
+			</div>
+
 			{/* Panel de Predicciones */}
 			<div
+			style={{
+				background: "white",
+				borderRadius: "16px",
+				padding: "1.5rem",
+				boxShadow: "0 4px 6px rgba(0,0,0,0.07)",
+				marginBottom: "2rem",
+				border: "2px solid #3b82f6",
+				overflow: 'hidden',
+			}}
+		>
+			<div
 				style={{
-					background: "white",
-					borderRadius: "16px",
 					padding: "1.5rem",
-					boxShadow: "0 4px 6px rgba(0,0,0,0.07)",
-					marginBottom: "2rem",
-					border: "2px solid #3b82f6",
+					background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+					color: "white",
+					cursor: "pointer",
 				}}
+				onClick={() => toggleSection('predictive')}
 			>
 				<div
 					style={{
 						display: "flex",
 						justifyContent: "space-between",
 						alignItems: "center",
-						marginBottom: "1rem",
 					}}
 				>
-					<h2 style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-						🔮 Predictive Analytics
-					</h2>
-
+					<div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+						<span style={{ fontSize: '1.5rem' }}>🔮</span>
+						<h2 style={{ fontSize: "1.25rem", fontWeight: "bold", margin: 0 }}>
+							Predictive Analytics
+						</h2>
+					</div>
 					<button
-						onClick={getPredictions}
+						onClick={(e) => { e.stopPropagation(); getPredictions(); }}
 						disabled={loadingPredictions}
 						style={{
 							padding: "0.75rem 1.5rem",
-							background: loadingPredictions
-								? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
-								: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
-							color: "white",
+							background: loadingPredictions ? "#9ca3af" : "white",
+							color: loadingPredictions ? "#6b7280" : "#3b82f6",
 							border: "none",
-							borderRadius: "12px",
+							borderRadius: "8px",
 							fontSize: "0.875rem",
 							fontWeight: "bold",
 							cursor: loadingPredictions ? "not-allowed" : "pointer",
-							transition: "all 0.2s",
 						}}
-						onMouseEnter={(e) =>
-							!loadingPredictions &&
-							(e.currentTarget.style.transform = "scale(1.05)")
-						}
-						onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
 					>
 						{loadingPredictions ? "⏳ Analizando..." : "🔮 Generar Predicciones"}
 					</button>
 				</div>
+			</div>
 
-				{!predictions && !loadingPredictions && (
-					<div style={{ textAlign: "center", padding: "3rem", color: "#6b7280" }}>
-						<div style={{ fontSize: "4rem", marginBottom: "1rem" }}>🔮</div>
-						<div
-							style={{
-								fontSize: "1.25rem",
-								fontWeight: "600",
-								marginBottom: "0.5rem",
-							}}
-						>
-							Predice el futuro de tu portfolio
-						</div>
-						<div style={{ fontSize: "0.875rem" }}>
-							Click en "Generar Predicciones" para ver proyecciones de MRR, revenue,
-							runway y escenarios
-						</div>
-					</div>
-				)}
+			{expandedSection === 'predictive' && (
+				<div style={{ padding: '2rem' }}>
+					{!predictions && !loadingPredictions && (
+						<>
+							<div style={{ marginBottom: '2rem' }}>
+								<h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>📈 Proyección MRR</h3>
+								<ResponsiveContainer width="100%" height={300}>
+									<LineChart data={[
+										{ month: 'Dec', actual: 15420, expected: 15420, best: 15420, worst: 15420 },
+										{ month: 'Jan', actual: null, expected: 17250, best: 19500, worst: 15800 },
+										{ month: 'Feb', actual: null, expected: 19200, best: 22100, worst: 17200 },
+										{ month: 'Mar', actual: null, expected: 21500, best: 25200, worst: 19100 },
+										{ month: 'Apr', actual: null, expected: 24100, best: 28900, worst: 21400 },
+										{ month: 'May', actual: null, expected: 27200, best: 33200, worst: 24100 },
+										{ month: 'Jun', actual: null, expected: 30800, best: 38100, worst: 27300 },
+									]}>
+										<CartesianGrid strokeDasharray="3 3" />
+										<XAxis dataKey="month" />
+										<YAxis />
+										<Tooltip />
+										<Legend />
+										<Line type="monotone" dataKey="actual" stroke="#8b5cf6" strokeWidth={3} name="Actual" />
+										<Line type="monotone" dataKey="expected" stroke="#3b82f6" strokeWidth={2} name="Expected" strokeDasharray="5 5" />
+										<Line type="monotone" dataKey="best" stroke="#10b981" strokeWidth={1} name="Best Case" />
+										<Line type="monotone" dataKey="worst" stroke="#ef4444" strokeWidth={1} name="Worst Case" />
+									</LineChart>
+								</ResponsiveContainer>
+							</div>
 
-				{predictions && (
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+								<div style={{ padding: '1rem', background: '#dcfce7', borderRadius: '8px' }}>
+									<div style={{ fontSize: '0.875rem', color: '#065f46', marginBottom: '0.5rem' }}>Best Case (6m)</div>
+									<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#065f46' }}>€38.1k MRR</div>
+									<div style={{ fontSize: '0.75rem', color: '#065f46' }}>+147% growth</div>
+								</div>
+								<div style={{ padding: '1rem', background: '#dbeafe', borderRadius: '8px' }}>
+									<div style={{ fontSize: '0.875rem', color: '#1e40af', marginBottom: '0.5rem' }}>Expected (6m)</div>
+									<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1e40af' }}>€30.8k MRR</div>
+									<div style={{ fontSize: '0.75rem', color: '#1e40af' }}>+100% growth</div>
+								</div>
+								<div style={{ padding: '1rem', background: '#fee2e2', borderRadius: '8px' }}>
+									<div style={{ fontSize: '0.875rem', color: '#991b1b', marginBottom: '0.5rem' }}>Worst Case (6m)</div>
+									<div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#991b1b' }}>€27.3k MRR</div>
+									<div style={{ fontSize: '0.75rem', color: '#991b1b' }}>+77% growth</div>
+								</div>
+							</div>
+
+							<div style={{ background: '#f3f4f6', borderRadius: '8px', padding: '1.5rem' }}>
+								<div style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>💰 Runway & Burn Rate</div>
+								<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+									<div>
+										<div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Current Runway</div>
+										<div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>18 months</div>
+									</div>
+									<div>
+										<div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Monthly Burn</div>
+										<div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>€12,500</div>
+									</div>
+									<div>
+										<div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Cash Balance</div>
+										<div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>€225,000</div>
+									</div>
+									<div>
+										<div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Next Funding Need</div>
+										<div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>Q2 2026</div>
+									</div>
+								</div>
+							</div>
+						</>
+					)}
+
+					{predictions && (
 					<>
 						{/* Runway Warning */}
 						{predictions.runway.warning && (
