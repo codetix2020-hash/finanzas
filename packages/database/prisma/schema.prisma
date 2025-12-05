@@ -151,6 +151,10 @@ model Organization {
   marketingDecisions   MarketingDecision[]
   marketingGuards      MarketingGuard[]
   marketingLeads       MarketingLead[]
+  marketingMemories    MarketingMemory[]
+  marketingJobs        MarketingJob[]
+  autoSaasInbox        AutoSaasInbox[]
+  autoSaasOutbox       AutoSaasOutbox[]
 
   @@unique([slug])
   @@map("organization")
@@ -588,6 +592,7 @@ model SaasProduct {
   campaigns      MarketingAdCampaign[]
   content        MarketingContent[]
   leads          MarketingLead[]
+  marketingJobs  MarketingJob[]
   
   @@index([organizationId])
   @@map("saas_product")
@@ -737,4 +742,97 @@ model MarketingLeadActivity {
   
   @@index([leadId])
   @@map("marketing_lead_activity")
+}
+
+// ============================================
+// MARKETINGOS - MODELOS ADICIONALES
+// ============================================
+
+model MarketingMemory {
+  id             String   @id @default(cuid())
+  organizationId String
+  
+  memoryType     String   // business_dna, learning, prompt_template
+  content        String   @db.Text
+  embedding      Json?    // Vector embedding para búsqueda semántica
+  metadata       Json?
+  importance     Int      @default(5) // 1-10
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@index([organizationId])
+  @@index([memoryType])
+  @@map("marketing_memory")
+}
+
+model MarketingJob {
+  id             String   @id @default(cuid())
+  organizationId String
+  productId      String?
+  
+  jobType        String   // content_generation, image_generation, email_sequence, voice_generation, campaign_optimization
+  status         String   @default("pending") // pending, running, completed, failed
+  priority       Int      @default(5) // 1-10
+  
+  input          Json     // Parámetros del job
+  output         Json?    // Resultado del job
+  error          String?  @db.Text // Error si falló
+  
+  progress       Int      @default(0) // 0-100
+  attempts       Int      @default(0)
+  maxAttempts    Int      @default(3)
+  
+  scheduledAt    DateTime?
+  startedAt      DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  product        SaasProduct? @relation(fields: [productId], references: [id])
+  
+  @@index([organizationId])
+  @@index([status])
+  @@index([jobType])
+  @@index([scheduledAt])
+  @@map("marketing_job")
+}
+
+model AutoSaasInbox {
+  id             String   @id @default(cuid())
+  organizationId String
+  
+  messageType    String   // new_product, product_update, feature_request_response
+  payload        Json
+  processed      Boolean  @default(false)
+  processedAt    DateTime?
+  
+  createdAt      DateTime @default(now())
+  
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@index([organizationId])
+  @@index([processed])
+  @@map("auto_saas_inbox")
+}
+
+model AutoSaasOutbox {
+  id             String   @id @default(cuid())
+  organizationId String
+  
+  messageType    String   // feature_request, performance_report, optimization_suggestion
+  payload        Json
+  sent           Boolean  @default(false)
+  sentAt         DateTime?
+  
+  createdAt      DateTime @default(now())
+  
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@index([organizationId])
+  @@index([sent])
+  @@map("auto_saas_outbox")
 }

@@ -37,64 +37,43 @@ export async function saveMemory(
 
   const embedding = await generateEmbedding(content)
 
-  // NOTA: MarketingMemory necesita ser añadido al schema.prisma
-  // Por ahora, guardamos en MarketingDecision como workaround temporal
-  // TODO: Añadir modelo MarketingMemory al schema.prisma
-  
-  try {
-    // Buscar si ya existe una decisión similar (workaround temporal)
-    const existing = await prisma.marketingDecision.findFirst({
-      where: {
-        organizationId,
-        agentType: `memory_${memoryType}`,
-        reasoning: { contains: content.substring(0, 100) }
-      }
-    })
-
-    if (existing) {
-      // Actualizar existente
-      const updated = await prisma.marketingDecision.update({
-        where: { id: existing.id },
-        data: {
-          decision: {
-            ...(existing.decision as any),
-            content,
-            embedding,
-            metadata,
-            importance,
-            updatedAt: new Date().toISOString()
-          },
-          reasoning: content.substring(0, 500),
-          context: { memoryType, importance, ...metadata }
-        }
-      })
-      console.log('✅ Memoria marketing actualizada:', updated.id)
-      return updated
+  // Buscar si ya existe una memoria similar
+  const existing = await prisma.marketingMemory.findFirst({
+    where: {
+      organizationId,
+      memoryType,
+      content: { contains: content.substring(0, 100) }
     }
+  })
 
-    // Crear nueva
-    const memory = await prisma.marketingDecision.create({
+  if (existing) {
+    const updated = await prisma.marketingMemory.update({
+      where: { id: existing.id },
       data: {
-        organizationId,
-        agentType: `memory_${memoryType}`,
-        decision: {
-          content,
-          embedding,
-          metadata,
-          importance,
-          createdAt: new Date().toISOString()
-        },
-        reasoning: content.substring(0, 500),
-        context: { memoryType, importance, ...metadata }
+        content,
+        embedding: embedding as any,
+        metadata,
+        importance,
+        updatedAt: new Date()
       }
     })
-
-    console.log('✅ Memoria marketing creada:', memory.id)
-    return memory
-  } catch (error) {
-    console.error('Error guardando memoria marketing:', error)
-    throw error
+    console.log('✅ Memoria marketing actualizada:', updated.id)
+    return updated
   }
+
+  const memory = await prisma.marketingMemory.create({
+    data: {
+      organizationId,
+      memoryType,
+      content,
+      embedding: embedding as any,
+      metadata,
+      importance
+    }
+  })
+
+  console.log('✅ Memoria marketing creada:', memory.id)
+  return memory
 }
 
 // Buscar memorias relevantes por similitud semántica
@@ -108,43 +87,29 @@ export async function searchMemory(
 
   const queryEmbedding = await generateEmbedding(query)
 
-  // Obtener todas las memorias de la organización (workaround temporal)
-  const memories = await prisma.marketingDecision.findMany({
+  const memories = await prisma.marketingMemory.findMany({
     where: {
       organizationId,
-      agentType: memoryType ? `memory_${memoryType}` : { startsWith: 'memory_' }
+      ...(memoryType && { memoryType })
     },
-    orderBy: { createdAt: 'desc' },
-    take: 50 // Limitar para performance
+    orderBy: { importance: 'desc' }
   })
 
-  // Calcular similitud coseno
   const withSimilarity = memories.map(memory => {
-    const decision = memory.decision as any
-    const memoryEmbedding = decision?.embedding as number[] | undefined
-    
+    const memoryEmbedding = memory.embedding as number[]
     if (!memoryEmbedding || memoryEmbedding.length === 0) {
       return { ...memory, similarity: 0 }
     }
-    
     const similarity = cosineSimilarity(queryEmbedding, memoryEmbedding)
-    return { 
-      ...memory, 
-      similarity,
-      content: decision?.content || memory.reasoning,
-      metadata: decision?.metadata || memory.context
-    }
+    return { ...memory, similarity }
   })
 
-  // Ordenar por similitud y retornar top N
   const sorted = withSimilarity
     .filter(m => m.similarity > 0.3) // Threshold mínimo
     .sort((a, b) => {
-      // Priorizar por importancia si existe
-      const importanceA = (a.metadata as any)?.importance || 5
-      const importanceB = (b.metadata as any)?.importance || 5
-      const scoreA = a.similarity * (importanceA / 10)
-      const scoreB = b.similarity * (importanceB / 10)
+      // Priorizar por importancia y similitud
+      const scoreA = a.similarity * (a.importance / 10)
+      const scoreB = b.similarity * (b.importance / 10)
       return scoreB - scoreA
     })
     .slice(0, limit)
@@ -158,12 +123,12 @@ export async function getMemoryByType(
   organizationId: string,
   memoryType: string
 ): Promise<any[]> {
-  return prisma.marketingDecision.findMany({
+  return prisma.marketingMemory.findMany({
     where: { 
       organizationId, 
-      agentType: `memory_${memoryType}` 
+      memoryType 
     },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { importance: 'desc' }
   })
 }
 
