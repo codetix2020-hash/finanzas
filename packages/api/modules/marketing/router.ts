@@ -59,6 +59,31 @@ import {
   optimizeBudgetProcedure,
   generateStrategicReportProcedure
 } from './procedures/strategy';
+import {
+  generateImageProcedure,
+  generateImageVariantsProcedure,
+  generateOptimizedPromptProcedure
+} from './procedures/visual';
+import {
+  generateVoiceoverProcedure,
+  generateVideoScriptProcedure,
+  generateScriptAndVoiceProcedure
+} from './procedures/voice';
+import {
+  analyzeCompetitorsProcedure,
+  monitorCompetitorChangesProcedure
+} from './procedures/competitor';
+import {
+  orchestrateLaunchProcedure,
+  getLaunchStatusProcedure
+} from './procedures/launch';
+import {
+  orchestrateProcedure,
+  orchestrateMasterProcedure,
+  orchestrateProductProcedure,
+  saveMemoryProcedure,
+  searchMemoryProcedure
+} from './procedures/orchestration';
 
 export const marketingRouter = publicProcedure.router({
   guards: {
@@ -120,6 +145,31 @@ export const marketingRouter = publicProcedure.router({
     coordinateAgents: coordinateMarketingAgentsProcedure,
     optimizeBudget: optimizeBudgetProcedure,
     generateReport: generateStrategicReportProcedure
+  },
+  visual: {
+    generate: generateImageProcedure,
+    variants: generateImageVariantsProcedure,
+    optimizePrompt: generateOptimizedPromptProcedure
+  },
+  voice: {
+    generate: generateVoiceoverProcedure,
+    script: generateVideoScriptProcedure,
+    complete: generateScriptAndVoiceProcedure
+  },
+  competitor: {
+    analyze: analyzeCompetitorsProcedure,
+    monitor: monitorCompetitorChangesProcedure
+  },
+  launch: {
+    orchestrate: orchestrateLaunchProcedure,
+    status: getLaunchStatusProcedure
+  },
+  orchestration: {
+    run: orchestrateProcedure,
+    master: orchestrateMasterProcedure,
+    product: orchestrateProductProcedure,
+    saveMemory: saveMemoryProcedure,
+    searchMemory: searchMemoryProcedure
   }
 });
 

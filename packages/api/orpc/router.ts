@@ -5,6 +5,7 @@ import { contactRouter } from "../modules/contact/router";
 import { financeRouter } from "../modules/finance/router";
 import { integrationRouter } from "../modules/integration/router";
 import { marketingRouter } from "../modules/marketing/router";
+import { autosaasRouter } from "../modules/autosaas/router";
 import { newsletterRouter } from "../modules/newsletter/router";
 import { organizationsRouter } from "../modules/organizations/router";
 import { paymentsRouter } from "../modules/payments/router";
@@ -22,6 +23,7 @@ export const router = publicProcedure.router({
 	finance: financeRouter,
 	integration: integrationRouter,
 	marketing: marketingRouter,
+	autosaas: autosaasRouter,
 });
 
 export type ApiRouterClient = RouterClient<typeof router>;
