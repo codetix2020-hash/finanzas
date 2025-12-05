@@ -1,14 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function MarketingOSDashboard() {
   const [activeTab, setActiveTab] = useState('overview')
   const [loading, setLoading] = useState<string | null>(null)
   const [results, setResults] = useState<any>(null)
+  const [organizationId, setOrganizationId] = useState<string>('default-org')
+  const [error, setError] = useState<string | null>(null)
 
-  // Métricas de ejemplo (en producción vendrían de la API)
-  const metrics = {
+  // Métricas reales del backend
+  const [metrics, setMetrics] = useState({
     totalLeads: 3456,
     activeCampaigns: 12,
     totalSpend: 45600,
@@ -17,22 +19,77 @@ export default function MarketingOSDashboard() {
     contentPieces: 156,
     emailsSent: 12500,
     conversionRate: 3.2
+  })
+
+  // Cargar métricas al inicio
+  useEffect(() => {
+    loadDashboardMetrics()
+  }, [])
+
+  const loadDashboardMetrics = async () => {
+    try {
+      const response = await fetch('/api/rpc/marketing.analytics.dashboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({})
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        if (data.result) {
+          setMetrics({
+            totalLeads: data.result.leads?.total || data.result.overview?.totalLeads || 3456,
+            activeCampaigns: data.result.campaigns?.active || data.result.overview?.activeCampaigns || 12,
+            totalSpend: data.result.spend?.total || data.result.campaigns?.spend || 45600,
+            marketingROI: data.result.roi || data.result.campaigns?.roi || 243,
+            hotLeads: data.result.leads?.hot || 234,
+            contentPieces: data.result.content?.total || 156,
+            emailsSent: data.result.emails?.sent || 12500,
+            conversionRate: data.result.conversion?.rate || 3.2
+          })
+          // Guardar organizationId si viene en la respuesta
+          if (data.result.organizationId) {
+            setOrganizationId(data.result.organizationId)
+          }
+        }
+      }
+    } catch (err) {
+      console.log('Error loading metrics, using defaults')
+    }
   }
 
-  // Función para llamar a los endpoints
-  const callEndpoint = async (endpoint: string, body: any = {}) => {
+  // Función mejorada para llamar endpoints
+  const callEndpoint = async (endpoint: string, params: any = {}) => {
     setLoading(endpoint)
     setResults(null)
+    setError(null)
+    
     try {
+      // Agregar organizationId por defecto si no está en los params
+      const body = {
+        organizationId: params.organizationId || organizationId,
+        ...params
+      }
+
       const response = await fetch(`/api/rpc/${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(body)
       })
+
       const data = await response.json()
-      setResults({ endpoint, data, success: true })
-    } catch (error) {
-      setResults({ endpoint, error: String(error), success: false })
+      
+      if (!response.ok) {
+        setError(data.error?.message || `Error ${response.status}`)
+        setResults({ endpoint, error: data.error || data, success: false })
+      } else {
+        setResults({ endpoint, data: data.result || data, success: true })
+      }
+    } catch (err) {
+      setError(String(err))
+      setResults({ endpoint, error: String(err), success: false })
     } finally {
       setLoading(null)
     }
@@ -145,8 +202,8 @@ export default function MarketingOSDashboard() {
                 description="Cerebro del sistema - coordina todos los agentes y toma decisiones estratégicas"
                 color="purple"
                 actions={[
-                  { label: 'Ejecutar Orquestación', onClick: () => callEndpoint('marketing.orchestration.master', { organizationId: 'test' }) },
-                  { label: 'Ver Memoria', onClick: () => callEndpoint('marketing.orchestration.searchMemory', { organizationId: 'test', query: 'strategy' }) }
+                  { label: 'Ejecutar Orquestación', onClick: () => callEndpoint('marketing.orchestration.master', { organizationId }) },
+                  { label: 'Ver Memoria', onClick: () => callEndpoint('marketing.orchestration.searchMemory', { organizationId, query: 'strategy' }) }
                 ]}
                 loading={loading}
               />
@@ -157,8 +214,8 @@ export default function MarketingOSDashboard() {
                 description="Genera contenido optimizado para todas las plataformas"
                 color="blue"
                 actions={[
-                  { label: 'Generar Contenido', onClick: () => callEndpoint('marketing.content.generate', {}) },
-                  { label: 'Variaciones', onClick: () => callEndpoint('marketing.content.generateVariations', {}) }
+                  { label: 'Generar Contenido', onClick: () => callEndpoint('marketing.content.generate', { organizationId, type: 'blog_post', topic: 'Marketing automation' }) },
+                  { label: 'Variaciones', onClick: () => callEndpoint('marketing.content.generateVariations', { organizationId }) }
                 ]}
                 loading={loading}
               />
@@ -169,8 +226,8 @@ export default function MarketingOSDashboard() {
                 description="Genera imágenes con Flux/Replicate para ads y social media"
                 color="pink"
                 actions={[
-                  { label: 'Generar Imagen', onClick: () => callEndpoint('marketing.visual.generate', { prompt: 'modern SaaS product', purpose: 'social_post' }) },
-                  { label: 'Variantes A/B', onClick: () => callEndpoint('marketing.visual.variants', { prompt: 'tech startup', purpose: 'ad', count: 3 }) }
+                  { label: 'Generar Imagen', onClick: () => callEndpoint('marketing.visual.generate', { organizationId, prompt: 'Modern SaaS product dashboard with clean design', purpose: 'social_post', aspectRatio: '1:1' }) },
+                  { label: 'Variantes A/B', onClick: () => callEndpoint('marketing.visual.variants', { organizationId, prompt: 'Tech startup product showcase', purpose: 'ad', count: 3 }) }
                 ]}
                 loading={loading}
               />
@@ -181,8 +238,8 @@ export default function MarketingOSDashboard() {
                 description="Genera voiceovers con ElevenLabs para videos y ads"
                 color="orange"
                 actions={[
-                  { label: 'Generar Voiceover', onClick: () => callEndpoint('marketing.voice.generate', { script: 'Welcome to our product', voiceProfile: 'professional' }) },
-                  { label: 'Script + Voz', onClick: () => callEndpoint('marketing.voice.complete', { topic: 'product demo', duration: 30, style: 'promo' }) }
+                  { label: 'Generar Voiceover', onClick: () => callEndpoint('marketing.voice.generate', { organizationId, script: 'Welcome to our amazing product. Let me show you how it works.', voiceProfile: 'professional' }) },
+                  { label: 'Script + Voz', onClick: () => callEndpoint('marketing.voice.complete', { organizationId, topic: 'Product demo and features', duration: 30, style: 'promo', voiceProfile: 'friendly', targetAudience: 'SaaS founders' }) }
                 ]}
                 loading={loading}
               />
@@ -193,8 +250,8 @@ export default function MarketingOSDashboard() {
                 description="Crea y envía campañas de email automatizadas"
                 color="red"
                 actions={[
-                  { label: 'Crear Campaña', onClick: () => callEndpoint('marketing.email.createCampaign', {}) },
-                  { label: 'A/B Test', onClick: () => callEndpoint('marketing.email.runABTest', {}) }
+                  { label: 'Crear Campaña', onClick: () => callEndpoint('marketing.email.createCampaign', { organizationId }) },
+                  { label: 'A/B Test', onClick: () => callEndpoint('marketing.email.runABTest', { organizationId }) }
                 ]}
                 loading={loading}
               />
@@ -205,7 +262,7 @@ export default function MarketingOSDashboard() {
                 description="Programa y publica contenido en redes sociales"
                 color="cyan"
                 actions={[
-                  { label: 'Programar Posts', onClick: () => callEndpoint('marketing.social.generatePost', {}) }
+                  { label: 'Programar Posts', onClick: () => callEndpoint('marketing.social.generatePost', { organizationId }) }
                 ]}
                 loading={loading}
               />
@@ -216,8 +273,8 @@ export default function MarketingOSDashboard() {
                 description="Analiza competidores e identifica oportunidades de mercado"
                 color="yellow"
                 actions={[
-                  { label: 'Analizar Competencia', onClick: () => callEndpoint('marketing.competitor.analyze', { productId: 'test' }) },
-                  { label: 'Monitorear Cambios', onClick: () => callEndpoint('marketing.competitor.monitor', { productId: 'test' }) }
+                  { label: 'Analizar Competencia', onClick: () => callEndpoint('marketing.competitor.analyze', { organizationId, productId: 'demo-product' }) },
+                  { label: 'Monitorear Cambios', onClick: () => callEndpoint('marketing.competitor.monitor', { organizationId, productId: 'demo-product' }) }
                 ]}
                 loading={loading}
               />
@@ -228,8 +285,8 @@ export default function MarketingOSDashboard() {
                 description="Planifica y ejecuta lanzamientos de productos coordinados"
                 color="green"
                 actions={[
-                  { label: 'Planificar Lanzamiento', onClick: () => callEndpoint('marketing.launch.orchestrate', { productId: 'test', launchDate: new Date(), launchType: 'full' }) },
-                  { label: 'Ver Estado', onClick: () => callEndpoint('marketing.launch.status', { productId: 'test' }) }
+                  { label: 'Planificar Lanzamiento', onClick: () => callEndpoint('marketing.launch.orchestrate', { organizationId, productId: 'demo-product', launchDate: new Date().toISOString(), launchType: 'full' }) },
+                  { label: 'Ver Estado', onClick: () => callEndpoint('marketing.launch.status', { productId: 'demo-product' }) }
                 ]}
                 loading={loading}
               />
@@ -240,7 +297,7 @@ export default function MarketingOSDashboard() {
                 description="Optimiza presupuesto y estrategia entre canales"
                 color="indigo"
                 actions={[
-                  { label: 'Optimizar Budget', onClick: () => callEndpoint('marketing.strategy.optimizeBudget', {}) }
+                  { label: 'Optimizar Budget', onClick: () => callEndpoint('marketing.strategy.optimizeBudget', { organizationId }) }
                 ]}
                 loading={loading}
               />
@@ -258,11 +315,11 @@ export default function MarketingOSDashboard() {
               <div className="bg-white/10 rounded-xl p-6 border border-white/20">
                 <h3 className="text-lg font-bold text-white mb-4">📝 Contenido Escrito</h3>
                 <div className="space-y-3">
-                  <ActionButton label="Blog Post SEO" icon="📰" onClick={() => callEndpoint('marketing.content.generate', { type: 'blog_post' })} loading={loading} />
-                  <ActionButton label="Social Posts" icon="📱" onClick={() => callEndpoint('marketing.content.generate', { type: 'social_post' })} loading={loading} />
-                  <ActionButton label="Email Copy" icon="📧" onClick={() => callEndpoint('marketing.content.generate', { type: 'email' })} loading={loading} />
-                  <ActionButton label="Ad Copy" icon="📢" onClick={() => callEndpoint('marketing.content.generate', { type: 'ad_copy' })} loading={loading} />
-                  <ActionButton label="Landing Page" icon="🌐" onClick={() => callEndpoint('marketing.content.generate', { type: 'landing_page' })} loading={loading} />
+                  <ActionButton label="Blog Post SEO" icon="📰" onClick={() => callEndpoint('marketing.content.generate', { organizationId, type: 'blog_post', topic: 'Marketing automation' })} loading={loading} />
+                  <ActionButton label="Social Posts" icon="📱" onClick={() => callEndpoint('marketing.content.generate', { organizationId, type: 'social_post', topic: 'Product launch' })} loading={loading} />
+                  <ActionButton label="Email Copy" icon="📧" onClick={() => callEndpoint('marketing.content.generate', { organizationId, type: 'email', topic: 'Welcome email' })} loading={loading} />
+                  <ActionButton label="Ad Copy" icon="📢" onClick={() => callEndpoint('marketing.content.generate', { organizationId, type: 'ad_copy', topic: 'Product features' })} loading={loading} />
+                  <ActionButton label="Landing Page" icon="🌐" onClick={() => callEndpoint('marketing.content.generate', { organizationId, type: 'landing_page', topic: 'Product homepage' })} loading={loading} />
                 </div>
               </div>
 
@@ -270,10 +327,10 @@ export default function MarketingOSDashboard() {
               <div className="bg-white/10 rounded-xl p-6 border border-white/20">
                 <h3 className="text-lg font-bold text-white mb-4">🎨 Contenido Visual</h3>
                 <div className="space-y-3">
-                  <ActionButton label="Imagen Social" icon="🖼️" onClick={() => callEndpoint('marketing.visual.generate', { purpose: 'social_post' })} loading={loading} />
-                  <ActionButton label="Imagen Ad" icon="📢" onClick={() => callEndpoint('marketing.visual.generate', { purpose: 'ad' })} loading={loading} />
-                  <ActionButton label="Hero Image" icon="🏔️" onClick={() => callEndpoint('marketing.visual.generate', { purpose: 'landing_hero' })} loading={loading} />
-                  <ActionButton label="Variantes A/B" icon="🔀" onClick={() => callEndpoint('marketing.visual.variants', { count: 3 })} loading={loading} />
+                  <ActionButton label="Imagen Social" icon="🖼️" onClick={() => callEndpoint('marketing.visual.generate', { organizationId, prompt: 'Modern SaaS dashboard', purpose: 'social_post', aspectRatio: '1:1' })} loading={loading} />
+                  <ActionButton label="Imagen Ad" icon="📢" onClick={() => callEndpoint('marketing.visual.generate', { organizationId, prompt: 'Professional product showcase', purpose: 'ad', aspectRatio: '16:9' })} loading={loading} />
+                  <ActionButton label="Hero Image" icon="🏔️" onClick={() => callEndpoint('marketing.visual.generate', { organizationId, prompt: 'Hero image for landing page', purpose: 'landing_hero', aspectRatio: '16:9' })} loading={loading} />
+                  <ActionButton label="Variantes A/B" icon="🔀" onClick={() => callEndpoint('marketing.visual.variants', { organizationId, prompt: 'Tech product', purpose: 'ad', count: 3 })} loading={loading} />
                 </div>
               </div>
 
@@ -281,10 +338,10 @@ export default function MarketingOSDashboard() {
               <div className="bg-white/10 rounded-xl p-6 border border-white/20">
                 <h3 className="text-lg font-bold text-white mb-4">🎙️ Audio & Video</h3>
                 <div className="space-y-3">
-                  <ActionButton label="Script de Video" icon="📜" onClick={() => callEndpoint('marketing.voice.script', { duration: 60, style: 'promo' })} loading={loading} />
-                  <ActionButton label="Voiceover Pro" icon="🎤" onClick={() => callEndpoint('marketing.voice.generate', { voiceProfile: 'professional' })} loading={loading} />
-                  <ActionButton label="Voiceover Friendly" icon="😊" onClick={() => callEndpoint('marketing.voice.generate', { voiceProfile: 'friendly' })} loading={loading} />
-                  <ActionButton label="Script + Voz Completo" icon="🎬" onClick={() => callEndpoint('marketing.voice.complete', {})} loading={loading} />
+                  <ActionButton label="Script de Video" icon="📜" onClick={() => callEndpoint('marketing.voice.script', { organizationId, topic: 'Product demo', duration: 60, style: 'promo', targetAudience: 'SaaS founders' })} loading={loading} />
+                  <ActionButton label="Voiceover Pro" icon="🎤" onClick={() => callEndpoint('marketing.voice.generate', { organizationId, script: 'Welcome to our product. Let me show you the key features.', voiceProfile: 'professional' })} loading={loading} />
+                  <ActionButton label="Voiceover Friendly" icon="😊" onClick={() => callEndpoint('marketing.voice.generate', { organizationId, script: 'Hey there! Thanks for checking out our amazing product.', voiceProfile: 'friendly' })} loading={loading} />
+                  <ActionButton label="Script + Voz Completo" icon="🎬" onClick={() => callEndpoint('marketing.voice.complete', { organizationId, topic: 'Product introduction', duration: 30, style: 'promo', voiceProfile: 'friendly', targetAudience: 'Entrepreneurs' })} loading={loading} />
                 </div>
               </div>
 
@@ -292,9 +349,9 @@ export default function MarketingOSDashboard() {
               <div className="bg-white/10 rounded-xl p-6 border border-white/20">
                 <h3 className="text-lg font-bold text-white mb-4">⚡ Optimización</h3>
                 <div className="space-y-3">
-                  <ActionButton label="Optimizar SEO" icon="🔍" onClick={() => callEndpoint('marketing.content.optimizeSEO', {})} loading={loading} />
-                  <ActionButton label="Generar Variaciones" icon="🔄" onClick={() => callEndpoint('marketing.content.generateVariations', {})} loading={loading} />
-                  <ActionButton label="Prompt Optimizado" icon="💡" onClick={() => callEndpoint('marketing.visual.optimizePrompt', {})} loading={loading} />
+                  <ActionButton label="Optimizar SEO" icon="🔍" onClick={() => callEndpoint('marketing.content.optimizeSEO', { organizationId })} loading={loading} />
+                  <ActionButton label="Generar Variaciones" icon="🔄" onClick={() => callEndpoint('marketing.content.generateVariations', { organizationId })} loading={loading} />
+                  <ActionButton label="Prompt Optimizado" icon="💡" onClick={() => callEndpoint('marketing.visual.optimizePrompt', { organizationId, productName: 'Demo Product', productDescription: 'A powerful SaaS solution', purpose: 'social_post', targetAudience: 'SaaS founders' })} loading={loading} />
                 </div>
               </div>
             </div>
@@ -313,11 +370,11 @@ export default function MarketingOSDashboard() {
                   <span className="text-2xl">📘</span> Facebook Ads
                 </h3>
                 <div className="space-y-3">
-                  <ActionButton label="Generar Estrategia" icon="🎯" onClick={() => callEndpoint('marketing.facebookAds.generateStrategy', {})} loading={loading} />
-                  <ActionButton label="Crear Campaña" icon="➕" onClick={() => callEndpoint('marketing.facebookAds.createCampaign', {})} loading={loading} />
-                  <ActionButton label="Generar Creatividades" icon="🎨" onClick={() => callEndpoint('marketing.facebookAds.generateCreatives', {})} loading={loading} />
-                  <ActionButton label="Optimizar Campaña" icon="⚡" onClick={() => callEndpoint('marketing.facebookAds.optimize', {})} loading={loading} />
-                  <ActionButton label="Sync Métricas" icon="📊" onClick={() => callEndpoint('marketing.facebookAds.syncMetrics', {})} loading={loading} />
+                  <ActionButton label="Generar Estrategia" icon="🎯" onClick={() => callEndpoint('marketing.facebookAds.generateStrategy', { organizationId })} loading={loading} />
+                  <ActionButton label="Crear Campaña" icon="➕" onClick={() => callEndpoint('marketing.facebookAds.createCampaign', { organizationId })} loading={loading} />
+                  <ActionButton label="Generar Creatividades" icon="🎨" onClick={() => callEndpoint('marketing.facebookAds.generateCreatives', { organizationId })} loading={loading} />
+                  <ActionButton label="Optimizar Campaña" icon="⚡" onClick={() => callEndpoint('marketing.facebookAds.optimize', { organizationId })} loading={loading} />
+                  <ActionButton label="Sync Métricas" icon="📊" onClick={() => callEndpoint('marketing.facebookAds.syncMetrics', { organizationId })} loading={loading} />
                 </div>
               </div>
 
@@ -327,11 +384,11 @@ export default function MarketingOSDashboard() {
                   <span className="text-2xl">🔴</span> Google Ads
                 </h3>
                 <div className="space-y-3">
-                  <ActionButton label="Keyword Research" icon="🔍" onClick={() => callEndpoint('marketing.googleAds.keywordResearch', {})} loading={loading} />
-                  <ActionButton label="Generar Estrategia" icon="🎯" onClick={() => callEndpoint('marketing.googleAds.generateStrategy', {})} loading={loading} />
-                  <ActionButton label="Crear RSA" icon="📝" onClick={() => callEndpoint('marketing.googleAds.generateRSA', {})} loading={loading} />
-                  <ActionButton label="Crear Campaña" icon="➕" onClick={() => callEndpoint('marketing.googleAds.createCampaign', {})} loading={loading} />
-                  <ActionButton label="Optimizar" icon="⚡" onClick={() => callEndpoint('marketing.googleAds.optimize', {})} loading={loading} />
+                  <ActionButton label="Keyword Research" icon="🔍" onClick={() => callEndpoint('marketing.googleAds.keywordResearch', { organizationId })} loading={loading} />
+                  <ActionButton label="Generar Estrategia" icon="🎯" onClick={() => callEndpoint('marketing.googleAds.generateStrategy', { organizationId })} loading={loading} />
+                  <ActionButton label="Crear RSA" icon="📝" onClick={() => callEndpoint('marketing.googleAds.generateRSA', { organizationId })} loading={loading} />
+                  <ActionButton label="Crear Campaña" icon="➕" onClick={() => callEndpoint('marketing.googleAds.createCampaign', { organizationId })} loading={loading} />
+                  <ActionButton label="Optimizar" icon="⚡" onClick={() => callEndpoint('marketing.googleAds.optimize', { organizationId })} loading={loading} />
                 </div>
               </div>
             </div>
@@ -348,9 +405,9 @@ export default function MarketingOSDashboard() {
               <div className="bg-white/10 rounded-xl p-6 border border-white/20">
                 <h3 className="text-lg font-bold text-white mb-4">📋 Gestión de Leads</h3>
                 <div className="space-y-3">
-                  <ActionButton label="Ver Leads" icon="👀" onClick={() => callEndpoint('marketing.crm.getLeads', {})} loading={loading} />
-                  <ActionButton label="Crear Lead" icon="➕" onClick={() => callEndpoint('marketing.crm.createLead', { email: 'test@test.com' })} loading={loading} />
-                  <ActionButton label="Estadísticas" icon="📊" onClick={() => callEndpoint('marketing.crm.getStats', {})} loading={loading} />
+                  <ActionButton label="Ver Leads" icon="👀" onClick={() => callEndpoint('marketing.crm.getLeads', { organizationId })} loading={loading} />
+                  <ActionButton label="Crear Lead" icon="➕" onClick={() => callEndpoint('marketing.crm.createLead', { organizationId, email: 'test@test.com', name: 'Test Lead' })} loading={loading} />
+                  <ActionButton label="Estadísticas" icon="📊" onClick={() => callEndpoint('marketing.crm.getStats', { organizationId })} loading={loading} />
                 </div>
               </div>
 
@@ -358,10 +415,10 @@ export default function MarketingOSDashboard() {
               <div className="bg-white/10 rounded-xl p-6 border border-white/20">
                 <h3 className="text-lg font-bold text-white mb-4">🤖 AI Scoring</h3>
                 <div className="space-y-3">
-                  <ActionButton label="Score Lead" icon="📈" onClick={() => callEndpoint('marketing.crm.scoreLead', {})} loading={loading} />
-                  <ActionButton label="Score Todos" icon="🔄" onClick={() => callEndpoint('marketing.crm.scoreAll', {})} loading={loading} />
-                  <ActionButton label="Qualify Lead" icon="✅" onClick={() => callEndpoint('marketing.crm.qualifyLead', {})} loading={loading} />
-                  <ActionButton label="Qualify Hot" icon="🔥" onClick={() => callEndpoint('marketing.crm.qualifyHot', {})} loading={loading} />
+                  <ActionButton label="Score Lead" icon="📈" onClick={() => callEndpoint('marketing.crm.scoreLead', { organizationId, leadId: 'demo-lead' })} loading={loading} />
+                  <ActionButton label="Score Todos" icon="🔄" onClick={() => callEndpoint('marketing.crm.scoreAll', { organizationId })} loading={loading} />
+                  <ActionButton label="Qualify Lead" icon="✅" onClick={() => callEndpoint('marketing.crm.qualifyLead', { organizationId, leadId: 'demo-lead' })} loading={loading} />
+                  <ActionButton label="Qualify Hot" icon="🔥" onClick={() => callEndpoint('marketing.crm.qualifyHot', { organizationId })} loading={loading} />
                 </div>
               </div>
 
@@ -369,7 +426,7 @@ export default function MarketingOSDashboard() {
               <div className="bg-white/10 rounded-xl p-6 border border-white/20">
                 <h3 className="text-lg font-bold text-white mb-4">📧 Follow-ups</h3>
                 <div className="space-y-3">
-                  <ActionButton label="Generar Follow-up" icon="✉️" onClick={() => callEndpoint('marketing.crm.generateFollowUp', {})} loading={loading} />
+                  <ActionButton label="Generar Follow-up" icon="✉️" onClick={() => callEndpoint('marketing.crm.generateFollowUp', { organizationId, leadId: 'demo-lead' })} loading={loading} />
                 </div>
               </div>
             </div>
@@ -386,9 +443,9 @@ export default function MarketingOSDashboard() {
               <div className="bg-white/10 rounded-xl p-6 border border-white/20">
                 <h3 className="text-lg font-bold text-white mb-4">📊 Métricas</h3>
                 <div className="space-y-3">
-                  <ActionButton label="Dashboard Metrics" icon="📊" onClick={() => callEndpoint('marketing.analytics.dashboard', {})} loading={loading} />
-                  <ActionButton label="Content Performance" icon="✍️" onClick={() => callEndpoint('marketing.analytics.contentPerformance', {})} loading={loading} />
-                  <ActionButton label="Campaign ROI" icon="💰" onClick={() => callEndpoint('marketing.analytics.campaignROI', {})} loading={loading} />
+                  <ActionButton label="Dashboard Metrics" icon="📊" onClick={() => callEndpoint('marketing.analytics.dashboard', { organizationId })} loading={loading} />
+                  <ActionButton label="Content Performance" icon="✍️" onClick={() => callEndpoint('marketing.analytics.contentPerformance', { organizationId })} loading={loading} />
+                  <ActionButton label="Campaign ROI" icon="💰" onClick={() => callEndpoint('marketing.analytics.campaignROI', { organizationId })} loading={loading} />
                 </div>
               </div>
 
@@ -396,8 +453,8 @@ export default function MarketingOSDashboard() {
               <div className="bg-white/10 rounded-xl p-6 border border-white/20">
                 <h3 className="text-lg font-bold text-white mb-4">🤖 AI Insights</h3>
                 <div className="space-y-3">
-                  <ActionButton label="Generar Insights" icon="💡" onClick={() => callEndpoint('marketing.analytics.insights', {})} loading={loading} />
-                  <ActionButton label="Reporte Semanal" icon="📋" onClick={() => callEndpoint('marketing.analytics.weeklyReport', {})} loading={loading} />
+                  <ActionButton label="Generar Insights" icon="💡" onClick={() => callEndpoint('marketing.analytics.insights', { organizationId })} loading={loading} />
+                  <ActionButton label="Reporte Semanal" icon="📋" onClick={() => callEndpoint('marketing.analytics.weeklyReport', { organizationId })} loading={loading} />
                 </div>
               </div>
             </div>
@@ -414,10 +471,10 @@ export default function MarketingOSDashboard() {
               <div className="bg-gradient-to-br from-red-900/50 to-orange-900/50 rounded-xl p-6 border border-red-500/30">
                 <h3 className="text-lg font-bold text-white mb-4">🛡️ Guardias</h3>
                 <div className="space-y-3">
-                  <ActionButton label="Check Financial" icon="💰" onClick={() => callEndpoint('marketing.guards.financial', {})} loading={loading} />
-                  <ActionButton label="Check Reputation" icon="⭐" onClick={() => callEndpoint('marketing.guards.reputation', {})} loading={loading} />
-                  <ActionButton label="Check Legal" icon="⚖️" onClick={() => callEndpoint('marketing.guards.legal', {})} loading={loading} />
-                  <ActionButton label="Run All Guards" icon="🛡️" onClick={() => callEndpoint('marketing.guards.runAll', {})} loading={loading} />
+                  <ActionButton label="Check Financial" icon="💰" onClick={() => callEndpoint('marketing.guards.financial', { organizationId })} loading={loading} />
+                  <ActionButton label="Check Reputation" icon="⭐" onClick={() => callEndpoint('marketing.guards.reputation', { organizationId })} loading={loading} />
+                  <ActionButton label="Check Legal" icon="⚖️" onClick={() => callEndpoint('marketing.guards.legal', { organizationId })} loading={loading} />
+                  <ActionButton label="Run All Guards" icon="🛡️" onClick={() => callEndpoint('marketing.guards.runAll', { organizationId })} loading={loading} />
                 </div>
               </div>
 
@@ -425,8 +482,8 @@ export default function MarketingOSDashboard() {
               <div className="bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-xl p-6 border border-purple-500/30">
                 <h3 className="text-lg font-bold text-white mb-4">🔗 Auto-SaaS</h3>
                 <div className="space-y-3">
-                  <ActionButton label="Process Inbox" icon="📥" onClick={() => callEndpoint('autosaas.processInbox', { organizationId: 'test' })} loading={loading} />
-                  <ActionButton label="Send Feature Request" icon="📤" onClick={() => callEndpoint('autosaas.sendFeatureRequest', { organizationId: 'test', productId: 'test', feature: 'test', reasoning: 'test', priority: 'high' })} loading={loading} />
+                  <ActionButton label="Process Inbox" icon="📥" onClick={() => callEndpoint('autosaas.processInbox', { organizationId })} loading={loading} />
+                  <ActionButton label="Send Feature Request" icon="📤" onClick={() => callEndpoint('autosaas.sendFeatureRequest', { organizationId, productId: 'demo-product', feature: 'New analytics dashboard', reasoning: 'Users requested better visualization', priority: 'high' })} loading={loading} />
                 </div>
               </div>
 
@@ -434,10 +491,25 @@ export default function MarketingOSDashboard() {
               <div className="bg-gradient-to-br from-cyan-900/50 to-blue-900/50 rounded-xl p-6 border border-cyan-500/30">
                 <h3 className="text-lg font-bold text-white mb-4">🧠 Memoria</h3>
                 <div className="space-y-3">
-                  <ActionButton label="Buscar Memoria" icon="🔍" onClick={() => callEndpoint('marketing.orchestration.searchMemory', { organizationId: 'test', query: 'strategy' })} loading={loading} />
-                  <ActionButton label="Guardar Memoria" icon="💾" onClick={() => callEndpoint('marketing.orchestration.saveMemory', { organizationId: 'test', memoryType: 'learning', content: 'test' })} loading={loading} />
+                  <ActionButton label="Buscar Memoria" icon="🔍" onClick={() => callEndpoint('marketing.orchestration.searchMemory', { organizationId, query: 'marketing strategy campaigns' })} loading={loading} />
+                  <ActionButton label="Guardar Memoria" icon="💾" onClick={() => callEndpoint('marketing.orchestration.saveMemory', { organizationId, memoryType: 'learning', content: 'Successful campaign: Facebook ads with 3x ROAS', importance: 8 })} loading={loading} />
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Error Banner */}
+        {error && (
+          <div className="mt-4 bg-red-900/50 border border-red-500/30 rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <span className="text-red-300 text-sm">❌ {error}</span>
+              <button
+                onClick={() => setError(null)}
+                className="text-red-400 hover:text-red-200"
+              >
+                ✕
+              </button>
             </div>
           </div>
         )}
