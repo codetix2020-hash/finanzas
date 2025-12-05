@@ -1,0 +1,209 @@
+import Anthropic from '@anthropic-ai/sdk'
+import Replicate from 'replicate'
+import { prisma } from '@repo/database'
+
+let anthropicClient: Anthropic | null = null
+let replicateClient: Replicate | null = null
+
+function getAnthropicClient() {
+  if (!anthropicClient && process.env.ANTHROPIC_API_KEY) {
+    anthropicClient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+  }
+  return anthropicClient
+}
+
+function getReplicateClient() {
+  if (!replicateClient && process.env.REPLICATE_API_TOKEN) {
+    replicateClient = new Replicate({ auth: process.env.REPLICATE_API_TOKEN })
+  }
+  return replicateClient
+}
+
+// Estilos por propósito de marketing
+const STYLE_PRESETS = {
+  social_post: 'Vibrant, modern, eye-catching, Instagram-worthy, high engagement',
+  ad: 'Clean, professional, conversion-focused, clear CTA space, premium look',
+  landing_hero: 'Hero image, wide shot, premium feel, aspirational, brand-aligned',
+  blog_header: 'Editorial style, clean composition, readable text overlay space',
+  product_showcase: 'Product photography style, clean background, detailed, professional'
+}
+
+const ASPECT_RATIOS = {
+  '1:1': { width: 1024, height: 1024 },    // Instagram post
+  '16:9': { width: 1344, height: 768 },    // YouTube, LinkedIn
+  '9:16': { width: 768, height: 1344 },    // Stories, TikTok, Reels
+  '4:5': { width: 896, height: 1120 }      // Instagram portrait
+}
+
+interface GenerateImageParams {
+  organizationId: string
+  productId?: string
+  prompt: string
+  purpose: 'social_post' | 'ad' | 'landing_hero' | 'blog_header' | 'product_showcase'
+  aspectRatio?: '1:1' | '16:9' | '9:16' | '4:5'
+  brandColors?: string[]
+  style?: string
+}
+
+// Generar imagen con Flux
+export async function generateImage(params: GenerateImageParams) {
+  console.log('🎨 Generando imagen de marketing...')
+
+  const replicate = getReplicateClient()
+  if (!replicate) throw new Error('Replicate not configured')
+
+  const { organizationId, productId, prompt, purpose, aspectRatio = '1:1' } = params
+  const dimensions = ASPECT_RATIOS[aspectRatio]
+  const stylePreset = STYLE_PRESETS[purpose]
+
+  // Mejorar prompt con estilo de marketing
+  const enhancedPrompt = `${prompt}. Style: ${stylePreset}. ${params.style || ''} High quality, professional marketing image.`
+
+  console.log(`  📝 Prompt: ${enhancedPrompt.substring(0, 100)}...`)
+
+  try {
+    const output = await replicate.run(
+      'black-forest-labs/flux-schnell',
+      {
+        input: {
+          prompt: enhancedPrompt,
+          width: dimensions.width,
+          height: dimensions.height,
+          num_outputs: 1,
+          output_format: 'webp',
+          output_quality: 90
+        }
+      }
+    ) as string[]
+
+    const imageUrl = output[0]
+    console.log(`  ✅ Imagen generada: ${imageUrl}`)
+
+    // Guardar en MarketingContent
+    const content = await prisma.marketingContent.create({
+      data: {
+        organizationId,
+        productId,
+        type: 'IMAGE',
+        platform: purpose === 'social_post' ? 'instagram' : 'web',
+        title: `Generated Image: ${prompt.substring(0, 50)}`,
+        content: {
+          imageUrl,
+          prompt: enhancedPrompt,
+          purpose,
+          aspectRatio,
+          dimensions
+        },
+        status: 'DRAFT',
+        metadata: {
+          generator: 'flux-schnell',
+          originalPrompt: prompt
+        }
+      }
+    })
+
+    return {
+      success: true,
+      imageUrl,
+      contentId: content.id,
+      dimensions,
+      prompt: enhancedPrompt
+    }
+
+  } catch (error) {
+    console.error('❌ Error generando imagen:', error)
+    throw error
+  }
+}
+
+// Generar variantes A/B de imagen
+export async function generateImageVariants(params: GenerateImageParams & { count?: number }) {
+  console.log('🎨 Generando variantes de imagen para A/B testing...')
+
+  const count = params.count || 3
+  const variants = []
+
+  const styleVariants = [
+    'minimalist, clean, modern',
+    'vibrant, colorful, energetic',
+    'professional, corporate, trustworthy'
+  ]
+
+  for (let i = 0; i < count; i++) {
+    const variantParams = {
+      ...params,
+      style: styleVariants[i % styleVariants.length]
+    }
+
+    try {
+      const result = await generateImage(variantParams)
+      variants.push({
+        variant: String.fromCharCode(65 + i), // A, B, C...
+        ...result
+      })
+    } catch (error) {
+      console.error(`❌ Error en variante ${i + 1}:`, error)
+    }
+  }
+
+  console.log(`✅ ${variants.length} variantes generadas`)
+  return { variants, total: variants.length }
+}
+
+// Generar prompt de imagen optimizado con IA
+export async function generateOptimizedPrompt(params: {
+  productName: string
+  productDescription: string
+  purpose: string
+  targetAudience: string
+}) {
+  console.log('💡 Generando prompt optimizado para imagen...')
+
+  const anthropic = getAnthropicClient()
+  if (!anthropic) throw new Error('Anthropic not configured')
+
+  const prompt = `
+Eres un experto en MARKETING DIGITAL y DISEÑO VISUAL para campañas publicitarias.
+Tu objetivo es crear un prompt para generar una imagen de marketing altamente efectiva.
+
+PRODUCTO: ${params.productName}
+DESCRIPCIÓN: ${params.productDescription}
+PROPÓSITO: ${params.purpose}
+AUDIENCIA: ${params.targetAudience}
+
+Genera un prompt detallado para crear una imagen de marketing que:
+1. Capture la atención inmediatamente
+2. Comunique el valor del producto
+3. Sea apropiada para la audiencia target
+4. Funcione bien en redes sociales y ads
+
+Responde SOLO con JSON:
+{
+  "prompt": "descripción detallada de la imagen a generar",
+  "style": "estilo visual recomendado",
+  "colors": ["color1", "color2", "color3"],
+  "mood": "estado de ánimo que debe transmitir",
+  "elements": ["elemento clave 1", "elemento clave 2"],
+  "avoidElements": ["qué evitar 1", "qué evitar 2"]
+}
+`
+
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1000,
+    messages: [{ role: 'user', content: prompt }]
+  })
+
+  const text = response.content[0].type === 'text' ? response.content[0].text : ''
+  const result = JSON.parse(text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim())
+
+  console.log('✅ Prompt optimizado generado')
+  return result
+}
+
+export default {
+  generateImage,
+  generateImageVariants,
+  generateOptimizedPrompt
+}
+
