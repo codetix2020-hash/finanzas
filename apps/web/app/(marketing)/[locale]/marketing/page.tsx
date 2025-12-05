@@ -81,12 +81,17 @@ export default function MarketingOSDashboard() {
         ...params
       }
 
+      // Log para debugging
+      console.log('Calling endpoint:', `/api/rpc/${endpoint}`, 'with body:', body)
+
       const response = await fetch(`/api/rpc/${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(body)
       })
+
+      console.log('Response status:', response.status, response.statusText)
 
       // Leer el texto primero para manejar errores de JSON
       const text = await response.text()
@@ -121,6 +126,7 @@ export default function MarketingOSDashboard() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err)
+      console.error('Error calling endpoint:', endpoint, err)
       setError(errorMessage)
       setResults({ endpoint, error: errorMessage, success: false })
     } finally {
