@@ -13,7 +13,7 @@ export const generateVoiceoverProcedure = publicProcedure
   .output(z.any())
   .handler(async ({ input }) => {
     const result = await generateVoiceover(input)
-    return { success: true, ...result }
+    return result
   })
 
 export const generateVideoScriptProcedure = publicProcedure
@@ -44,6 +44,6 @@ export const generateScriptAndVoiceProcedure = publicProcedure
   .output(z.any())
   .handler(async ({ input }) => {
     const result = await generateScriptAndVoice(input)
-    return { success: true, ...result }
+    return result
   })
 

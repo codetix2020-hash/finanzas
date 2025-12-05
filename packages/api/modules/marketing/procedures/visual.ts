@@ -15,7 +15,7 @@ export const generateImageProcedure = publicProcedure
   .output(z.any())
   .handler(async ({ input }) => {
     const result = await generateImage(input)
-    return { success: true, ...result }
+    return result
   })
 
 export const generateImageVariantsProcedure = publicProcedure
@@ -30,7 +30,7 @@ export const generateImageVariantsProcedure = publicProcedure
   .output(z.any())
   .handler(async ({ input }) => {
     const result = await generateImageVariants(input)
-    return { success: true, ...result }
+    return result
   })
 
 export const generateOptimizedPromptProcedure = publicProcedure
@@ -43,6 +43,6 @@ export const generateOptimizedPromptProcedure = publicProcedure
   .output(z.any())
   .handler(async ({ input }) => {
     const result = await generateOptimizedPrompt(input)
-    return { success: true, ...result }
+    return result
   })
 
