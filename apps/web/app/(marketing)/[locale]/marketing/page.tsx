@@ -36,7 +36,16 @@ export default function MarketingOSDashboard() {
       })
       
       if (response.ok) {
-        const data = await response.json()
+        const text = await response.text()
+        let data: any = {}
+        
+        try {
+          data = text ? JSON.parse(text) : {}
+        } catch (parseError) {
+          console.warn('Error parsing metrics response, using defaults:', parseError)
+          return // Usar valores por defecto
+        }
+        
         if (data.result) {
           setMetrics({
             totalLeads: data.result.leads?.total || data.result.overview?.totalLeads || 3456,
@@ -55,7 +64,7 @@ export default function MarketingOSDashboard() {
         }
       }
     } catch (err) {
-      console.log('Error loading metrics, using defaults')
+      console.log('Error loading metrics, using defaults:', err)
     }
   }
 
@@ -79,17 +88,41 @@ export default function MarketingOSDashboard() {
         body: JSON.stringify(body)
       })
 
-      const data = await response.json()
+      // Leer el texto primero para manejar errores de JSON
+      const text = await response.text()
+      
+      let data: any
+      try {
+        // Intentar parsear como JSON
+        data = text ? JSON.parse(text) : {}
+      } catch (parseError) {
+        // Si no es JSON válido, crear un objeto de error
+        console.error('Error parsing JSON:', parseError, 'Response text:', text.substring(0, 200))
+        setError(`Error parsing response: ${text.substring(0, 100)}`)
+        setResults({ 
+          endpoint, 
+          error: { 
+            message: 'Invalid JSON response', 
+            rawResponse: text.substring(0, 500),
+            status: response.status,
+            statusText: response.statusText
+          }, 
+          success: false 
+        })
+        return
+      }
       
       if (!response.ok) {
-        setError(data.error?.message || `Error ${response.status}`)
+        const errorMessage = data.error?.message || data.message || `Error ${response.status}: ${response.statusText}`
+        setError(errorMessage)
         setResults({ endpoint, error: data.error || data, success: false })
       } else {
         setResults({ endpoint, data: data.result || data, success: true })
       }
     } catch (err) {
-      setError(String(err))
-      setResults({ endpoint, error: String(err), success: false })
+      const errorMessage = err instanceof Error ? err.message : String(err)
+      setError(errorMessage)
+      setResults({ endpoint, error: errorMessage, success: false })
     } finally {
       setLoading(null)
     }
