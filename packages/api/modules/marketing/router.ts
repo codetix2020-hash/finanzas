@@ -1,35 +1,35 @@
 import { publicProcedure } from "../../orpc/procedures";
 import { 
-  checkFinancialGuardProcedure,
-  checkReputationGuardProcedure,
-  checkLegalGuardProcedure,
-  runAllGuardsProcedure
+  guardsFinancial,
+  guardsReputation,
+  guardsLegal,
+  guardsRunAll
 } from './procedures/guards';
 import { 
-  generateFBStrategyProcedure,
-  createFBCampaignProcedure,
-  generateFBCreativesProcedure,
-  optimizeFBCampaignProcedure,
-  updateFBCampaignStatusProcedure,
-  syncFBMetricsProcedure
+  facebookAdsGenerateStrategy,
+  facebookAdsCreateCampaign,
+  facebookAdsGenerateCreatives,
+  facebookAdsOptimize,
+  facebookAdsUpdateStatus,
+  facebookAdsSyncMetrics
 } from './procedures/facebook-ads';
 import { 
-  generateKeywordResearchProcedure,
-  generateGoogleStrategyProcedure,
-  createGoogleCampaignProcedure,
-  generateRSAProcedure,
-  optimizeGoogleCampaignProcedure,
-  syncGoogleMetricsProcedure
+  googleAdsKeywordResearch,
+  googleAdsGenerateStrategy,
+  googleAdsCreateCampaign,
+  googleAdsGenerateRSA,
+  googleAdsOptimize,
+  googleAdsSyncMetrics
 } from './procedures/google-ads';
 import { 
-  createLeadProcedure,
-  scoreLeadProcedure,
-  qualifyLeadProcedure,
-  generateFollowUpProcedure,
-  scoreAllLeadsProcedure,
-  qualifyHotLeadsProcedure,
-  getLeadsProcedure,
-  getLeadStatsProcedure
+  crmCreateLead,
+  crmScoreLead,
+  crmQualifyLead,
+  crmGenerateFollowUp,
+  crmScoreAll,
+  crmQualifyHot,
+  crmGetLeads,
+  crmGetStats
 } from './procedures/crm';
 import { 
   analyticsDashboard,
@@ -39,25 +39,25 @@ import {
   analyticsWeeklyReport
 } from './procedures/analytics';
 import {
-  generateContentProcedure,
-  generateContentVariationsProcedure,
-  optimizeContentForSEOProcedure
+  contentGenerate,
+  contentGenerateVariations,
+  contentOptimizeSEO
 } from './procedures/content';
 import {
-  createEmailCampaignProcedure,
-  sendEmailCampaignProcedure,
-  segmentAudienceProcedure,
-  runABTestProcedure
+  emailCreateCampaign,
+  emailSendCampaign,
+  emailSegmentAudience,
+  emailRunABTest
 } from './procedures/email';
 import {
-  generateSocialPostProcedure,
-  analyzeSocialSentimentProcedure,
-  getBestPostingTimesProcedure
+  socialGeneratePost,
+  socialAnalyzeSentiment,
+  socialGetBestPostingTimes
 } from './procedures/social';
 import {
-  coordinateMarketingAgentsProcedure,
-  optimizeBudgetProcedure,
-  generateStrategicReportProcedure
+  strategyCoordinateAgents,
+  strategyOptimizeBudget,
+  strategyGenerateReport
 } from './procedures/strategy';
 import {
   visualGenerate,
@@ -70,19 +70,19 @@ import {
   voiceComplete
 } from './procedures/voice';
 import {
-  analyzeCompetitorsProcedure,
-  monitorCompetitorChangesProcedure
+  competitorAnalyze,
+  competitorMonitor
 } from './procedures/competitor';
 import {
-  orchestrateLaunchProcedure,
-  getLaunchStatusProcedure
+  launchOrchestrate,
+  launchStatus
 } from './procedures/launch';
 import {
-  orchestrateProcedure,
-  orchestrateMasterProcedure,
-  orchestrateProductProcedure,
-  saveMemoryProcedure,
-  searchMemoryProcedure
+  orchestrationRun,
+  orchestrationMaster,
+  orchestrationProduct,
+  orchestrationSaveMemory,
+  orchestrationSearchMemory
 } from './procedures/orchestration';
 
 // Aplanar el router para que coincida con la estructura de finance
@@ -97,36 +97,36 @@ export const marketingRouter = publicProcedure.router({
     };
   }),
   // Guards
-  guardsFinancial: checkFinancialGuardProcedure,
-  guardsReputation: checkReputationGuardProcedure,
-  guardsLegal: checkLegalGuardProcedure,
-  guardsRunAll: runAllGuardsProcedure,
+  guardsFinancial,
+  guardsReputation,
+  guardsLegal,
+  guardsRunAll,
   
   // Facebook Ads
-  facebookAdsGenerateStrategy: generateFBStrategyProcedure,
-  facebookAdsCreateCampaign: createFBCampaignProcedure,
-  facebookAdsGenerateCreatives: generateFBCreativesProcedure,
-  facebookAdsOptimize: optimizeFBCampaignProcedure,
-  facebookAdsUpdateStatus: updateFBCampaignStatusProcedure,
-  facebookAdsSyncMetrics: syncFBMetricsProcedure,
+  facebookAdsGenerateStrategy,
+  facebookAdsCreateCampaign,
+  facebookAdsGenerateCreatives,
+  facebookAdsOptimize,
+  facebookAdsUpdateStatus,
+  facebookAdsSyncMetrics,
   
   // Google Ads
-  googleAdsKeywordResearch: generateKeywordResearchProcedure,
-  googleAdsGenerateStrategy: generateGoogleStrategyProcedure,
-  googleAdsCreateCampaign: createGoogleCampaignProcedure,
-  googleAdsGenerateRSA: generateRSAProcedure,
-  googleAdsOptimize: optimizeGoogleCampaignProcedure,
-  googleAdsSyncMetrics: syncGoogleMetricsProcedure,
+  googleAdsKeywordResearch,
+  googleAdsGenerateStrategy,
+  googleAdsCreateCampaign,
+  googleAdsGenerateRSA,
+  googleAdsOptimize,
+  googleAdsSyncMetrics,
   
   // CRM
-  crmCreateLead: createLeadProcedure,
-  crmScoreLead: scoreLeadProcedure,
-  crmQualifyLead: qualifyLeadProcedure,
-  crmGenerateFollowUp: generateFollowUpProcedure,
-  crmScoreAll: scoreAllLeadsProcedure,
-  crmQualifyHot: qualifyHotLeadsProcedure,
-  crmGetLeads: getLeadsProcedure,
-  crmGetStats: getLeadStatsProcedure,
+  crmCreateLead,
+  crmScoreLead,
+  crmQualifyLead,
+  crmGenerateFollowUp,
+  crmScoreAll,
+  crmQualifyHot,
+  crmGetLeads,
+  crmGetStats,
   
   // Analytics
   analyticsDashboard,
@@ -136,25 +136,25 @@ export const marketingRouter = publicProcedure.router({
   analyticsWeeklyReport,
   
   // Content
-  contentGenerate: generateContentProcedure,
-  contentGenerateVariations: generateContentVariationsProcedure,
-  contentOptimizeSEO: optimizeContentForSEOProcedure,
+  contentGenerate,
+  contentGenerateVariations,
+  contentOptimizeSEO,
   
   // Email
-  emailCreateCampaign: createEmailCampaignProcedure,
-  emailSendCampaign: sendEmailCampaignProcedure,
-  emailSegmentAudience: segmentAudienceProcedure,
-  emailRunABTest: runABTestProcedure,
+  emailCreateCampaign,
+  emailSendCampaign,
+  emailSegmentAudience,
+  emailRunABTest,
   
   // Social
-  socialGeneratePost: generateSocialPostProcedure,
-  socialAnalyzeSentiment: analyzeSocialSentimentProcedure,
-  socialGetBestPostingTimes: getBestPostingTimesProcedure,
+  socialGeneratePost,
+  socialAnalyzeSentiment,
+  socialGetBestPostingTimes,
   
   // Strategy
-  strategyCoordinateAgents: coordinateMarketingAgentsProcedure,
-  strategyOptimizeBudget: optimizeBudgetProcedure,
-  strategyGenerateReport: generateStrategicReportProcedure,
+  strategyCoordinateAgents,
+  strategyOptimizeBudget,
+  strategyGenerateReport,
   
   // Visual
   visualGenerate,
@@ -167,17 +167,17 @@ export const marketingRouter = publicProcedure.router({
   voiceComplete,
   
   // Competitor
-  competitorAnalyze: analyzeCompetitorsProcedure,
-  competitorMonitor: monitorCompetitorChangesProcedure,
+  competitorAnalyze,
+  competitorMonitor,
   
   // Launch
-  launchOrchestrate: orchestrateLaunchProcedure,
-  launchStatus: getLaunchStatusProcedure,
+  launchOrchestrate,
+  launchStatus,
   
   // Orchestration
-  orchestrationRun: orchestrateProcedure,
-  orchestrationMaster: orchestrateMasterProcedure,
-  orchestrationProduct: orchestrateProductProcedure,
-  orchestrationSaveMemory: saveMemoryProcedure,
-  orchestrationSearchMemory: searchMemoryProcedure,
+  orchestrationRun,
+  orchestrationMaster,
+  orchestrationProduct,
+  orchestrationSaveMemory,
+  orchestrationSearchMemory,
 });

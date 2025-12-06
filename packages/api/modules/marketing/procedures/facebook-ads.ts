@@ -9,7 +9,7 @@ import {
   syncCampaignMetrics
 } from '../services/facebook-ads-service'
 
-export const generateFBStrategyProcedure = protectedProcedure
+export const facebookAdsGenerateStrategy = protectedProcedure
   .route({ method: "POST", path: "/marketing/facebook-ads-generate-strategy" })
   .input(z.object({ productId: z.string() }))
   .handler(async ({ input }) => {
@@ -17,7 +17,7 @@ export const generateFBStrategyProcedure = protectedProcedure
     return { success: true, strategy: result }
   })
 
-export const createFBCampaignProcedure = protectedProcedure
+export const facebookAdsCreateCampaign = protectedProcedure
   .route({ method: "POST", path: "/marketing/facebook-ads-create-campaign" })
   .input(
     z.object({
@@ -46,7 +46,7 @@ export const createFBCampaignProcedure = protectedProcedure
     return { success: true, campaign: result }
   })
 
-export const generateFBCreativesProcedure = protectedProcedure
+export const facebookAdsGenerateCreatives = protectedProcedure
   .route({ method: "POST", path: "/marketing/facebook-ads-generate-creatives" })
   .input(
     z.object({
@@ -60,7 +60,7 @@ export const generateFBCreativesProcedure = protectedProcedure
     return { success: true, creatives: result }
   })
 
-export const optimizeFBCampaignProcedure = protectedProcedure
+export const facebookAdsOptimize = protectedProcedure
   .route({ method: "POST", path: "/marketing/facebook-ads-optimize" })
   .input(z.object({ campaignId: z.string() }))
   .handler(async ({ input }) => {
@@ -68,7 +68,7 @@ export const optimizeFBCampaignProcedure = protectedProcedure
     return { success: true, optimization: result }
   })
 
-export const updateFBCampaignStatusProcedure = protectedProcedure
+export const facebookAdsUpdateStatus = protectedProcedure
   .route({ method: "POST", path: "/marketing/facebook-ads-update-status" })
   .input(
     z.object({
@@ -81,7 +81,7 @@ export const updateFBCampaignStatusProcedure = protectedProcedure
     return { success: true, campaign: result }
   })
 
-export const syncFBMetricsProcedure = protectedProcedure
+export const facebookAdsSyncMetrics = protectedProcedure
   .route({ method: "POST", path: "/marketing/facebook-ads-sync-metrics" })
   .input(z.object({ campaignId: z.string() }))
   .handler(async ({ input }) => {

@@ -9,7 +9,7 @@ import {
   syncGoogleMetrics
 } from '../services/google-ads-service'
 
-export const generateKeywordResearchProcedure = protectedProcedure
+export const googleAdsKeywordResearch = protectedProcedure
   .route({ method: "POST", path: "/marketing/google-ads-keyword-research" })
   .input(z.object({ productId: z.string() }))
   .handler(async ({ input }) => {
@@ -17,7 +17,7 @@ export const generateKeywordResearchProcedure = protectedProcedure
     return { success: true, research: result }
   })
 
-export const generateGoogleStrategyProcedure = protectedProcedure
+export const googleAdsGenerateStrategy = protectedProcedure
   .route({ method: "POST", path: "/marketing/google-ads-generate-strategy" })
   .input(z.object({ productId: z.string() }))
   .handler(async ({ input }) => {
@@ -25,7 +25,7 @@ export const generateGoogleStrategyProcedure = protectedProcedure
     return { success: true, strategy: result }
   })
 
-export const createGoogleCampaignProcedure = protectedProcedure
+export const googleAdsCreateCampaign = protectedProcedure
   .route({ method: "POST", path: "/marketing/google-ads-create-campaign" })
   .input(
     z.object({
@@ -58,7 +58,7 @@ export const createGoogleCampaignProcedure = protectedProcedure
     return { success: true, campaign: result }
   })
 
-export const generateRSAProcedure = protectedProcedure
+export const googleAdsGenerateRSA = protectedProcedure
   .route({ method: "POST", path: "/marketing/google-ads-generate-rsa" })
   .input(
     z.object({
@@ -72,7 +72,7 @@ export const generateRSAProcedure = protectedProcedure
     return { success: true, ads: result }
   })
 
-export const optimizeGoogleCampaignProcedure = protectedProcedure
+export const googleAdsOptimize = protectedProcedure
   .route({ method: "POST", path: "/marketing/google-ads-optimize" })
   .input(z.object({ campaignId: z.string() }))
   .handler(async ({ input }) => {
@@ -80,7 +80,7 @@ export const optimizeGoogleCampaignProcedure = protectedProcedure
     return { success: true, optimization: result }
   })
 
-export const syncGoogleMetricsProcedure = protectedProcedure
+export const googleAdsSyncMetrics = protectedProcedure
   .route({ method: "POST", path: "/marketing/google-ads-sync-metrics" })
   .input(z.object({ campaignId: z.string() }))
   .handler(async ({ input }) => {

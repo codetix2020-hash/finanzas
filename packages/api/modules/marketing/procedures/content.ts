@@ -11,7 +11,7 @@ const generateContentSchema = z.object({
   targetAudience: z.string().optional(),
 });
 
-export const generateContentProcedure = protectedProcedure
+export const contentGenerate = protectedProcedure
   .route({ method: "POST", path: "/marketing/content-generate" })
   .input(generateContentSchema)
   .handler(async ({ input }) => {
@@ -40,7 +40,7 @@ export const generateContentProcedure = protectedProcedure
     }
   });
 
-export const generateContentVariationsProcedure = protectedProcedure
+export const contentGenerateVariations = protectedProcedure
   .route({ method: "POST", path: "/marketing/content-generate-variations" })
   .input(generateContentSchema.extend({
     count: z.number().min(1).max(5).default(3),
@@ -73,7 +73,7 @@ export const generateContentVariationsProcedure = protectedProcedure
     }
   });
 
-export const optimizeContentForSEOProcedure = protectedProcedure
+export const contentOptimizeSEO = protectedProcedure
   .route({ method: "POST", path: "/marketing/content-optimize-seo" })
   .input(z.object({
     content: z.string(),

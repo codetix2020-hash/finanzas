@@ -3,7 +3,7 @@ import { protectedProcedure } from '../../../orpc/procedures'
 import { orchestrate, orchestrateMaster, orchestrateProduct } from '../../../src/lib/ai/orchestrator'
 import { saveMemory, searchMemory } from '../../../src/lib/ai/embeddings'
 
-export const orchestrateProcedure = protectedProcedure
+export const orchestrationRun = protectedProcedure
   .route({ method: "POST", path: "/marketing/orchestration-run" })
   .input(z.object({
     organizationId: z.string(),
@@ -15,7 +15,7 @@ export const orchestrateProcedure = protectedProcedure
     return { success: true, ...result }
   })
 
-export const orchestrateMasterProcedure = protectedProcedure
+export const orchestrationMaster = protectedProcedure
   .route({ method: "POST", path: "/marketing/orchestration-master" })
   .input(z.object({
     organizationId: z.string()
@@ -26,7 +26,7 @@ export const orchestrateMasterProcedure = protectedProcedure
     return { success: true, ...result }
   })
 
-export const orchestrateProductProcedure = protectedProcedure
+export const orchestrationProduct = protectedProcedure
   .route({ method: "POST", path: "/marketing/orchestration-product" })
   .input(z.object({
     productId: z.string()
@@ -37,7 +37,7 @@ export const orchestrateProductProcedure = protectedProcedure
     return { success: true, ...result }
   })
 
-export const saveMemoryProcedure = protectedProcedure
+export const orchestrationSaveMemory = protectedProcedure
   .route({ method: "POST", path: "/marketing/orchestration-save-memory" })
   .input(z.object({
     organizationId: z.string(),
@@ -58,7 +58,7 @@ export const saveMemoryProcedure = protectedProcedure
     return { success: true, memory: result }
   })
 
-export const searchMemoryProcedure = protectedProcedure
+export const orchestrationSearchMemory = protectedProcedure
   .route({ method: "POST", path: "/marketing/orchestration-search-memory" })
   .input(z.object({
     organizationId: z.string(),

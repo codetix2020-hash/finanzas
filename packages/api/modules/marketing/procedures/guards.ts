@@ -7,7 +7,7 @@ import {
   runAllGuards 
 } from '../services/guard-service'
 
-export const checkFinancialGuardProcedure = protectedProcedure
+export const guardsFinancial = protectedProcedure
   .route({ method: "POST", path: "/marketing/guards-financial" })
   .input(
     z.object({
@@ -20,7 +20,7 @@ export const checkFinancialGuardProcedure = protectedProcedure
     return { success: true, ...result }
   })
 
-export const checkReputationGuardProcedure = protectedProcedure
+export const guardsReputation = protectedProcedure
   .route({ method: "POST", path: "/marketing/guards-reputation" })
   .input(
     z.object({
@@ -33,7 +33,7 @@ export const checkReputationGuardProcedure = protectedProcedure
     return { success: true, ...result }
   })
 
-export const checkLegalGuardProcedure = protectedProcedure
+export const guardsLegal = protectedProcedure
   .route({ method: "POST", path: "/marketing/guards-legal" })
   .input(
     z.object({
@@ -46,7 +46,7 @@ export const checkLegalGuardProcedure = protectedProcedure
     return { success: true, ...result }
   })
 
-export const runAllGuardsProcedure = protectedProcedure
+export const guardsRunAll = protectedProcedure
   .route({ method: "POST", path: "/marketing/guards-run-all" })
   .input(
     z.object({
