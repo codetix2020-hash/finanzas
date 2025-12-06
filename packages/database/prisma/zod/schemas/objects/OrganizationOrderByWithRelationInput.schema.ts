@@ -15,7 +15,11 @@ import { MarketingAdCampaignOrderByRelationAggregateInputObjectSchema as Marketi
 import { MarketingContentOrderByRelationAggregateInputObjectSchema as MarketingContentOrderByRelationAggregateInputObjectSchema } from './MarketingContentOrderByRelationAggregateInput.schema';
 import { MarketingDecisionOrderByRelationAggregateInputObjectSchema as MarketingDecisionOrderByRelationAggregateInputObjectSchema } from './MarketingDecisionOrderByRelationAggregateInput.schema';
 import { MarketingGuardOrderByRelationAggregateInputObjectSchema as MarketingGuardOrderByRelationAggregateInputObjectSchema } from './MarketingGuardOrderByRelationAggregateInput.schema';
-import { MarketingLeadOrderByRelationAggregateInputObjectSchema as MarketingLeadOrderByRelationAggregateInputObjectSchema } from './MarketingLeadOrderByRelationAggregateInput.schema'
+import { MarketingLeadOrderByRelationAggregateInputObjectSchema as MarketingLeadOrderByRelationAggregateInputObjectSchema } from './MarketingLeadOrderByRelationAggregateInput.schema';
+import { MarketingMemoryOrderByRelationAggregateInputObjectSchema as MarketingMemoryOrderByRelationAggregateInputObjectSchema } from './MarketingMemoryOrderByRelationAggregateInput.schema';
+import { MarketingJobOrderByRelationAggregateInputObjectSchema as MarketingJobOrderByRelationAggregateInputObjectSchema } from './MarketingJobOrderByRelationAggregateInput.schema';
+import { AutoSaasInboxOrderByRelationAggregateInputObjectSchema as AutoSaasInboxOrderByRelationAggregateInputObjectSchema } from './AutoSaasInboxOrderByRelationAggregateInput.schema';
+import { AutoSaasOutboxOrderByRelationAggregateInputObjectSchema as AutoSaasOutboxOrderByRelationAggregateInputObjectSchema } from './AutoSaasOutboxOrderByRelationAggregateInput.schema'
 
 const makeSchema = () => z.object({
   id: SortOrderSchema.optional(),
@@ -38,7 +42,11 @@ const makeSchema = () => z.object({
   marketingContent: z.lazy(() => MarketingContentOrderByRelationAggregateInputObjectSchema).optional(),
   marketingDecisions: z.lazy(() => MarketingDecisionOrderByRelationAggregateInputObjectSchema).optional(),
   marketingGuards: z.lazy(() => MarketingGuardOrderByRelationAggregateInputObjectSchema).optional(),
-  marketingLeads: z.lazy(() => MarketingLeadOrderByRelationAggregateInputObjectSchema).optional()
+  marketingLeads: z.lazy(() => MarketingLeadOrderByRelationAggregateInputObjectSchema).optional(),
+  marketingMemories: z.lazy(() => MarketingMemoryOrderByRelationAggregateInputObjectSchema).optional(),
+  marketingJobs: z.lazy(() => MarketingJobOrderByRelationAggregateInputObjectSchema).optional(),
+  autoSaasInbox: z.lazy(() => AutoSaasInboxOrderByRelationAggregateInputObjectSchema).optional(),
+  autoSaasOutbox: z.lazy(() => AutoSaasOutboxOrderByRelationAggregateInputObjectSchema).optional()
 }).strict();
 export const OrganizationOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.OrganizationOrderByWithRelationInput> = makeSchema() as unknown as z.ZodType<Prisma.OrganizationOrderByWithRelationInput>;
 export const OrganizationOrderByWithRelationInputObjectZodSchema = makeSchema();

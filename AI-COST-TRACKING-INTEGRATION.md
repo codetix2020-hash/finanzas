@@ -65,7 +65,8 @@ const response = streamText({
           role: "assistant",
           parts: [{ type: "text", text }],
         },
-      ],
+
+],
     });
   },
 });

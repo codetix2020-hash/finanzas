@@ -12,7 +12,11 @@ import { MarketingAdCampaignUncheckedCreateNestedManyWithoutOrganizationInputObj
 import { MarketingContentUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingContentUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingContentUncheckedCreateNestedManyWithoutOrganizationInput.schema';
 import { MarketingDecisionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingDecisionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingDecisionUncheckedCreateNestedManyWithoutOrganizationInput.schema';
 import { MarketingGuardUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingGuardUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingGuardUncheckedCreateNestedManyWithoutOrganizationInput.schema';
-import { MarketingLeadUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingLeadUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingLeadUncheckedCreateNestedManyWithoutOrganizationInput.schema'
+import { MarketingLeadUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingLeadUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingLeadUncheckedCreateNestedManyWithoutOrganizationInput.schema';
+import { MarketingMemoryUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingMemoryUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingMemoryUncheckedCreateNestedManyWithoutOrganizationInput.schema';
+import { MarketingJobUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as MarketingJobUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './MarketingJobUncheckedCreateNestedManyWithoutOrganizationInput.schema';
+import { AutoSaasInboxUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as AutoSaasInboxUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './AutoSaasInboxUncheckedCreateNestedManyWithoutOrganizationInput.schema';
+import { AutoSaasOutboxUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema as AutoSaasOutboxUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema } from './AutoSaasOutboxUncheckedCreateNestedManyWithoutOrganizationInput.schema'
 
 const makeSchema = () => z.object({
   id: z.string().optional(),
@@ -34,7 +38,11 @@ const makeSchema = () => z.object({
   marketingContent: z.lazy(() => MarketingContentUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
   marketingDecisions: z.lazy(() => MarketingDecisionUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
   marketingGuards: z.lazy(() => MarketingGuardUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
-  marketingLeads: z.lazy(() => MarketingLeadUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional()
+  marketingLeads: z.lazy(() => MarketingLeadUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  marketingMemories: z.lazy(() => MarketingMemoryUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  marketingJobs: z.lazy(() => MarketingJobUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  autoSaasInbox: z.lazy(() => AutoSaasInboxUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional(),
+  autoSaasOutbox: z.lazy(() => AutoSaasOutboxUncheckedCreateNestedManyWithoutOrganizationInputObjectSchema).optional()
 }).strict();
 export const OrganizationUncheckedCreateWithoutMembersInputObjectSchema: z.ZodType<Prisma.OrganizationUncheckedCreateWithoutMembersInput> = makeSchema() as unknown as z.ZodType<Prisma.OrganizationUncheckedCreateWithoutMembersInput>;
 export const OrganizationUncheckedCreateWithoutMembersInputObjectZodSchema = makeSchema();
