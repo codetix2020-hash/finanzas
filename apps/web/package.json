@@ -106,6 +106,7 @@
 	"name": "@repo/web",
 	"private": true,
 	"scripts": {
+		"prebuild": "content-collections build",
 		"build": "next build",
 		"dev": "next dev",
 		"e2e": "pnpm exec playwright test --ui",
