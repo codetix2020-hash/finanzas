@@ -32,11 +32,11 @@ import {
   getLeadStatsProcedure
 } from './procedures/crm';
 import { 
-  getDashboardMetricsProcedure,
-  getContentPerformanceProcedure,
-  getCampaignROIProcedure,
-  generateInsightsProcedure,
-  generateWeeklyReportProcedure
+  analyticsDashboard,
+  analyticsContentPerformance,
+  analyticsCampaignROI,
+  analyticsInsights,
+  analyticsWeeklyReport
 } from './procedures/analytics';
 import {
   generateContentProcedure,
@@ -60,14 +60,14 @@ import {
   generateStrategicReportProcedure
 } from './procedures/strategy';
 import {
-  generateImageProcedure,
-  generateImageVariantsProcedure,
-  generateOptimizedPromptProcedure
+  visualGenerate,
+  visualVariants,
+  visualOptimizePrompt
 } from './procedures/visual';
 import {
-  generateVoiceoverProcedure,
-  generateVideoScriptProcedure,
-  generateScriptAndVoiceProcedure
+  voiceGenerate,
+  voiceScript,
+  voiceComplete
 } from './procedures/voice';
 import {
   analyzeCompetitorsProcedure,
@@ -129,11 +129,11 @@ export const marketingRouter = publicProcedure.router({
   crmGetStats: getLeadStatsProcedure,
   
   // Analytics
-  analyticsDashboard: getDashboardMetricsProcedure,
-  analyticsContentPerformance: getContentPerformanceProcedure,
-  analyticsCampaignROI: getCampaignROIProcedure,
-  analyticsInsights: generateInsightsProcedure,
-  analyticsWeeklyReport: generateWeeklyReportProcedure,
+  analyticsDashboard,
+  analyticsContentPerformance,
+  analyticsCampaignROI,
+  analyticsInsights,
+  analyticsWeeklyReport,
   
   // Content
   contentGenerate: generateContentProcedure,
@@ -157,14 +157,14 @@ export const marketingRouter = publicProcedure.router({
   strategyGenerateReport: generateStrategicReportProcedure,
   
   // Visual
-  visualGenerate: generateImageProcedure,
-  visualVariants: generateImageVariantsProcedure,
-  visualOptimizePrompt: generateOptimizedPromptProcedure,
+  visualGenerate,
+  visualVariants,
+  visualOptimizePrompt,
   
   // Voice
-  voiceGenerate: generateVoiceoverProcedure,
-  voiceScript: generateVideoScriptProcedure,
-  voiceComplete: generateScriptAndVoiceProcedure,
+  voiceGenerate,
+  voiceScript,
+  voiceComplete,
   
   // Competitor
   competitorAnalyze: analyzeCompetitorsProcedure,

@@ -8,7 +8,7 @@ import {
   generateWeeklyReport
 } from '../services/analytics-service'
 
-export const getDashboardMetricsProcedure = protectedProcedure
+export const analyticsDashboard = protectedProcedure
   .route({ method: "POST", path: "/marketing/analytics-dashboard" })
   .input(
     z.object({
@@ -108,7 +108,7 @@ export const getDashboardMetricsProcedure = protectedProcedure
     }
   })
 
-export const getContentPerformanceProcedure = protectedProcedure
+export const analyticsContentPerformance = protectedProcedure
   .route({ method: "POST", path: "/marketing/analytics-content-performance" })
   .input(
     z.object({
@@ -122,7 +122,7 @@ export const getContentPerformanceProcedure = protectedProcedure
     return { success: true, performance: result }
   })
 
-export const getCampaignROIProcedure = protectedProcedure
+export const analyticsCampaignROI = protectedProcedure
   .route({ method: "POST", path: "/marketing/analytics-campaign-roi" })
   .input(z.object({ organizationId: z.string() }))
   .handler(async ({ input }) => {
@@ -130,7 +130,7 @@ export const getCampaignROIProcedure = protectedProcedure
     return { success: true, roi: result }
   })
 
-export const generateInsightsProcedure = protectedProcedure
+export const analyticsInsights = protectedProcedure
   .route({ method: "POST", path: "/marketing/analytics-insights" })
   .input(z.object({ organizationId: z.string() }))
   .handler(async ({ input }) => {
@@ -138,7 +138,7 @@ export const generateInsightsProcedure = protectedProcedure
     return { success: true, insights: result }
   })
 
-export const generateWeeklyReportProcedure = protectedProcedure
+export const analyticsWeeklyReport = protectedProcedure
   .route({ method: "POST", path: "/marketing/analytics-weekly-report" })
   .input(z.object({ organizationId: z.string() }))
   .handler(async ({ input }) => {
