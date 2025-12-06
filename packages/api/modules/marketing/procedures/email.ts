@@ -3,6 +3,7 @@ import { z } from "zod";
 import { EmailAgent } from "../services/email-agent";
 
 export const createEmailCampaignProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/email-create-campaign" })
   .input(z.object({
     name: z.string(),
     segment: z.string(),
@@ -19,6 +20,7 @@ export const createEmailCampaignProcedure = protectedProcedure
   });
 
 export const sendEmailCampaignProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/email-send-campaign" })
   .input(z.object({
     campaign: z.any(),
     recipients: z.array(z.string()),
@@ -34,6 +36,7 @@ export const sendEmailCampaignProcedure = protectedProcedure
   });
 
 export const segmentAudienceProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/email-segment-audience" })
   .input(z.object({
     leads: z.array(z.object({
       email: z.string(),
@@ -52,6 +55,7 @@ export const segmentAudienceProcedure = protectedProcedure
   });
 
 export const runABTestProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/email-run-ab-test" })
   .input(z.object({
     variantA: z.object({
       subject: z.string(),

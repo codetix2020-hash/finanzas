@@ -3,6 +3,7 @@ import { publicProcedure } from '../../../orpc/procedures'
 import { orchestrateLaunch, getLaunchStatus } from '../services/launch-orchestrator'
 
 export const orchestrateLaunchProcedure = publicProcedure
+  .route({ method: "POST", path: "/marketing/launch-orchestrate" })
   .input(z.object({
     organizationId: z.string(),
     productId: z.string(),
@@ -16,6 +17,7 @@ export const orchestrateLaunchProcedure = publicProcedure
   })
 
 export const getLaunchStatusProcedure = publicProcedure
+  .route({ method: "POST", path: "/marketing/launch-status" })
   .input(z.object({
     productId: z.string()
   }))

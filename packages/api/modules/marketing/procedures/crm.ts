@@ -12,6 +12,7 @@ import {
 } from '../services/crm-service'
 
 export const createLeadProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/crm-create-lead" })
   .input(
     z.object({
       organizationId: z.string(),
@@ -32,6 +33,7 @@ export const createLeadProcedure = protectedProcedure
   })
 
 export const scoreLeadProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/crm-score-lead" })
   .input(z.object({ leadId: z.string() }))
   .handler(async ({ input }) => {
     const result = await calculateLeadScore(input.leadId)
@@ -39,6 +41,7 @@ export const scoreLeadProcedure = protectedProcedure
   })
 
 export const qualifyLeadProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/crm-qualify-lead" })
   .input(z.object({ leadId: z.string() }))
   .handler(async ({ input }) => {
     const result = await qualifyLeadWithAI(input.leadId)
@@ -46,6 +49,7 @@ export const qualifyLeadProcedure = protectedProcedure
   })
 
 export const generateFollowUpProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/crm-generate-follow-up" })
   .input(z.object({ leadId: z.string() }))
   .handler(async ({ input }) => {
     const result = await generateFollowUp(input.leadId)
@@ -53,6 +57,7 @@ export const generateFollowUpProcedure = protectedProcedure
   })
 
 export const scoreAllLeadsProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/crm-score-all" })
   .input(z.object({ organizationId: z.string() }))
   .handler(async ({ input }) => {
     const result = await scoreAllLeads(input.organizationId)
@@ -60,6 +65,7 @@ export const scoreAllLeadsProcedure = protectedProcedure
   })
 
 export const qualifyHotLeadsProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/crm-qualify-hot" })
   .input(z.object({ organizationId: z.string() }))
   .handler(async ({ input }) => {
     const result = await qualifyHotLeads(input.organizationId)
@@ -67,6 +73,7 @@ export const qualifyHotLeadsProcedure = protectedProcedure
   })
 
 export const getLeadsProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/crm-get-leads" })
   .input(
     z.object({
       organizationId: z.string(),
@@ -82,6 +89,7 @@ export const getLeadsProcedure = protectedProcedure
   })
 
 export const getLeadStatsProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/crm-get-stats" })
   .input(z.object({ organizationId: z.string().optional() }))
   .handler(async ({ input }) => {
     try {

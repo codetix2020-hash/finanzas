@@ -10,6 +10,7 @@ import {
 } from '../services/google-ads-service'
 
 export const generateKeywordResearchProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/google-ads-keyword-research" })
   .input(z.object({ productId: z.string() }))
   .handler(async ({ input }) => {
     const result = await generateKeywordResearch(input.productId)
@@ -17,6 +18,7 @@ export const generateKeywordResearchProcedure = protectedProcedure
   })
 
 export const generateGoogleStrategyProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/google-ads-generate-strategy" })
   .input(z.object({ productId: z.string() }))
   .handler(async ({ input }) => {
     const result = await generateGoogleAdsStrategy(input.productId)
@@ -24,6 +26,7 @@ export const generateGoogleStrategyProcedure = protectedProcedure
   })
 
 export const createGoogleCampaignProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/google-ads-create-campaign" })
   .input(
     z.object({
       productId: z.string(),
@@ -56,6 +59,7 @@ export const createGoogleCampaignProcedure = protectedProcedure
   })
 
 export const generateRSAProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/google-ads-generate-rsa" })
   .input(
     z.object({
       productId: z.string(),
@@ -69,6 +73,7 @@ export const generateRSAProcedure = protectedProcedure
   })
 
 export const optimizeGoogleCampaignProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/google-ads-optimize" })
   .input(z.object({ campaignId: z.string() }))
   .handler(async ({ input }) => {
     const result = await optimizeGoogleCampaign(input.campaignId)
@@ -76,6 +81,7 @@ export const optimizeGoogleCampaignProcedure = protectedProcedure
   })
 
 export const syncGoogleMetricsProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/google-ads-sync-metrics" })
   .input(z.object({ campaignId: z.string() }))
   .handler(async ({ input }) => {
     const result = await syncGoogleMetrics(input.campaignId)

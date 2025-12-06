@@ -10,6 +10,7 @@ import {
 } from '../services/facebook-ads-service'
 
 export const generateFBStrategyProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/facebook-ads-generate-strategy" })
   .input(z.object({ productId: z.string() }))
   .handler(async ({ input }) => {
     const result = await generateCampaignStrategy(input.productId)
@@ -17,6 +18,7 @@ export const generateFBStrategyProcedure = protectedProcedure
   })
 
 export const createFBCampaignProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/facebook-ads-create-campaign" })
   .input(
     z.object({
       productId: z.string(),
@@ -45,6 +47,7 @@ export const createFBCampaignProcedure = protectedProcedure
   })
 
 export const generateFBCreativesProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/facebook-ads-generate-creatives" })
   .input(
     z.object({
       productId: z.string(),
@@ -58,6 +61,7 @@ export const generateFBCreativesProcedure = protectedProcedure
   })
 
 export const optimizeFBCampaignProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/facebook-ads-optimize" })
   .input(z.object({ campaignId: z.string() }))
   .handler(async ({ input }) => {
     const result = await optimizeCampaign(input.campaignId)
@@ -65,6 +69,7 @@ export const optimizeFBCampaignProcedure = protectedProcedure
   })
 
 export const updateFBCampaignStatusProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/facebook-ads-update-status" })
   .input(
     z.object({
       campaignId: z.string(),
@@ -77,6 +82,7 @@ export const updateFBCampaignStatusProcedure = protectedProcedure
   })
 
 export const syncFBMetricsProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/facebook-ads-sync-metrics" })
   .input(z.object({ campaignId: z.string() }))
   .handler(async ({ input }) => {
     const result = await syncCampaignMetrics(input.campaignId)

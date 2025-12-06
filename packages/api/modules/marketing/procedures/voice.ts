@@ -3,6 +3,7 @@ import { publicProcedure } from '../../../orpc/procedures'
 import { generateVoiceover, generateVideoScript, generateScriptAndVoice } from '../services/voice-agent'
 
 export const generateVoiceoverProcedure = publicProcedure
+  .route({ method: "POST", path: "/marketing/voice-generate" })
   .input(z.object({
     organizationId: z.string(),
     productId: z.string().optional(),
@@ -17,6 +18,7 @@ export const generateVoiceoverProcedure = publicProcedure
   })
 
 export const generateVideoScriptProcedure = publicProcedure
+  .route({ method: "POST", path: "/marketing/voice-script" })
   .input(z.object({
     organizationId: z.string(),
     productId: z.string().optional(),
@@ -32,6 +34,7 @@ export const generateVideoScriptProcedure = publicProcedure
   })
 
 export const generateScriptAndVoiceProcedure = publicProcedure
+  .route({ method: "POST", path: "/marketing/voice-complete" })
   .input(z.object({
     organizationId: z.string(),
     productId: z.string().optional(),

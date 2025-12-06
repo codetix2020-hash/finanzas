@@ -8,6 +8,7 @@ import {
 } from '../services/guard-service'
 
 export const checkFinancialGuardProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/guards-financial" })
   .input(
     z.object({
       organizationId: z.string(),
@@ -20,6 +21,7 @@ export const checkFinancialGuardProcedure = protectedProcedure
   })
 
 export const checkReputationGuardProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/guards-reputation" })
   .input(
     z.object({
       organizationId: z.string(),
@@ -32,6 +34,7 @@ export const checkReputationGuardProcedure = protectedProcedure
   })
 
 export const checkLegalGuardProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/guards-legal" })
   .input(
     z.object({
       organizationId: z.string(),
@@ -44,6 +47,7 @@ export const checkLegalGuardProcedure = protectedProcedure
   })
 
 export const runAllGuardsProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/guards-run-all" })
   .input(
     z.object({
       organizationId: z.string().optional()

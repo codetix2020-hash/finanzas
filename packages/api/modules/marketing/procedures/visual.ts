@@ -3,6 +3,7 @@ import { publicProcedure } from '../../../orpc/procedures'
 import { generateImage, generateImageVariants, generateOptimizedPrompt } from '../services/visual-agent'
 
 export const generateImageProcedure = publicProcedure
+  .route({ method: "POST", path: "/marketing/visual-generate" })
   .input(z.object({
     organizationId: z.string(),
     productId: z.string().optional(),
@@ -19,6 +20,7 @@ export const generateImageProcedure = publicProcedure
   })
 
 export const generateImageVariantsProcedure = publicProcedure
+  .route({ method: "POST", path: "/marketing/visual-variants" })
   .input(z.object({
     organizationId: z.string(),
     productId: z.string().optional(),
@@ -34,6 +36,7 @@ export const generateImageVariantsProcedure = publicProcedure
   })
 
 export const generateOptimizedPromptProcedure = publicProcedure
+  .route({ method: "POST", path: "/marketing/visual-optimize-prompt" })
   .input(z.object({
     productName: z.string(),
     productDescription: z.string(),

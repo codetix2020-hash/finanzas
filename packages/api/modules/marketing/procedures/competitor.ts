@@ -3,6 +3,7 @@ import { publicProcedure } from '../../../orpc/procedures'
 import { analyzeCompetitors, monitorCompetitorChanges } from '../services/competitor-analyzer'
 
 export const analyzeCompetitorsProcedure = publicProcedure
+  .route({ method: "POST", path: "/marketing/competitor-analyze" })
   .input(z.object({
     organizationId: z.string(),
     productId: z.string(),
@@ -15,6 +16,7 @@ export const analyzeCompetitorsProcedure = publicProcedure
   })
 
 export const monitorCompetitorChangesProcedure = publicProcedure
+  .route({ method: "POST", path: "/marketing/competitor-monitor" })
   .input(z.object({
     organizationId: z.string(),
     productId: z.string()

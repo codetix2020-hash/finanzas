@@ -12,6 +12,7 @@ const generateContentSchema = z.object({
 });
 
 export const generateContentProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/content-generate" })
   .input(generateContentSchema)
   .handler(async ({ input }) => {
     const agent = new ContentAgent();
@@ -25,6 +26,7 @@ export const generateContentProcedure = protectedProcedure
   });
 
 export const generateContentVariationsProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/content-generate-variations" })
   .input(generateContentSchema.extend({
     count: z.number().min(1).max(5).default(3),
   }))
@@ -41,6 +43,7 @@ export const generateContentVariationsProcedure = protectedProcedure
   });
 
 export const optimizeContentForSEOProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/content-optimize-seo" })
   .input(z.object({
     content: z.string(),
     keywords: z.array(z.string()),

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { StrategyAgent } from "../services/strategy-agent";
 
 export const coordinateMarketingAgentsProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/strategy-coordinate-agents" })
   .input(z.object({
     channelPerformance: z.record(z.string(), z.object({
       spend: z.number(),
@@ -23,6 +24,7 @@ export const coordinateMarketingAgentsProcedure = protectedProcedure
   });
 
 export const optimizeBudgetProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/strategy-optimize-budget" })
   .input(z.object({
     totalBudget: z.number(),
     channels: z.record(z.string(), z.object({
@@ -45,6 +47,7 @@ export const optimizeBudgetProcedure = protectedProcedure
   });
 
 export const generateStrategicReportProcedure = protectedProcedure
+  .route({ method: "POST", path: "/marketing/strategy-generate-report" })
   .input(z.object({
     period: z.string(),
     metrics: z.record(z.string(), z.any()),
