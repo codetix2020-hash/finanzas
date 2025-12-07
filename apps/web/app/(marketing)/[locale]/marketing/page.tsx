@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { orpcClient } from '../../../../modules/shared/lib/orpc-client'
+import { orpcClient } from "@shared/lib/orpc-client";
 
 export default function MarketingOSDashboard() {
   const [activeTab, setActiveTab] = useState('overview')
