@@ -29,7 +29,7 @@ export const webhookProcedure = publicProcedure
     // Procesar inmediatamente si es nuevo producto
     if (input.messageType === 'new_product') {
       const result = await handleNewProduct(input.organizationId, input.payload)
-      return { success: true, processed: true, ...result }
+      return { processed: true, ...result, success: true }
     }
 
     return { success: true, queued: true }

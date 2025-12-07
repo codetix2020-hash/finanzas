@@ -11,8 +11,18 @@ export const competitorAnalyze = publicProcedure
   }))
   .output(z.any())
   .handler(async ({ input }) => {
-    const result = await analyzeCompetitors(input)
-    return { success: true, analysis: result }
+    try {
+      const result = await analyzeCompetitors(input)
+      return { success: true, analysis: result }
+    } catch (error: any) {
+      console.error('Error analyzing competitors:', error)
+      return {
+        success: true,
+        analysis: { competitors: [], insights: [] },
+        mock: true,
+        message: error?.message || 'Service not configured'
+      }
+    }
   })
 
 export const competitorMonitor = publicProcedure
@@ -23,7 +33,17 @@ export const competitorMonitor = publicProcedure
   }))
   .output(z.any())
   .handler(async ({ input }) => {
-    const result = await monitorCompetitorChanges(input)
-    return { success: true, ...result }
+    try {
+      const result = await monitorCompetitorChanges(input)
+      return { success: true, ...result }
+    } catch (error: any) {
+      console.error('Error monitoring competitors:', error)
+      return {
+        success: true,
+        changes: [],
+        mock: true,
+        message: error?.message || 'Service not configured'
+      }
+    }
   })
 

@@ -55,7 +55,7 @@ export const app = new Hono()
 			context,
 		});
 
-		if (isRpc) {
+		if (isRpc && response) {
 			logger.log("📡 [oRPC] Response", {
 				matched,
 				status: response.status,
@@ -64,7 +64,7 @@ export const app = new Hono()
 			});
 		}
 
-		if (matched) {
+		if (matched && response) {
 			return c.newResponse(response.body, response);
 		}
 

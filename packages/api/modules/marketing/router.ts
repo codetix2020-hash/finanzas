@@ -85,18 +85,7 @@ import {
   orchestrationSearchMemory
 } from './procedures/orchestration';
 
-// Aplanar el router para que coincida con la estructura de finance
-// Router actualizado con todas las rutas HTTP - 2024
 export const marketingRouter = publicProcedure.router({
-  // Endpoint de prueba (sin autenticación)
-  test: publicProcedure.handler(async () => {
-    return { 
-      success: true, 
-      message: 'Marketing router works!',
-      timestamp: new Date().toISOString()
-    };
-  }),
-  // Guards
   guardsFinancial,
   guardsReputation,
   guardsLegal,
