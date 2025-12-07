@@ -6,21 +6,10 @@ import Anthropic from "@anthropic-ai/sdk";
 const generateContentSchema = z.object({
   organizationId: z.string(),
   productId: z.string().optional(),
-  type: z.union([
-    z.enum(['blog_post', 'social_post', 'ad_copy', 'email', 'landing_page']),
-    z.enum(['BLOG', 'EMAIL', 'VIDEO_SCRIPT', 'SOCIAL_POST', 'AD_COPY', 'LANDING_PAGE']),
-    z.string()
-  ]),
+  type: z.string(), // Acepta cualquier string
   topic: z.string(),
-  tone: z.union([
-    z.enum(['professional', 'casual', 'friendly', 'urgent']),
-    z.string()
-  ]).optional(),
-  length: z.union([
-    z.enum(['short', 'medium', 'long']),
-    z.enum(['corto', 'medio', 'largo']),
-    z.string()
-  ]).optional(),
+  tone: z.string().optional(), // Acepta cualquier string
+  length: z.string().optional(), // Acepta cualquier string
   keywords: z.array(z.string()).optional(),
   targetAudience: z.string().optional(),
 });
