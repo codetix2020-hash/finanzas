@@ -1,4 +1,4 @@
-import { protectedProcedure } from "../../../orpc/procedures";
+import { publicProcedure } from "../../../orpc/procedures";
 import { z } from "zod";
 import { ContentAgent } from "../services/content-agent";
 
@@ -11,7 +11,7 @@ const generateContentSchema = z.object({
   targetAudience: z.string().optional(),
 });
 
-export const contentGenerate = protectedProcedure
+export const contentGenerate = publicProcedure
   .route({ method: "POST", path: "/marketing/content-generate" })
   .input(generateContentSchema)
   .handler(async ({ input }) => {
@@ -40,7 +40,7 @@ export const contentGenerate = protectedProcedure
     }
   });
 
-export const contentGenerateVariations = protectedProcedure
+export const contentGenerateVariations = publicProcedure
   .route({ method: "POST", path: "/marketing/content-generate-variations" })
   .input(generateContentSchema.extend({
     count: z.number().min(1).max(5).default(3),
@@ -73,7 +73,7 @@ export const contentGenerateVariations = protectedProcedure
     }
   });
 
-export const contentOptimizeSEO = protectedProcedure
+export const contentOptimizeSEO = publicProcedure
   .route({ method: "POST", path: "/marketing/content-optimize-seo" })
   .input(z.object({
     content: z.string(),

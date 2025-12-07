@@ -1,8 +1,8 @@
-import { protectedProcedure } from "../../../orpc/procedures";
+import { publicProcedure } from "../../../orpc/procedures";
 import { z } from "zod";
 import { StrategyAgent } from "../services/strategy-agent";
 
-export const strategyCoordinateAgents = protectedProcedure
+export const strategyCoordinateAgents = publicProcedure
   .route({ method: "POST", path: "/marketing/strategy-coordinate-agents" })
   .input(z.object({
     channelPerformance: z.record(z.string(), z.object({
@@ -34,7 +34,7 @@ export const strategyCoordinateAgents = protectedProcedure
     }
   });
 
-export const strategyOptimizeBudget = protectedProcedure
+export const strategyOptimizeBudget = publicProcedure
   .route({ method: "POST", path: "/marketing/strategy-optimize-budget" })
   .input(z.object({
     totalBudget: z.number(),
@@ -73,7 +73,7 @@ export const strategyOptimizeBudget = protectedProcedure
     }
   });
 
-export const strategyGenerateReport = protectedProcedure
+export const strategyGenerateReport = publicProcedure
   .route({ method: "POST", path: "/marketing/strategy-generate-report" })
   .input(z.object({
     period: z.string(),

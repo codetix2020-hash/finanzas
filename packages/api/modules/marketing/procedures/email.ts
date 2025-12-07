@@ -1,8 +1,8 @@
-import { protectedProcedure } from "../../../orpc/procedures";
+import { publicProcedure } from "../../../orpc/procedures";
 import { z } from "zod";
 import { EmailAgent } from "../services/email-agent";
 
-export const emailCreateCampaign = protectedProcedure
+export const emailCreateCampaign = publicProcedure
   .route({ method: "POST", path: "/marketing/email-create-campaign" })
   .input(z.object({
     name: z.string(),
@@ -35,7 +35,7 @@ export const emailCreateCampaign = protectedProcedure
     }
   });
 
-export const emailSendCampaign = protectedProcedure
+export const emailSendCampaign = publicProcedure
   .route({ method: "POST", path: "/marketing/email-send-campaign" })
   .input(z.object({
     campaign: z.any(),
@@ -63,7 +63,7 @@ export const emailSendCampaign = protectedProcedure
     }
   });
 
-export const emailSegmentAudience = protectedProcedure
+export const emailSegmentAudience = publicProcedure
   .route({ method: "POST", path: "/marketing/email-segment-audience" })
   .input(z.object({
     leads: z.array(z.object({
@@ -96,7 +96,7 @@ export const emailSegmentAudience = protectedProcedure
     }
   });
 
-export const emailRunABTest = protectedProcedure
+export const emailRunABTest = publicProcedure
   .route({ method: "POST", path: "/marketing/email-run-ab-test" })
   .input(z.object({
     variantA: z.object({

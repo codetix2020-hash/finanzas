@@ -1,8 +1,8 @@
 import { z } from 'zod'
-import { protectedProcedure } from '../../../orpc/procedures'
+import { publicProcedure } from '../../../orpc/procedures'
 import { orchestrateLaunch, getLaunchStatus } from '../services/launch-orchestrator'
 
-export const launchOrchestrate = protectedProcedure
+export const launchOrchestrate = publicProcedure
   .route({ method: "POST", path: "/marketing/launch-orchestrate" })
   .input(z.object({
     organizationId: z.string(),
@@ -16,7 +16,7 @@ export const launchOrchestrate = protectedProcedure
     return { success: true, ...result }
   })
 
-export const launchStatus = protectedProcedure
+export const launchStatus = publicProcedure
   .route({ method: "POST", path: "/marketing/launch-status" })
   .input(z.object({
     productId: z.string()

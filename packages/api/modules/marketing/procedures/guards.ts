@@ -1,4 +1,4 @@
-import { protectedProcedure } from '../../../orpc/procedures'
+import { publicProcedure } from '../../../orpc/procedures'
 import { z } from 'zod'
 import { 
   checkFinancialGuard, 
@@ -7,7 +7,7 @@ import {
   runAllGuards 
 } from '../services/guard-service'
 
-export const guardsFinancial = protectedProcedure
+export const guardsFinancial = publicProcedure
   .route({ method: "POST", path: "/marketing/guards-financial" })
   .input(
     z.object({
@@ -20,7 +20,7 @@ export const guardsFinancial = protectedProcedure
     return { success: true, ...result }
   })
 
-export const guardsReputation = protectedProcedure
+export const guardsReputation = publicProcedure
   .route({ method: "POST", path: "/marketing/guards-reputation" })
   .input(
     z.object({
@@ -33,7 +33,7 @@ export const guardsReputation = protectedProcedure
     return { success: true, ...result }
   })
 
-export const guardsLegal = protectedProcedure
+export const guardsLegal = publicProcedure
   .route({ method: "POST", path: "/marketing/guards-legal" })
   .input(
     z.object({
@@ -46,7 +46,7 @@ export const guardsLegal = protectedProcedure
     return { success: true, ...result }
   })
 
-export const guardsRunAll = protectedProcedure
+export const guardsRunAll = publicProcedure
   .route({ method: "POST", path: "/marketing/guards-run-all" })
   .input(
     z.object({

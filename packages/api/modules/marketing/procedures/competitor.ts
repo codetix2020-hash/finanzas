@@ -1,8 +1,8 @@
 import { z } from 'zod'
-import { protectedProcedure } from '../../../orpc/procedures'
+import { publicProcedure } from '../../../orpc/procedures'
 import { analyzeCompetitors, monitorCompetitorChanges } from '../services/competitor-analyzer'
 
-export const competitorAnalyze = protectedProcedure
+export const competitorAnalyze = publicProcedure
   .route({ method: "POST", path: "/marketing/competitor-analyze" })
   .input(z.object({
     organizationId: z.string(),
@@ -15,7 +15,7 @@ export const competitorAnalyze = protectedProcedure
     return { success: true, analysis: result }
   })
 
-export const competitorMonitor = protectedProcedure
+export const competitorMonitor = publicProcedure
   .route({ method: "POST", path: "/marketing/competitor-monitor" })
   .input(z.object({
     organizationId: z.string(),

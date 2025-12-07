@@ -1,4 +1,4 @@
-import { protectedProcedure } from '../../../orpc/procedures'
+import { publicProcedure } from '../../../orpc/procedures'
 import { z } from 'zod'
 import { 
   generateCampaignStrategy,
@@ -9,7 +9,7 @@ import {
   syncCampaignMetrics
 } from '../services/facebook-ads-service'
 
-export const facebookAdsGenerateStrategy = protectedProcedure
+export const facebookAdsGenerateStrategy = publicProcedure
   .route({ method: "POST", path: "/marketing/facebook-ads-generate-strategy" })
   .input(z.object({ productId: z.string() }))
   .handler(async ({ input }) => {
@@ -17,7 +17,7 @@ export const facebookAdsGenerateStrategy = protectedProcedure
     return { success: true, strategy: result }
   })
 
-export const facebookAdsCreateCampaign = protectedProcedure
+export const facebookAdsCreateCampaign = publicProcedure
   .route({ method: "POST", path: "/marketing/facebook-ads-create-campaign" })
   .input(
     z.object({
@@ -46,7 +46,7 @@ export const facebookAdsCreateCampaign = protectedProcedure
     return { success: true, campaign: result }
   })
 
-export const facebookAdsGenerateCreatives = protectedProcedure
+export const facebookAdsGenerateCreatives = publicProcedure
   .route({ method: "POST", path: "/marketing/facebook-ads-generate-creatives" })
   .input(
     z.object({
@@ -60,7 +60,7 @@ export const facebookAdsGenerateCreatives = protectedProcedure
     return { success: true, creatives: result }
   })
 
-export const facebookAdsOptimize = protectedProcedure
+export const facebookAdsOptimize = publicProcedure
   .route({ method: "POST", path: "/marketing/facebook-ads-optimize" })
   .input(z.object({ campaignId: z.string() }))
   .handler(async ({ input }) => {
@@ -68,7 +68,7 @@ export const facebookAdsOptimize = protectedProcedure
     return { success: true, optimization: result }
   })
 
-export const facebookAdsUpdateStatus = protectedProcedure
+export const facebookAdsUpdateStatus = publicProcedure
   .route({ method: "POST", path: "/marketing/facebook-ads-update-status" })
   .input(
     z.object({
@@ -81,7 +81,7 @@ export const facebookAdsUpdateStatus = protectedProcedure
     return { success: true, campaign: result }
   })
 
-export const facebookAdsSyncMetrics = protectedProcedure
+export const facebookAdsSyncMetrics = publicProcedure
   .route({ method: "POST", path: "/marketing/facebook-ads-sync-metrics" })
   .input(z.object({ campaignId: z.string() }))
   .handler(async ({ input }) => {

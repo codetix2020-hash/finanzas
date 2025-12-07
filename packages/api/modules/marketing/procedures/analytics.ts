@@ -1,4 +1,4 @@
-import { protectedProcedure } from '../../../orpc/procedures'
+import { publicProcedure } from '../../../orpc/procedures'
 import { z } from 'zod'
 import { 
   getDashboardMetrics,
@@ -8,7 +8,7 @@ import {
   generateWeeklyReport
 } from '../services/analytics-service'
 
-export const analyticsDashboard = protectedProcedure
+export const analyticsDashboard = publicProcedure
   .route({ method: "POST", path: "/marketing/analytics-dashboard" })
   .input(
     z.object({
@@ -108,7 +108,7 @@ export const analyticsDashboard = protectedProcedure
     }
   })
 
-export const analyticsContentPerformance = protectedProcedure
+export const analyticsContentPerformance = publicProcedure
   .route({ method: "POST", path: "/marketing/analytics-content-performance" })
   .input(
     z.object({
@@ -122,7 +122,7 @@ export const analyticsContentPerformance = protectedProcedure
     return { success: true, performance: result }
   })
 
-export const analyticsCampaignROI = protectedProcedure
+export const analyticsCampaignROI = publicProcedure
   .route({ method: "POST", path: "/marketing/analytics-campaign-roi" })
   .input(z.object({ organizationId: z.string() }))
   .handler(async ({ input }) => {
@@ -130,7 +130,7 @@ export const analyticsCampaignROI = protectedProcedure
     return { success: true, roi: result }
   })
 
-export const analyticsInsights = protectedProcedure
+export const analyticsInsights = publicProcedure
   .route({ method: "POST", path: "/marketing/analytics-insights" })
   .input(z.object({ organizationId: z.string() }))
   .handler(async ({ input }) => {
@@ -138,7 +138,7 @@ export const analyticsInsights = protectedProcedure
     return { success: true, insights: result }
   })
 
-export const analyticsWeeklyReport = protectedProcedure
+export const analyticsWeeklyReport = publicProcedure
   .route({ method: "POST", path: "/marketing/analytics-weekly-report" })
   .input(z.object({ organizationId: z.string() }))
   .handler(async ({ input }) => {

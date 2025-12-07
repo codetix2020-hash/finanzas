@@ -1,4 +1,4 @@
-import { protectedProcedure } from '../../../orpc/procedures'
+import { publicProcedure } from '../../../orpc/procedures'
 import { z } from 'zod'
 import { 
   createLead,
@@ -11,7 +11,7 @@ import {
   getLeadStats
 } from '../services/crm-service'
 
-export const crmCreateLead = protectedProcedure
+export const crmCreateLead = publicProcedure
   .route({ method: "POST", path: "/marketing/crm-create-lead" })
   .input(
     z.object({
@@ -32,7 +32,7 @@ export const crmCreateLead = protectedProcedure
     return { success: true, lead: result }
   })
 
-export const crmScoreLead = protectedProcedure
+export const crmScoreLead = publicProcedure
   .route({ method: "POST", path: "/marketing/crm-score-lead" })
   .input(z.object({ leadId: z.string() }))
   .handler(async ({ input }) => {
@@ -40,7 +40,7 @@ export const crmScoreLead = protectedProcedure
     return { success: true, ...result }
   })
 
-export const crmQualifyLead = protectedProcedure
+export const crmQualifyLead = publicProcedure
   .route({ method: "POST", path: "/marketing/crm-qualify-lead" })
   .input(z.object({ leadId: z.string() }))
   .handler(async ({ input }) => {
@@ -48,7 +48,7 @@ export const crmQualifyLead = protectedProcedure
     return { success: true, analysis: result }
   })
 
-export const crmGenerateFollowUp = protectedProcedure
+export const crmGenerateFollowUp = publicProcedure
   .route({ method: "POST", path: "/marketing/crm-generate-follow-up" })
   .input(z.object({ leadId: z.string() }))
   .handler(async ({ input }) => {
@@ -56,7 +56,7 @@ export const crmGenerateFollowUp = protectedProcedure
     return { success: true, followUp: result }
   })
 
-export const crmScoreAll = protectedProcedure
+export const crmScoreAll = publicProcedure
   .route({ method: "POST", path: "/marketing/crm-score-all" })
   .input(z.object({ organizationId: z.string() }))
   .handler(async ({ input }) => {
@@ -64,7 +64,7 @@ export const crmScoreAll = protectedProcedure
     return { success: true, ...result }
   })
 
-export const crmQualifyHot = protectedProcedure
+export const crmQualifyHot = publicProcedure
   .route({ method: "POST", path: "/marketing/crm-qualify-hot" })
   .input(z.object({ organizationId: z.string() }))
   .handler(async ({ input }) => {
@@ -72,7 +72,7 @@ export const crmQualifyHot = protectedProcedure
     return { success: true, ...result }
   })
 
-export const crmGetLeads = protectedProcedure
+export const crmGetLeads = publicProcedure
   .route({ method: "POST", path: "/marketing/crm-get-leads" })
   .input(
     z.object({
@@ -88,7 +88,7 @@ export const crmGetLeads = protectedProcedure
     return { success: true, leads: result }
   })
 
-export const crmGetStats = protectedProcedure
+export const crmGetStats = publicProcedure
   .route({ method: "POST", path: "/marketing/crm-get-stats" })
   .input(z.object({ organizationId: z.string().optional() }))
   .handler(async ({ input }) => {

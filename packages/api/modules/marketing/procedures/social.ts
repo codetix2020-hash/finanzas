@@ -1,8 +1,8 @@
-import { protectedProcedure } from "../../../orpc/procedures";
+import { publicProcedure } from "../../../orpc/procedures";
 import { z } from "zod";
 import { SocialAgent } from "../services/social-agent";
 
-export const socialGeneratePost = protectedProcedure
+export const socialGeneratePost = publicProcedure
   .route({ method: "POST", path: "/marketing/social-generate-post" })
   .input(z.object({
     platform: z.enum(['twitter', 'linkedin', 'facebook', 'instagram']),
@@ -33,7 +33,7 @@ export const socialGeneratePost = protectedProcedure
     }
   });
 
-export const socialAnalyzeSentiment = protectedProcedure
+export const socialAnalyzeSentiment = publicProcedure
   .route({ method: "POST", path: "/marketing/social-analyze-sentiment" })
   .input(z.object({
     comments: z.array(z.string()),
@@ -62,7 +62,7 @@ export const socialAnalyzeSentiment = protectedProcedure
     }
   });
 
-export const socialGetBestPostingTimes = protectedProcedure
+export const socialGetBestPostingTimes = publicProcedure
   .route({ method: "POST", path: "/marketing/social-get-best-posting-times" })
   .input(z.object({
     platform: z.string(),
