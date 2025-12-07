@@ -167,8 +167,7 @@ Genera un plan de marketing para las próximas 6 horas. Responde SOLO con JSON:
             type: item.type === 'blog' ? 'blog_post' : item.type === 'email' ? 'email' : 'social_post',
             topic: item.topic,
             tone: 'professional',
-            length: 'medium',
-            organizationId: product.organizationId
+            length: 'medium'
           })
           
           // Guardar contenido generado
