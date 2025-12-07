@@ -78,12 +78,17 @@ import {
   launchStatus
 } from './procedures/launch';
 import {
-  orchestrationRun,
-  orchestrationMaster,
-  orchestrationProduct,
-  orchestrationSaveMemory,
-  orchestrationSearchMemory
+	orchestrationRun,
+	orchestrationMaster,
+	orchestrationProduct,
+	orchestrationSaveMemory,
+	orchestrationSearchMemory
 } from './procedures/orchestration';
+import {
+	cronOrchestration,
+	cronJobProcessor,
+	cronProcessInbox,
+} from './procedures/cron';
 
 export const marketingRouter = publicProcedure.router({
 	guardsFinancial,
