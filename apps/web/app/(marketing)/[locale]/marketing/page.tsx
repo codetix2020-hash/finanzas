@@ -29,7 +29,7 @@ export default function MarketingOSDashboard() {
 
   const loadDashboardMetrics = async () => {
     try {
-      const response = await fetch('/api/rpc/marketing.analyticsDashboard', {
+      const response = await fetch('/api/marketing/analytics-dashboard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -69,7 +69,36 @@ export default function MarketingOSDashboard() {
     }
   }
 
-  // Función mejorada para llamar endpoints usando orpcClient
+  // Función helper para convertir formato RPC a HTTP directo
+  // marketing.contentGenerate → /api/marketing/content-generate
+  const convertToHttpPath = (rpcEndpoint: string): string => {
+    // Si ya es una ruta HTTP, devolverla tal cual
+    if (rpcEndpoint.startsWith('/api/')) {
+      return rpcEndpoint
+    }
+    
+    // Si ya es una ruta sin /api/, agregarlo
+    if (rpcEndpoint.startsWith('marketing/') || rpcEndpoint.startsWith('autosaas/')) {
+      return `/api/${rpcEndpoint}`
+    }
+    
+    // Convertir formato RPC: marketing.contentGenerate → /api/marketing/content-generate
+    const parts = rpcEndpoint.split('.')
+    if (parts.length >= 2) {
+      const [module, ...procedureParts] = parts
+      const procedure = procedureParts.join('.')
+      
+      // Convertir camelCase a kebab-case: contentGenerate → content-generate
+      const kebabProcedure = procedure.replace(/([A-Z])/g, '-$1').toLowerCase()
+      
+      return `/api/${module}/${kebabProcedure}`
+    }
+    
+    // Fallback: usar formato RPC original
+    return `/api/rpc/${rpcEndpoint}`
+  }
+
+  // Función mejorada para llamar endpoints usando rutas HTTP directas
   const callEndpoint = async (endpoint: string, params: any = {}) => {
     setLoading(endpoint)
     setResults(null)
@@ -82,32 +111,32 @@ export default function MarketingOSDashboard() {
         ...params
       }
 
+      // Convertir endpoint a ruta HTTP directa
+      const url = convertToHttpPath(endpoint)
+      
       // Log para debugging
-      console.log('Calling endpoint:', endpoint, 'with params:', body)
+      console.log('Calling endpoint:', endpoint, '→', url, 'with params:', body)
 
-      // Parsear el endpoint (ej: "marketing.visualGenerate" -> ["marketing", "visualGenerate"])
-      const parts = endpoint.split('.')
-      if (parts.length < 2) {
-        throw new Error(`Invalid endpoint format: ${endpoint}. Expected format: "module.procedure"`)
+      // Llamar usando fetch con ruta HTTP directa
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(body)
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        let errorData: any = {}
+        try {
+          errorData = errorText ? JSON.parse(errorText) : {}
+        } catch {
+          errorData = { message: errorText || `HTTP ${response.status}` }
+        }
+        throw new Error(errorData.message || errorData.error || `HTTP ${response.status}`)
       }
 
-      // Obtener el módulo y el procedure
-      const [module, ...procedureParts] = parts
-      const procedure = procedureParts.join('.')
-
-      // Acceder al cliente oRPC dinámicamente
-      const moduleClient = (orpcClient as any)[module]
-      if (!moduleClient) {
-        throw new Error(`Module "${module}" not found in orpcClient`)
-      }
-
-      const procedureFn = moduleClient[procedure]
-      if (!procedureFn || typeof procedureFn !== 'function') {
-        throw new Error(`Procedure "${procedure}" not found in module "${module}"`)
-      }
-
-      // Llamar al procedure
-      const result = await procedureFn(body)
+      const result = await response.json()
       
       console.log('Response received:', result)
       
