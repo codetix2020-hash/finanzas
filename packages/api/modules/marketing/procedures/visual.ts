@@ -18,7 +18,7 @@ export const visualGenerate = publicProcedure
     try {
       const result = await generateImage(input)
       return result
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating image:', error)
       // Devolver respuesta mock en caso de error
       return {
@@ -28,7 +28,7 @@ export const visualGenerate = publicProcedure
         dimensions: { width: 1024, height: 1024 },
         prompt: input.prompt,
         mock: true,
-        message: 'Service not configured, returning mock response'
+        message: error?.message || 'Service not configured, returning mock response'
       }
     }
   })
