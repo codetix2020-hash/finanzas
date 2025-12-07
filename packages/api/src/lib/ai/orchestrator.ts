@@ -1,8 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { prisma } from '@repo/database'
 import { searchMemory, saveMemory } from './embeddings'
-import { ContentAgent } from '../../modules/marketing/services/content-agent'
-import { generateImage } from '../../modules/marketing/services/visual-agent'
+import { ContentAgent } from '../../../modules/marketing/services/content-agent'
+import { generateImage } from '../../../modules/marketing/services/visual-agent'
 
 let anthropicClient: Anthropic | null = null
 
