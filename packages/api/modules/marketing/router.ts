@@ -86,87 +86,61 @@ import {
 } from './procedures/orchestration';
 
 export const marketingRouter = publicProcedure.router({
-  guardsFinancial,
-  guardsReputation,
-  guardsLegal,
-  guardsRunAll,
-  
-  // Facebook Ads
-  facebookAdsGenerateStrategy,
-  facebookAdsCreateCampaign,
-  facebookAdsGenerateCreatives,
-  facebookAdsOptimize,
-  facebookAdsUpdateStatus,
-  facebookAdsSyncMetrics,
-  
-  // Google Ads
-  googleAdsKeywordResearch,
-  googleAdsGenerateStrategy,
-  googleAdsCreateCampaign,
-  googleAdsGenerateRSA,
-  googleAdsOptimize,
-  googleAdsSyncMetrics,
-  
-  // CRM
-  crmCreateLead,
-  crmScoreLead,
-  crmQualifyLead,
-  crmGenerateFollowUp,
-  crmScoreAll,
-  crmQualifyHot,
-  crmGetLeads,
-  crmGetStats,
-  
-  // Analytics
-  analyticsDashboard,
-  analyticsContentPerformance,
-  analyticsCampaignROI,
-  analyticsInsights,
-  analyticsWeeklyReport,
-  
-  // Content
-  contentGenerate,
-  contentGenerateVariations,
-  contentOptimizeSEO,
-  
-  // Email
-  emailCreateCampaign,
-  emailSendCampaign,
-  emailSegmentAudience,
-  emailRunABTest,
-  
-  // Social
-  socialGeneratePost,
-  socialAnalyzeSentiment,
-  socialGetBestPostingTimes,
-  
-  // Strategy
-  strategyCoordinateAgents,
-  strategyOptimizeBudget,
-  strategyGenerateReport,
-  
-  // Visual
-  visualGenerate,
-  visualVariants,
-  visualOptimizePrompt,
-  
-  // Voice
-  voiceGenerate,
-  voiceScript,
-  voiceComplete,
-  
-  // Competitor
-  competitorAnalyze,
-  competitorMonitor,
-  
-  // Launch
-  launchOrchestrate,
-  launchStatus,
-  
-  // Orchestration
-  orchestrationRun,
-  orchestrationMaster,
-  orchestrationProduct,
-  orchestrationSaveMemory,
-  orchestrationSearchMemory,
+	guardsFinancial,
+	guardsReputation,
+	guardsLegal,
+	guardsRunAll,
+	facebookAdsGenerateStrategy,
+	facebookAdsCreateCampaign,
+	facebookAdsGenerateCreatives,
+	facebookAdsOptimize,
+	facebookAdsUpdateStatus,
+	facebookAdsSyncMetrics,
+	googleAdsKeywordResearch,
+	googleAdsGenerateStrategy,
+	googleAdsCreateCampaign,
+	googleAdsGenerateRSA,
+	googleAdsOptimize,
+	googleAdsSyncMetrics,
+	crmCreateLead,
+	crmScoreLead,
+	crmQualifyLead,
+	crmGenerateFollowUp,
+	crmScoreAll,
+	crmQualifyHot,
+	crmGetLeads,
+	crmGetStats,
+	analyticsDashboard,
+	analyticsContentPerformance,
+	analyticsCampaignROI,
+	analyticsInsights,
+	analyticsWeeklyReport,
+	contentGenerate,
+	contentGenerateVariations,
+	contentOptimizeSEO,
+	emailCreateCampaign,
+	emailSendCampaign,
+	emailSegmentAudience,
+	emailRunABTest,
+	socialGeneratePost,
+	socialAnalyzeSentiment,
+	socialGetBestPostingTimes,
+	strategyCoordinateAgents,
+	strategyOptimizeBudget,
+	strategyGenerateReport,
+	visualGenerate,
+	visualVariants,
+	visualOptimizePrompt,
+	voiceGenerate,
+	voiceScript,
+	voiceComplete,
+	competitorAnalyze,
+	competitorMonitor,
+	launchOrchestrate,
+	launchStatus,
+	orchestrationRun,
+	orchestrationMaster,
+	orchestrationProduct,
+	orchestrationSaveMemory,
+	orchestrationSearchMemory,
 });
