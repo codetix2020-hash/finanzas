@@ -14,25 +14,41 @@ export const webhookProcedure = publicProcedure
   }))
   .output(z.any())
   .handler(async ({ input }) => {
-    // TODO: Validar API key
+    console.log('📥 Webhook Procedure: Handler iniciado')
+    console.log('📥 Input recibido:', JSON.stringify(input, null, 2))
     
-    // Guardar en inbox
-    await prisma.autoSaasInbox.create({
-      data: {
-        organizationId: input.organizationId,
-        messageType: input.messageType,
-        payload: input.payload,
-        processed: false
+    try {
+      // TODO: Validar API key
+      console.log('📥 Guardando mensaje en inbox...')
+      
+      // Guardar en inbox
+      const inboxMessage = await prisma.autoSaasInbox.create({
+        data: {
+          organizationId: input.organizationId,
+          messageType: input.messageType,
+          payload: input.payload,
+          processed: false
+        }
+      })
+      
+      console.log('✅ Mensaje guardado en inbox:', inboxMessage.id)
+
+      // Procesar inmediatamente si es nuevo producto
+      if (input.messageType === 'new_product') {
+        console.log('📥 Procesando mensaje de tipo new_product...')
+        const result = await handleNewProduct(input.organizationId, input.payload)
+        console.log('✅ Webhook Procedure: Procesamiento completado')
+        return { processed: true, ...result, success: true }
       }
-    })
 
-    // Procesar inmediatamente si es nuevo producto
-    if (input.messageType === 'new_product') {
-      const result = await handleNewProduct(input.organizationId, input.payload)
-      return { processed: true, ...result, success: true }
+      console.log('✅ Webhook Procedure: Mensaje encolado')
+      return { success: true, queued: true }
+    } catch (error) {
+      console.error('🔴 Webhook Procedure ERROR:', error)
+      console.error('🔴 Error message:', error instanceof Error ? error.message : String(error))
+      console.error('🔴 Error stack:', error instanceof Error ? error.stack : 'No stack')
+      throw error
     }
-
-    return { success: true, queued: true }
   })
 
 export const sendFeatureRequestProcedure = protectedProcedure

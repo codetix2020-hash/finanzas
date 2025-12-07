@@ -50,23 +50,46 @@ interface GenerateImageParams {
 
 // Generar imagen con Flux
 export async function generateImage(params: GenerateImageParams) {
-  console.log('🎨 Generando imagen de marketing...')
+  console.log('🎨 VisualAgent: Iniciando generación de imagen...')
+  console.log('🎨 Params:', JSON.stringify(params, null, 2))
+
+  const replicateToken = process.env.REPLICATE_API_TOKEN
+  console.log('🎨 REPLICATE_API_TOKEN exists:', !!replicateToken)
+  console.log('🎨 REPLICATE_API_TOKEN prefix:', replicateToken ? replicateToken.substring(0, 10) + '...' : 'NOT SET')
 
   const replicate = getReplicateClient()
   if (!replicate) {
+    console.error('🔴 REPLICATE_API_TOKEN not configured')
     throw new Error('REPLICATE_API_TOKEN not configured')
   }
+
+  console.log('🎨 Replicate client ready')
 
   const { organizationId, productId, prompt, purpose, aspectRatio = '1:1' } = params
   const dimensions = ASPECT_RATIOS[aspectRatio]
   const stylePreset = STYLE_PRESETS[purpose]
 
+  console.log('🎨 Dimensions:', dimensions)
+  console.log('🎨 Style preset:', stylePreset)
+
   // Mejorar prompt con estilo de marketing
   const enhancedPrompt = `${prompt}. Style: ${stylePreset}. ${params.style || ''} High quality, professional marketing image.`
 
-  console.log(`  📝 Prompt: ${enhancedPrompt.substring(0, 100)}...`)
+  console.log('🎨 Enhanced prompt:', enhancedPrompt)
+  console.log('🎨 Prompt length:', enhancedPrompt.length)
 
   try {
+    console.log('🎨 Calling Replicate API...')
+    console.log('🎨 Model: black-forest-labs/flux-schnell')
+    console.log('🎨 Input params:', {
+      prompt: enhancedPrompt.substring(0, 100) + '...',
+      width: dimensions.width,
+      height: dimensions.height,
+      num_outputs: 1,
+      output_format: 'webp',
+      output_quality: 90
+    })
+    
     const output = await replicate.run(
       'black-forest-labs/flux-schnell',
       {
@@ -81,8 +104,13 @@ export async function generateImage(params: GenerateImageParams) {
       }
     ) as string[]
 
+    console.log('🎨 Replicate API response received')
+    console.log('🎨 Output type:', typeof output)
+    console.log('🎨 Output is array:', Array.isArray(output))
+    console.log('🎨 Output length:', Array.isArray(output) ? output.length : 'N/A')
+
     const imageUrl = output[0]
-    console.log(`  ✅ Imagen generada: ${imageUrl}`)
+    console.log('✅ Imagen generada:', imageUrl)
 
     // Intentar guardar en MarketingContent (opcional, no crítico)
     let contentId = `generated_${Date.now()}`
@@ -123,7 +151,11 @@ export async function generateImage(params: GenerateImageParams) {
     }
 
   } catch (error) {
-    console.error('❌ Error generando imagen:', error)
+    console.error('🔴 VisualAgent ERROR:', error)
+    console.error('🔴 Error message:', error instanceof Error ? error.message : String(error))
+    console.error('🔴 Error stack:', error instanceof Error ? error.stack : 'No stack')
+    console.error('🔴 Error name:', error instanceof Error ? error.name : 'Unknown')
+    console.error('🔴 Returning mock response due to error')
     // Devolver respuesta mock en lugar de lanzar error
     return {
       success: true,
@@ -132,7 +164,8 @@ export async function generateImage(params: GenerateImageParams) {
       dimensions,
       prompt: enhancedPrompt,
       mock: true,
-      message: 'Service error, returning mock response'
+      message: 'Service error, returning mock response',
+      error: error instanceof Error ? error.message : String(error)
     }
   }
 }

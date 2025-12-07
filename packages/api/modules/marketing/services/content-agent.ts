@@ -50,28 +50,61 @@ export class ContentAgent {
    * Generar contenido con IA
    */
   async generateContent(request: ContentRequest): Promise<GeneratedContent> {
-    const prompt = this.buildPrompt(request);
-
+    console.log('🔵 ContentAgent: Iniciando generación de contenido');
+    console.log('🔵 Params:', JSON.stringify(request, null, 2));
+    
     try {
+      const apiKey = process.env.ANTHROPIC_API_KEY;
+      console.log('🔵 API Key exists:', !!apiKey);
+      console.log('🔵 API Key prefix:', apiKey ? apiKey.substring(0, 20) + '...' : 'NOT SET');
+      
+      if (!apiKey) {
+        console.error('🔴 ANTHROPIC_API_KEY not configured');
+        throw new Error('ANTHROPIC_API_KEY not configured');
+      }
+      
+      if (!this.anthropic) {
+        console.error('🔴 Anthropic client not initialized');
+        throw new Error('Anthropic client not initialized');
+      }
+      
+      console.log('🔵 Anthropic client ready');
+      
+      const prompt = this.buildPrompt(request);
+      console.log('🔵 Prompt built, length:', prompt.length);
+      console.log('🔵 Prompt preview:', prompt.substring(0, 200) + '...');
+      
+      const maxTokens = request.length === 'long' ? 4000 : request.length === 'medium' ? 2000 : 1000;
+      console.log('🔵 Max tokens:', maxTokens);
+      
+      console.log('🔵 Calling Anthropic API...');
       const message = await this.anthropic.messages.create({
         model: "claude-sonnet-4-20250514",
-        max_tokens: request.length === 'long' ? 4000 : request.length === 'medium' ? 2000 : 1000,
+        max_tokens: maxTokens,
         messages: [{ role: "user", content: prompt }],
       });
-
+      
+      console.log('🔵 Anthropic API response received');
+      console.log('🔵 Response content type:', message.content[0]?.type);
+      
       const content = message.content[0];
       if (content.type !== "text") {
+        console.error('🔴 Unexpected response type:', content.type);
         throw new Error("Unexpected response type");
       }
 
       const generatedText = content.text;
+      console.log('🔵 Generated text length:', generatedText.length);
+      console.log('🔵 Generated text preview:', generatedText.substring(0, 200) + '...');
       
       // Calcular metadata
       const wordCount = generatedText.split(/\s+/).length;
       const readingTime = Math.ceil(wordCount / 200); // 200 palabras por minuto
       const seoScore = this.calculateSEOScore(generatedText, request.keywords || []);
+      
+      console.log('🔵 Metadata calculated:', { wordCount, readingTime, seoScore });
 
-      return {
+      const result = {
         title: request.type === 'blog_post' ? this.extractTitle(generatedText) : undefined,
         content: generatedText,
         metadata: {
@@ -81,8 +114,14 @@ export class ContentAgent {
           keywords: request.keywords || [],
         },
       };
+      
+      console.log('✅ ContentAgent: Contenido generado exitosamente');
+      return result;
     } catch (error) {
-      console.error("Error generating content:", error);
+      console.error('🔴 ContentAgent ERROR:', error);
+      console.error('🔴 Error message:', error instanceof Error ? error.message : String(error));
+      console.error('🔴 Error stack:', error instanceof Error ? error.stack : 'No stack');
+      console.error('🔴 Error name:', error instanceof Error ? error.name : 'Unknown');
       // Lanzar error en lugar de devolver mock - el handler lo manejará
       throw new Error(`Failed to generate content: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }

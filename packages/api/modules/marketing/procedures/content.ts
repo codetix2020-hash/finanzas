@@ -15,21 +15,38 @@ export const contentGenerate = publicProcedure
   .route({ method: "POST", path: "/marketing/content-generate" })
   .input(generateContentSchema)
   .handler(async ({ input }) => {
+    console.log('📝 ContentGenerate Procedure: Handler iniciado');
+    console.log('📝 Input recibido:', JSON.stringify(input, null, 2));
+    
     try {
+      console.log('📝 Creando ContentAgent...');
       const agent = new ContentAgent();
-      const content = await agent.generateContent(input);
+      console.log('📝 ContentAgent creado');
       
-      return {
+      console.log('📝 Llamando agent.generateContent...');
+      const content = await agent.generateContent(input);
+      console.log('📝 Contenido generado exitosamente');
+      console.log('📝 Content length:', content.content.length);
+      
+      const result = {
         success: true,
         content,
         generatedAt: new Date().toISOString(),
       };
+      
+      console.log('✅ ContentGenerate Procedure: Éxito');
+      return result;
     } catch (error: any) {
-      console.error('Error generating content:', error);
+      console.error('🔴 ContentGenerate Procedure ERROR:', error);
+      console.error('🔴 Error message:', error?.message || 'Unknown error');
+      console.error('🔴 Error stack:', error?.stack || 'No stack');
+      console.error('🔴 Error name:', error?.name || 'Unknown');
+      
       const errorMessage = error?.message || 'Unknown error';
       
       // Solo devolver mock si es un error de configuración
       if (errorMessage.includes('not configured') || errorMessage.includes('ANTHROPIC_API_KEY')) {
+        console.log('⚠️ Devolviendo mock response por configuración faltante');
         return {
           success: false,
           error: errorMessage,
@@ -41,6 +58,7 @@ export const contentGenerate = publicProcedure
       }
       
       // Para otros errores, devolver el error real
+      console.error('🔴 Lanzando error al handler superior');
       throw error;
     }
   });

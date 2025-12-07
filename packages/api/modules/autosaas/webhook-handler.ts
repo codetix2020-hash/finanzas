@@ -16,9 +16,12 @@ interface NewProductPayload {
 
 // Manejar nuevo producto desde Auto-SaaS Builder
 export async function handleNewProduct(organizationId: string, payload: NewProductPayload) {
-  console.log('🆕 Nuevo producto recibido de Auto-SaaS:', payload.name)
+  console.log('🆕 WebhookHandler: handleNewProduct iniciado')
+  console.log('🆕 OrganizationId:', organizationId)
+  console.log('🆕 Payload:', JSON.stringify(payload, null, 2))
 
   try {
+    console.log('🆕 Paso 1: Crear o actualizar producto en BD...')
     // 1. Crear o actualizar producto en BD
     const product = await prisma.saasProduct.upsert({
       where: { id: payload.productId },
@@ -43,7 +46,9 @@ export async function handleNewProduct(organizationId: string, payload: NewProdu
     })
 
     console.log('  ✅ Producto guardado:', product.id)
+    console.log('  ✅ Producto data:', JSON.stringify(product, null, 2))
 
+    console.log('🆕 Paso 2: Poblar memoria con información del producto...')
     // 2. Poblar memoria con información del producto
     await saveMemory(
       organizationId,
@@ -55,6 +60,7 @@ export async function handleNewProduct(organizationId: string, payload: NewProdu
 
     console.log('  ✅ Memoria poblada')
 
+    console.log('🆕 Paso 3: Ejecutar análisis competitivo inicial...')
     // 3. Ejecutar análisis competitivo inicial
     try {
       await analyzeCompetitors({
@@ -67,13 +73,17 @@ export async function handleNewProduct(organizationId: string, payload: NewProdu
     }
 
     // 4. AUTOMÁTICAMENTE iniciar orquestación de marketing
-    console.log('  🤖 Iniciando orquestación automática de marketing...')
+    console.log('🆕 Paso 4: Iniciando orquestación automática de marketing...')
+    console.log('🆕 Product ID para orquestación:', product.id)
     let orchestrationResult = null
     try {
       orchestrationResult = await orchestrateProduct(product.id)
       console.log('  ✅ Orquestación completada')
+      console.log('  ✅ Orquestación result:', JSON.stringify(orchestrationResult, null, 2))
     } catch (error) {
-      console.error('  ⚠️ Error en orquestación:', error)
+      console.error('  🔴 Error en orquestación:', error)
+      console.error('  🔴 Error message:', error instanceof Error ? error.message : String(error))
+      console.error('  🔴 Error stack:', error instanceof Error ? error.stack : 'No stack')
     }
 
     // 5. Si hay fecha de lanzamiento, programar
@@ -137,7 +147,13 @@ export async function handleNewProduct(organizationId: string, payload: NewProdu
     }
 
   } catch (error) {
-    console.error('❌ Error procesando producto:', error)
+    console.error('🔴 WebhookHandler ERROR: Error procesando producto')
+    console.error('🔴 Error:', error)
+    console.error('🔴 Error message:', error instanceof Error ? error.message : String(error))
+    console.error('🔴 Error stack:', error instanceof Error ? error.stack : 'No stack')
+    console.error('🔴 Error name:', error instanceof Error ? error.name : 'Unknown')
+    console.error('🔴 OrganizationId:', organizationId)
+    console.error('🔴 Payload:', JSON.stringify(payload, null, 2))
     throw error
   }
 }
