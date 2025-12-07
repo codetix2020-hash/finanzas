@@ -5,7 +5,7 @@ import { prisma } from '@repo/database'
 
 // Webhook para recibir nuevos productos (puede ser público con API key)
 export const webhookProcedure = publicProcedure
-  .route({ method: 'POST', path: '/webhook' })
+  .route({ method: 'POST', path: '/autosaas/webhook' })
   .input(z.object({
     organizationId: z.string(),
     apiKey: z.string(),
