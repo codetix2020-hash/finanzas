@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { db } from "@repo/database";
 
 export interface FinanceAnalysis {
   summary: string;
@@ -184,6 +185,208 @@ Proporciona análisis en formato JSON.`;
         },
       };
     }
+  }
+
+  /**
+   * Analizar métricas históricas con IA
+   */
+  async analyzeMetrics(organizationId: string) {
+    // Obtener métricas históricas
+    const metrics = await db.financialMetric.findMany({
+      where: { organizationId },
+      orderBy: { period: "desc" },
+      take: 12,
+    });
+    
+    if (metrics.length === 0) {
+      return {
+        insights: ["No hay suficientes datos para análisis"],
+        recommendations: [],
+        risks: [],
+      };
+    }
+    
+    const prompt = `Analiza estas métricas financieras de una empresa SaaS:
+
+${JSON.stringify(metrics, null, 2)}
+
+Proporciona:
+
+1. 3-5 insights clave
+2. 3-5 recomendaciones accionables
+3. Riesgos identificados
+
+Formato JSON:
+
+{
+  "insights": ["..."],
+  "recommendations": ["..."],
+  "risks": ["..."]
+}`;
+
+    try {
+      const message = await this.anthropic.messages.create({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 2000,
+        messages: [{ role: "user", content: prompt }],
+      });
+      
+      const content = message.content[0];
+      if (content.type === "text") {
+        try {
+          const responseText = content.text.trim();
+          const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            return JSON.parse(jsonMatch[0]);
+          }
+        } catch {
+          // Fallback
+        }
+      }
+    } catch (error) {
+      console.error("Error analyzing metrics:", error);
+    }
+    
+    return { insights: [], recommendations: [], risks: [] };
+  }
+
+  /**
+   * Predecir MRR con IA
+   */
+  async predictMRR(organizationId: string, monthsAhead: number = 6) {
+    const metrics = await db.financialMetric.findMany({
+      where: { organizationId },
+      orderBy: { period: "desc" },
+      take: 12,
+    });
+    
+    if (metrics.length < 3) {
+      return { predictions: [], confidence: 0 };
+    }
+    
+    const prompt = `Predice el MRR de los próximos ${monthsAhead} meses basándote en estos datos históricos:
+
+${JSON.stringify(metrics.map(m => ({ period: m.period, mrr: m.mrr })), null, 2)}
+
+Proporciona predicción con 3 escenarios (best, expected, worst) en formato JSON:
+
+{
+  "predictions": [
+    { "period": "2025-01", "expected": 15000, "best": 18000, "worst": 13000, "confidence": 0.8 },
+    ...
+  ]
+}`;
+
+    try {
+      const message = await this.anthropic.messages.create({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 2000,
+        messages: [{ role: "user", content: prompt }],
+      });
+      
+      const content = message.content[0];
+      if (content.type === "text") {
+        try {
+          const responseText = content.text.trim();
+          const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            const result = JSON.parse(jsonMatch[0]);
+            
+            // Guardar predicciones en DB
+            for (const pred of result.predictions || []) {
+              await db.prediction.create({
+                data: {
+                  organizationId,
+                  metric: "mrr",
+                  currentValue: metrics[0]?.mrr || 0,
+                  predictedValue: pred.expected,
+                  period: pred.period,
+                  confidence: pred.confidence || 0.7,
+                  bestCase: pred.best,
+                  worstCase: pred.worst,
+                },
+              });
+            }
+            
+            return result;
+          }
+        } catch (error) {
+          console.error("Error parsing predictions:", error);
+        }
+      }
+    } catch (error) {
+      console.error("Error predicting MRR:", error);
+    }
+    
+    return { predictions: [], confidence: 0 };
+  }
+
+  /**
+   * Detectar anomalías con IA
+   */
+  async detectAnomalies(organizationId: string) {
+    const metrics = await db.financialMetric.findMany({
+      where: { organizationId },
+      orderBy: { period: "desc" },
+      take: 6,
+    });
+    
+    if (metrics.length < 3) {
+      return [];
+    }
+    
+    const anomalies = [];
+    const current = metrics[0];
+    const previous = metrics.slice(1);
+    
+    // Calcular promedio y desviación estándar
+    const avgMRR = previous.reduce((sum, m) => sum + m.mrr, 0) / previous.length;
+    const stdDevMRR = Math.sqrt(
+      previous.reduce((sum, m) => sum + Math.pow(m.mrr - avgMRR, 2), 0) / previous.length
+    );
+    
+    // Detectar anomalías (más de 2 desviaciones estándar)
+    const mrrDeviation = Math.abs(current.mrr - avgMRR);
+    if (mrrDeviation > 2 * stdDevMRR) {
+      const severity = mrrDeviation > 3 * stdDevMRR ? "critical" : "high";
+      
+      // Usar IA para analizar causa
+      const prompt = `MRR actual: ${current.mrr}, Promedio histórico: ${avgMRR}. 
+Desviación: ${((mrrDeviation / avgMRR) * 100).toFixed(1)}%.
+Identifica causa probable y recomienda acción en 1-2 frases cortas.`;
+      
+      try {
+        const message = await this.anthropic.messages.create({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 200,
+          messages: [{ role: "user", content: prompt }],
+        });
+        
+        const content = message.content[0];
+        const analysis = content.type === "text" ? content.text : "";
+        const parts = analysis.split(".");
+        
+        const anomaly = await db.anomaly.create({
+          data: {
+            organizationId,
+            type: current.mrr < avgMRR ? "mrr_drop" : "mrr_spike",
+            severity,
+            metric: "mrr",
+            expectedValue: avgMRR,
+            actualValue: current.mrr,
+            deviation: (mrrDeviation / avgMRR) * 100,
+            cause: parts[0] || null,
+            recommendation: parts[1] || null,
+          },
+        });
+        
+        anomalies.push(anomaly);
+      } catch (error) {
+        console.error("Error detecting anomalies:", error);
+      }
+    }
+    
+    return anomalies;
   }
 }
 

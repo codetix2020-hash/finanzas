@@ -3,7 +3,9 @@
 	"compilerOptions": {
 		"plugins": [{ "name": "next" }],
 		"skipLibCheck": true,
-		"strict": false,
+		"strict": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitReturns": true,
 		"paths": {
 			"@analytics": ["./modules/analytics"],
 			"@marketing/*": ["./modules/marketing/*"],
