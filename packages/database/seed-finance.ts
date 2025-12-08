@@ -110,7 +110,7 @@ async function seedFinanceData() {
   // Calcular métricas para cada mes
   console.log('📈 Calculating metrics...');
 
-  const { MetricsCalculator } = await import('../../api/modules/finance/services/metrics-calculator');
+  const { MetricsCalculator } = await import('../api/modules/finance/services/metrics-calculator');
   const calculator = new MetricsCalculator();
   
   await calculator.saveMetrics(org.id);
