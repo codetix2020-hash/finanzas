@@ -12,9 +12,10 @@ async function seedFinanceData() {
     return;
   }
 
-  console.log(`✅ Using organization: ${org.name}`);
+  console.log(`✅ Using organization: ${org.name} (${org.id})`);
 
-  // Limpiar datos existentes de finanzas (opcional)
+  // Limpiar datos existentes de finanzas
+  console.log('🧹 Cleaning existing finance data...');
   await db.transaction.deleteMany({ where: { organizationId: org.id } });
   await db.financialMetric.deleteMany({ where: { organizationId: org.id } });
   await db.prediction.deleteMany({ where: { organizationId: org.id } });
@@ -36,6 +37,7 @@ async function seedFinanceData() {
   ];
 
   console.log('📊 Creating transactions...');
+  let transactionCount = 0;
 
   for (let monthsAgo = 11; monthsAgo >= 0; monthsAgo--) {
     const date = subMonths(new Date(), monthsAgo);
@@ -62,6 +64,7 @@ async function seedFinanceData() {
             source: 'stripe',
           },
         });
+        transactionCount++;
       }
     }
 
@@ -86,6 +89,7 @@ async function seedFinanceData() {
           source: 'manual',
         },
       });
+      transactionCount++;
     }
 
     // Algunos one-time payments (aleatorios)
@@ -102,20 +106,24 @@ async function seedFinanceData() {
           source: 'stripe',
         },
       });
+      transactionCount++;
     }
   }
 
-  console.log('✅ Transactions created');
+  console.log(`✅ ${transactionCount} transactions created`);
 
   // Calcular métricas para cada mes
   console.log('📈 Calculating metrics...');
-
+  
   const { MetricsCalculator } = await import('../api/modules/finance/services/metrics-calculator');
   const calculator = new MetricsCalculator();
   
-  await calculator.saveMetrics(org.id);
-
-  console.log('✅ Metrics calculated');
+  try {
+    await calculator.saveMetrics(org.id);
+    console.log('✅ Metrics calculated and saved');
+  } catch (error) {
+    console.error('❌ Error calculating metrics:', error);
+  }
 
   // Crear algunas acciones de ejemplo
   console.log('🤖 Creating sample actions...');
@@ -154,13 +162,17 @@ async function seedFinanceData() {
     ],
   });
 
-  console.log('✅ Sample actions created');
+  console.log('✅ 3 sample actions created');
 
-  console.log('🎉 Finance seed data completed!');
+  console.log('\n🎉 Finance seed data completed!');
   console.log(`   Organization: ${org.name}`);
-  console.log(`   Transactions: ${customers.length * 12 + 48} created`);
-  console.log(`   Metrics: Calculated for last 12 months`);
+  console.log(`   Organization ID: ${org.id}`);
+  console.log(`   Transactions: ${transactionCount} created`);
+  console.log(`   Customers: ${customers.length} mock customers`);
+  console.log(`   Period: Last 12 months`);
+  console.log(`   Metrics: Calculated for current period`);
   console.log(`   Actions: 3 sample actions`);
+  console.log(`\n✅ Ready to test at: /app/finance`);
 }
 
 seedFinanceData()
