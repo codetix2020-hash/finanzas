@@ -56,6 +56,11 @@ import {
   socialGetBestPostingTimes
 } from './procedures/social';
 import {
+  socialGetAccounts,
+  socialPublishPost,
+  socialGenerateAndPublish
+} from './procedures/social-publish';
+import {
   strategyCoordinateAgents,
   strategyOptimizeBudget,
   strategyGenerateReport
@@ -141,6 +146,9 @@ export const marketingRouter = publicProcedure.router({
 	socialGeneratePost,
 	socialAnalyzeSentiment,
 	socialGetBestPostingTimes,
+	socialGetAccounts,
+	socialPublishPost,
+	socialGenerateAndPublish,
 	strategyCoordinateAgents,
 	strategyOptimizeBudget,
 	strategyGenerateReport,
