@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { generateWeeklyContent, generateSinglePost, adaptToTikTok } from "./content-generator-v2";
 
 const PUBLER_API_KEY = process.env.PUBLER_API_KEY;
 const PUBLER_BASE_URL = "https://app.publer.io/api/v1";
@@ -197,5 +198,119 @@ Responde SOLO con el texto del post, nada más.`
   });
 
   return { content, results };
+}
+
+// Generar contenido semanal y programar
+export async function generateWeeklyAndSchedule(params: {
+  product: {
+    name: string;
+    description: string;
+    targetAudience: string;
+    usp: string;
+    competitors?: string[];
+  };
+  nicho?: string;
+  startDate?: Date;
+}): Promise<{
+  success: boolean;
+  posts: any[];
+  tokensUsed: number;
+  scheduled: number;
+}> {
+  console.log("📅 Generando y programando contenido semanal...");
+
+  // Generar 7 posts
+  const batch = await generateWeeklyContent(
+    params.product,
+    params.nicho || "peluqueria"
+  );
+
+  const results: any[] = [];
+  const startDate = params.startDate || new Date();
+
+  for (let i = 0; i < batch.posts.length; i++) {
+    const post = batch.posts[i];
+    const tiktokPost = adaptToTikTok(post);
+    
+    // Calcular fecha de publicación (cada día a las 10:00)
+    const publishDate = new Date(startDate);
+    publishDate.setDate(publishDate.getDate() + i);
+    publishDate.setHours(10, 0, 0, 0);
+
+    // Publicar en Instagram
+    const igResult = await publishToSocial({
+      content: post.content,
+      platforms: ["instagram"],
+      scheduleAt: publishDate
+    });
+
+    // Publicar en TikTok (1 hora después)
+    const tiktokDate = new Date(publishDate);
+    tiktokDate.setHours(11, 0, 0, 0);
+    
+    const tkResult = await publishToSocial({
+      content: tiktokPost.content,
+      platforms: ["tiktok"],
+      scheduleAt: tiktokDate
+    });
+
+    results.push({
+      day: i + 1,
+      date: publishDate.toISOString().split("T")[0],
+      instagram: igResult,
+      tiktok: tkResult,
+      content: post.content.substring(0, 100) + "..."
+    });
+  }
+
+  const scheduled = results.filter(r => 
+    r.instagram[0]?.success || r.tiktok[0]?.success
+  ).length;
+
+  console.log(`✅ Programados ${scheduled}/7 días de contenido`);
+
+  return {
+    success: scheduled > 0,
+    posts: results,
+    tokensUsed: batch.tokensUsed,
+    scheduled
+  };
+}
+
+// Generar y publicar un post único optimizado
+export async function generateAndPublishOptimized(params: {
+  product: {
+    name: string;
+    description: string;
+    targetAudience: string;
+    usp: string;
+  };
+  tipo?: string;
+  platforms: string[];
+  immediate?: boolean;
+}): Promise<{
+  success: boolean;
+  content: string;
+  results: any[];
+}> {
+  console.log("🚀 Generando y publicando post optimizado...");
+
+  const post = await generateSinglePost(
+    params.product,
+    params.tipo || "educativo",
+    "instagram"
+  );
+
+  const results = await publishToSocial({
+    content: post.content,
+    platforms: params.platforms,
+    scheduleAt: params.immediate ? undefined : undefined
+  });
+
+  return {
+    success: results.every(r => r.success),
+    content: post.content,
+    results
+  };
 }
 

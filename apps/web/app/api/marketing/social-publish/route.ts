@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { publishToSocial, generateAndPublish, getPublerAccounts } from "@repo/api/modules/marketing/services/publer-service";
+import { 
+  publishToSocial, 
+  generateAndPublish, 
+  getPublerAccounts,
+  generateWeeklyAndSchedule,
+  generateAndPublishOptimized
+} from "@repo/api/modules/marketing/services/publer-service";
+import { generateWeeklyContent } from "@repo/api/modules/marketing/services/content-generator-v2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -47,8 +54,58 @@ export async function POST(request: NextRequest) {
         result = { success: true, ...genResult };
         break;
 
+      case "generate-weekly":
+        const weeklyResult = await generateWeeklyAndSchedule({
+          product: {
+            name: params.productName,
+            description: params.productDescription,
+            targetAudience: params.targetAudience,
+            usp: params.usp,
+            competitors: params.competitors
+          },
+          nicho: params.nicho || "peluqueria",
+          startDate: params.startDate ? new Date(params.startDate) : undefined
+        });
+        result = { success: true, ...weeklyResult };
+        break;
+
+      case "generate-single":
+        const singleResult = await generateAndPublishOptimized({
+          product: {
+            name: params.productName,
+            description: params.productDescription,
+            targetAudience: params.targetAudience,
+            usp: params.usp
+          },
+          tipo: params.tipo,
+          platforms: params.platforms || ["instagram", "tiktok"],
+          immediate: params.immediate
+        });
+        result = { success: true, ...singleResult };
+        break;
+
+      case "preview":
+        // Solo genera sin publicar, para revisar
+        const previewBatch = await generateWeeklyContent(
+          {
+            name: params.productName,
+            description: params.productDescription,
+            targetAudience: params.targetAudience,
+            usp: params.usp,
+            competitors: params.competitors
+          },
+          params.nicho || "peluqueria"
+        );
+        result = { 
+          success: true, 
+          posts: previewBatch.posts,
+          tokensUsed: previewBatch.tokensUsed,
+          message: "Preview generado. Usa 'generate-weekly' para programar."
+        };
+        break;
+
       default:
-        result = { success: false, error: "Invalid action. Use: get-accounts, publish, generate-and-publish" };
+        result = { success: false, error: "Invalid action. Use: get-accounts, publish, generate-and-publish, generate-weekly, generate-single, preview" };
     }
 
     return NextResponse.json(result, { headers: corsHeaders });
