@@ -1,130 +1,229 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateWeeklyContent, adaptToTikTok } from "@repo/api/modules/marketing/services/content-generator-v2";
-import { publishToSocial } from "@repo/api/modules/marketing/services/publer-service";
-import { prisma } from "@repo/database";
+import { db } from "@repo/database";
+import Anthropic from "@anthropic-ai/sdk";
 
-// Este endpoint se llama cada X horas via cron (Railway, Vercel, etc.)
+// Configuración
+const ORGANIZATION_ID = "8uu4-W6mScG8IQtY";
+
+// Tipos de contenido que rota
+const CONTENT_TYPES = [
+  "educativo",
+  "problema_solucion", 
+  "testimonio",
+  "oferta",
+  "carrusel_hook",
+  "urgencia"
+];
+
+// Información de ReservasPro
+const RESERVAS_PRO = {
+  name: "ReservasPro",
+  description: "Sistema de reservas premium para barberías con gamificación. Clientes ganan XP por cada corte, suben de nivel (Bronce→Plata→Oro→Platino→VIP) y desbloquean recompensas.",
+  targetAudience: "Dueños de barberías modernas en España, 1-5 barberos, clientela joven 18-40",
+  usp: "Sistema XP único que convierte clientes en fans. Lo que Booksy NO tiene.",
+  pricing: {
+    oferta: "30 días GRATIS sin tarjeta",
+    primeros10: "€19,99/mes DE POR VIDA (50% descuento)",
+    normal: "€39,99/mes"
+  },
+  oferta: {
+    vigente: true,
+    mensaje: "🔥 OFERTA DE LANZAMIENTO: 30 días GRATIS + Primeras 10 barberías: 50% de por vida",
+    urgencia: "Solo quedan X plazas de las 10"
+  }
+};
+
+// Hashtags
+const HASHTAGS = {
+  principales: ["#barberia", "#barbershop", "#reservasonline", "#barberiamoderna"],
+  oferta: ["#oferta", "#lanzamiento", "#gratis", "#descuento"],
+  engagement: ["#barberoespañol", "#cortedepelo", "#barberlife", "#emprendedor"]
+};
+
 export async function GET(request: NextRequest) {
-  console.log("⏰ Cron de publicación social ejecutándose...");
-
+  console.log("⏰ CRON: Generando contenido para redes sociales...");
+  
   try {
-    // Verificar autorización (opcional, para seguridad)
+    // Verificar autorización
     const authHeader = request.headers.get("authorization");
     const cronSecret = process.env.CRON_SECRET;
     
     if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+      console.log("❌ No autorizado");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Obtener productos activos
-    const products = await prisma.saasProduct.findMany({
+    // Obtener producto ReservasPro
+    let product = await db.saasProduct.findFirst({
       where: {
-        marketingEnabled: true,
-        organizationId: "8uu4-W6mScG8IQtY"
+        organizationId: ORGANIZATION_ID,
+        name: "ReservasPro"
       }
     });
 
-    if (products.length === 0) {
-      return NextResponse.json({ 
-        success: true, 
-        message: "No hay productos activos para publicar" 
-      });
-    }
-
-    const results = [];
-
-    for (const product of products) {
-      // Verificar si ya publicamos hoy para este producto
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      const publishedToday = await prisma.marketingContent.count({
-        where: {
-          productId: product.id,
-          type: "SOCIAL",
-          createdAt: {
-            gte: today
-          }
-        }
-      });
-
-      if (publishedToday > 0) {
-        console.log(`⏭️ Ya se publicó hoy para ${product.name}`);
-        continue;
-      }
-
-      // Generar contenido
-      console.log(`📝 Generando contenido para ${product.name}...`);
-      
-      const batch = await generateWeeklyContent({
-        name: product.name,
-        description: product.description || "",
-        targetAudience: product.targetAudience || "",
-        usp: product.usp || "",
-        competitors: (product.pricing as any)?.competitors || []
-      }, "peluqueria");
-
-      // Tomar el primer post del batch
-      const post = batch.posts[0];
-      if (!post) continue;
-
-      // Adaptar para TikTok
-      const tiktokPost = adaptToTikTok(post);
-
-      // Publicar en Instagram
-      const igResult = await publishToSocial({
-        content: post.content,
-        platforms: ["instagram"]
-      });
-
-      // Publicar en TikTok
-      const tkResult = await publishToSocial({
-        content: tiktokPost.content,
-        platforms: ["tiktok"]
-      });
-
-      // Guardar en BD
-      await prisma.marketingContent.create({
+    // Si no existe, crearlo
+    if (!product) {
+      console.log("📦 Creando producto ReservasPro...");
+      product = await db.saasProduct.create({
         data: {
-          type: "SOCIAL",
-          platform: "instagram+tiktok",
-          title: post.hook,
-          content: {
-            instagram: post.content,
-            tiktok: tiktokPost.content,
-            hook: post.hook,
-            type: post.type
-          } as any,
-          status: "PUBLISHED",
-          productId: product.id,
-          organizationId: product.organizationId,
-          metadata: {
-            instagramResult: igResult,
-            tiktokResult: tkResult,
-            tokensUsed: batch.tokensUsed
-          } as any
+          id: `reservaspro-${Date.now()}`,
+          name: RESERVAS_PRO.name,
+          description: RESERVAS_PRO.description,
+          features: [
+            "Reservas online 24/7",
+            "Sistema XP y niveles",
+            "Recompensas automáticas",
+            "Página dark mode premium",
+            "Panel admin completo"
+          ],
+          targetAudience: RESERVAS_PRO.targetAudience,
+          organizationId: ORGANIZATION_ID,
+          marketingEnabled: true,
+          usp: RESERVAS_PRO.usp
         }
       });
+    }
 
-      results.push({
-        product: product.name,
-        instagram: igResult,
-        tiktok: tkResult
+    // Verificar cuántos posts se han generado hoy
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const postsToday = await db.marketingContent.count({
+      where: {
+        productId: product.id,
+        type: "SOCIAL",
+        createdAt: { gte: today }
+      }
+    });
+
+    // Máximo 4 posts por día (cada 6 horas)
+    if (postsToday >= 4) {
+      console.log("⏭️ Ya se generaron 4 posts hoy");
+      return NextResponse.json({
+        success: true,
+        message: "Daily limit reached (4 posts)",
+        postsToday
       });
     }
+
+    // Seleccionar tipo de contenido (rota entre los tipos)
+    const contentType = CONTENT_TYPES[postsToday % CONTENT_TYPES.length];
+    console.log(`📝 Generando contenido tipo: ${contentType}`);
+
+    // Generar contenido con Claude
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const prompt = `Genera UN post para Instagram/TikTok para una barbería.
+
+PRODUCTO: ${RESERVAS_PRO.name}
+
+DESCRIPCIÓN: ${RESERVAS_PRO.description}
+
+AUDIENCIA: ${RESERVAS_PRO.targetAudience}
+
+USP: ${RESERVAS_PRO.usp}
+
+🔥 OFERTA ACTUAL (INCLUIRLA SIEMPRE):
+- 30 días GRATIS sin tarjeta
+- Primeras 10 barberías: €19,99/mes DE POR VIDA (50% descuento)
+- Después: €39,99/mes
+- Setup profesional GRATIS
+- Página lista en 24 horas
+
+TIPO DE POST: ${contentType}
+
+${contentType === "educativo" ? "Enseña algo útil sobre gestión de barberías o reservas" : ""}
+${contentType === "problema_solucion" ? "Presenta un problema común (WhatsApp, no-shows, tiempo perdido) y la solución" : ""}
+${contentType === "testimonio" ? "Crea un testimonio ficticio pero realista de un barbero que usa el sistema" : ""}
+${contentType === "oferta" ? "Enfócate 100% en la oferta de lanzamiento con urgencia" : ""}
+${contentType === "carrusel_hook" ? "Hook intrigante que haga querer ver más" : ""}
+${contentType === "urgencia" ? "Crea urgencia: plazas limitadas, oferta por tiempo limitado" : ""}
+
+REGLAS CRÍTICAS:
+- MÁXIMO 200 caracteres (sin hashtags)
+- Empezar con hook potente (pregunta, dato, POV)
+- Emojis estratégicos (3-5 máximo)
+- Español de España, cercano pero profesional
+- CTA claro: "DM QUIERO" o "Link en bio"
+- SIEMPRE mencionar la oferta o el precio
+
+FORMATO DE RESPUESTA (JSON):
+
+{
+  "instagram": {
+    "content": "texto del post para Instagram",
+    "hashtags": ["hashtag1", "hashtag2", ...]
+  },
+  "tiktok": {
+    "content": "texto más corto para TikTok (máx 150 chars)",
+    "hashtags": ["hashtag1", "hashtag2", "hashtag3"]
+  },
+  "hook": "el hook usado",
+  "tipo": "${contentType}"
+}
+
+Responde SOLO con el JSON.`;
+
+    const response = await client.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 512,
+      messages: [{ role: "user", content: prompt }]
+    });
+
+    const responseText = response.content[0].type === "text" ? response.content[0].text : "";
+    
+    // Parsear respuesta
+    let parsedContent;
+    try {
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        parsedContent = JSON.parse(jsonMatch[0]);
+      }
+    } catch (e) {
+      console.error("❌ Error parseando respuesta:", e);
+      parsedContent = {
+        instagram: { content: responseText, hashtags: HASHTAGS.principales },
+        tiktok: { content: responseText.substring(0, 150), hashtags: HASHTAGS.principales.slice(0, 3) },
+        hook: "default",
+        tipo: contentType
+      };
+    }
+
+    // Guardar en base de datos
+    const savedContent = await db.marketingContent.create({
+      data: {
+        type: "SOCIAL",
+        title: `Post ${contentType} - ${new Date().toLocaleDateString("es-ES")}`,
+        content: JSON.stringify(parsedContent),
+        status: "READY", // Listo para copiar y publicar
+        productId: product.id,
+        organizationId: ORGANIZATION_ID,
+        metadata: {
+          tipo: contentType,
+          hook: parsedContent.hook,
+          instagram: parsedContent.instagram,
+          tiktok: parsedContent.tiktok,
+          generatedAt: new Date().toISOString(),
+          tokensUsed: response.usage.input_tokens + response.usage.output_tokens
+        }
+      }
+    });
+
+    console.log("✅ Contenido generado y guardado:", savedContent.id);
 
     return NextResponse.json({
       success: true,
-      message: `Publicación completada para ${results.length} productos`,
-      results
+      contentId: savedContent.id,
+      tipo: contentType,
+      instagram: parsedContent.instagram,
+      tiktok: parsedContent.tiktok,
+      message: "Contenido generado. Disponible en dashboard para copiar."
     });
 
   } catch (error: any) {
-    console.error("❌ Error en cron de publicación:", error);
+    console.error("❌ Error en cron:", error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
     );
   }
 }
-
