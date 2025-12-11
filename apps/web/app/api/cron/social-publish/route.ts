@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@repo/database";
+import { prisma } from "@repo/database";
 import Anthropic from "@anthropic-ai/sdk";
 
 // Configuración
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Obtener producto ReservasPro
-    let product = await db.saasProduct.findFirst({
+    let product = await prisma.saasProduct.findFirst({
       where: {
         organizationId: ORGANIZATION_ID,
         name: "ReservasPro"
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     // Si no existe, crearlo
     if (!product) {
       console.log("📦 Creando producto ReservasPro...");
-      product = await db.saasProduct.create({
+      product = await prisma.saasProduct.create({
         data: {
           id: `reservaspro-${Date.now()}`,
           name: RESERVAS_PRO.name,
@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    const postsToday = await db.marketingContent.count({
+    const postsToday = await prisma.marketingContent.count({
       where: {
         productId: product.id,
         type: "SOCIAL",
@@ -189,7 +189,7 @@ Responde SOLO con el JSON.`;
     }
 
     // Guardar en base de datos
-    const savedContent = await db.marketingContent.create({
+    const savedContent = await prisma.marketingContent.create({
       data: {
         type: "SOCIAL",
         title: `Post ${contentType} - ${new Date().toLocaleDateString("es-ES")}`,

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@repo/database";
+import { prisma } from "@repo/database";
 
 const ORGANIZATION_ID = "8uu4-W6mScG8IQtY";
 
 export async function GET(request: NextRequest) {
   try {
     // Obtener contenido listo para publicar
-    const content = await db.marketingContent.findMany({
+    const content = await prisma.marketingContent.findMany({
       where: {
         organizationId: ORGANIZATION_ID,
         type: "SOCIAL",
@@ -64,10 +64,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { contentId, platform } = body;
 
-    const existing = await db.marketingContent.findUnique({ where: { id: contentId } });
+    const existing = await prisma.marketingContent.findUnique({ where: { id: contentId } });
     const existingMetadata = (existing?.metadata as any) || {};
 
-    await db.marketingContent.update({
+    await prisma.marketingContent.update({
       where: { id: contentId },
       data: {
         status: "PUBLISHED",
