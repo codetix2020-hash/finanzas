@@ -7,68 +7,71 @@ export async function POST(request: NextRequest) {
   console.log("🧹 Limpiando datos de prueba...");
 
   try {
-    // Productos a MANTENER (solo ReservasPro)
     const keepProducts = ["ReservasPro"];
 
-    // 1. Obtener IDs de productos a eliminar
-    const productsToDelete = await prisma.saasProduct.findMany({
+    // 1. Obtener TODOS los productos (incluyendo ReservasPro para re-registrarlo)
+    const allProducts = await prisma.saasProduct.findMany({
       where: {
-        organizationId: ORGANIZATION_ID,
-        name: { notIn: keepProducts }
+        organizationId: ORGANIZATION_ID
       },
       select: { id: true, name: true }
     });
 
-    console.log("Productos a eliminar:", productsToDelete.map(p => p.name));
+    const productsToDelete = allProducts.filter(p => p.name !== "ReservasPro");
+    const reservasProProduct = allProducts.find(p => p.name === "ReservasPro");
 
     const idsToDelete = productsToDelete.map(p => p.id);
+    const allIdsToDelete = allProducts.map(p => p.id); // Incluye ReservasPro
 
-    if (idsToDelete.length > 0) {
-      // 2. Eliminar contenido de esos productos
-      const deletedContent = await prisma.marketingContent.deleteMany({
-        where: { productId: { in: idsToDelete } }
+    let deletedContent = { count: 0 };
+    let deletedCampaigns = { count: 0 };
+    let deletedLeads = { count: 0 };
+    let deletedJobs = { count: 0 };
+    let deletedProducts = { count: 0 };
+
+    if (allIdsToDelete.length > 0) {
+      // 2. Eliminar contenido de TODOS los productos (incluyendo ReservasPro)
+      deletedContent = await prisma.marketingContent.deleteMany({
+        where: { productId: { in: allIdsToDelete } }
       });
 
-      // 3. Eliminar campañas de esos productos
-      const deletedCampaigns = await prisma.marketingAdCampaign.deleteMany({
-        where: { productId: { in: idsToDelete } }
+      // 3. Eliminar campañas
+      deletedCampaigns = await prisma.marketingAdCampaign.deleteMany({
+        where: { productId: { in: allIdsToDelete } }
       });
 
-      // 4. Eliminar leads de esos productos
-      const deletedLeads = await prisma.marketingLead.deleteMany({
-        where: { productId: { in: idsToDelete } }
+      // 4. Eliminar leads
+      deletedLeads = await prisma.marketingLead.deleteMany({
+        where: { productId: { in: allIdsToDelete } }
       });
 
-      // 5. Eliminar jobs de esos productos
-      const deletedJobs = await prisma.marketingJob.deleteMany({
-        where: { productId: { in: idsToDelete } }
+      // 5. Eliminar jobs
+      deletedJobs = await prisma.marketingJob.deleteMany({
+        where: { productId: { in: allIdsToDelete } }
       });
 
-      // 6. Eliminar los productos
-      const deletedProducts = await prisma.saasProduct.deleteMany({
-        where: { id: { in: idsToDelete } }
-      });
-
-      console.log("✅ Limpieza completada");
-
-      return NextResponse.json({
-        success: true,
-        deleted: {
-          products: deletedProducts.count,
-          productNames: productsToDelete.map(p => p.name),
-          content: deletedContent.count,
-          campaigns: deletedCampaigns.count,
-          leads: deletedLeads.count,
-          jobs: deletedJobs.count
-        },
-        kept: keepProducts
+      // 6. Eliminar TODOS los productos (incluyendo ReservasPro)
+      deletedProducts = await prisma.saasProduct.deleteMany({
+        where: { id: { in: allIdsToDelete } }
       });
     }
 
+    console.log("✅ Limpieza completada");
+
     return NextResponse.json({
       success: true,
-      message: "No hay productos de prueba para eliminar",
-      kept: keepProducts
+      deleted: {
+        products: deletedProducts.count,
+        productNames: [
+          ...productsToDelete.map(p => p.name),
+          ...(reservasProProduct ? ["ReservasPro (para re-registrar)"] : [])
+        ],
+        content: deletedContent.count,
+        campaigns: deletedCampaigns.count,
+        leads: deletedLeads.count,
+        jobs: deletedJobs.count
+      },
+      message: "Base de datos limpia. Listo para registrar ReservasPro."
     });
 
   } catch (error: any) {
