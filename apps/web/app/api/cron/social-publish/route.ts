@@ -188,13 +188,14 @@ Responde SOLO con el JSON.`;
       };
     }
 
-    // Guardar en base de datos
-    const savedContent = await prisma.marketingContent.create({
+    // Guardar en base de datos (dos registros: Instagram y TikTok)
+    const savedInstagram = await prisma.marketingContent.create({
       data: {
         type: "SOCIAL",
+        platform: "instagram",
         title: `Post ${contentType} - ${new Date().toLocaleDateString("es-ES")}`,
-        content: JSON.stringify(parsedContent),
-        status: "READY", // Listo para copiar y publicar
+        content: JSON.stringify(parsedContent.instagram),
+        status: "READY",
         productId: product.id,
         organizationId: ORGANIZATION_ID,
         metadata: {
@@ -208,11 +209,34 @@ Responde SOLO con el JSON.`;
       }
     });
 
-    console.log("✅ Contenido generado y guardado:", savedContent.id);
+    const savedTikTok = await prisma.marketingContent.create({
+      data: {
+        type: "SOCIAL",
+        platform: "tiktok",
+        title: `Post ${contentType} - ${new Date().toLocaleDateString("es-ES")}`,
+        content: JSON.stringify(parsedContent.tiktok),
+        status: "READY",
+        productId: product.id,
+        organizationId: ORGANIZATION_ID,
+        metadata: {
+          tipo: contentType,
+          hook: parsedContent.hook,
+          instagram: parsedContent.instagram,
+          tiktok: parsedContent.tiktok,
+          generatedAt: new Date().toISOString(),
+          tokensUsed: response.usage.input_tokens + response.usage.output_tokens
+        }
+      }
+    });
+
+    console.log("✅ Contenido generado y guardado:", savedInstagram.id, savedTikTok.id);
 
     return NextResponse.json({
       success: true,
-      contentId: savedContent.id,
+      contentIds: {
+        instagram: savedInstagram.id,
+        tiktok: savedTikTok.id
+      },
       tipo: contentType,
       instagram: parsedContent.instagram,
       tiktok: parsedContent.tiktok,
