@@ -79,17 +79,34 @@ export async function publishToSocial(params: {
   try {
     // Obtener cuentas
     const accounts = await getPublerAccounts();
+    console.log("📱 Cuentas obtenidas:", JSON.stringify(accounts, null, 2));
     
-    // Filtrar cuentas por plataforma solicitada
-    const targetAccounts = accounts.filter((acc: any) => 
-      params.platforms.some(p => 
-        acc.platform?.toLowerCase().includes(p.toLowerCase()) ||
-        acc.type?.toLowerCase().includes(p.toLowerCase())
-      )
-    );
+    if (!accounts || accounts.length === 0) {
+      return params.platforms.map(p => ({
+        success: false,
+        error: "No accounts found",
+        platform: p
+      }));
+    }
+
+    // Filtrar cuentas por plataforma (usar provider, type o platform)
+    const targetAccounts = accounts.filter((acc: any) => {
+      const platform = (acc.provider || acc.type || acc.platform || "").toLowerCase();
+      return params.platforms.some(p => {
+        const searchTerm = p.toLowerCase();
+        return platform.includes(searchTerm) || 
+               (searchTerm === "instagram" && platform.includes("ig")) ||
+               (searchTerm === "tiktok" && platform.includes("tiktok"));
+      });
+    });
+
+    console.log("🎯 Cuentas objetivo:", targetAccounts.map((a: any) => ({
+      id: a.id,
+      name: a.name,
+      provider: a.provider || a.type || a.platform
+    })));
 
     if (targetAccounts.length === 0) {
-      console.error("❌ No se encontraron cuentas para las plataformas:", params.platforms);
       return params.platforms.map(p => ({
         success: false,
         error: "No account found for platform",
@@ -97,17 +114,19 @@ export async function publishToSocial(params: {
       }));
     }
 
-    console.log("✅ Cuentas objetivo:", targetAccounts.map((a: any) => a.name || a.id));
+    // Obtener IDs de cuentas
+    const accountIds = targetAccounts.map((a: any) => a.id).filter(Boolean);
+    console.log("🔑 Account IDs:", accountIds);
 
-    // Crear el post
+    // Formato correcto para Publer API
     const postData: any = {
       text: params.content,
-      account_ids: targetAccounts.map((a: any) => a.id),
+      account_ids: accountIds,
     };
 
     // Agregar imagen si existe
     if (params.imageUrl) {
-      postData.media = [{ url: params.imageUrl }];
+      postData.media_url = params.imageUrl;
     }
 
     // Programar si se especifica fecha
@@ -125,28 +144,54 @@ export async function publishToSocial(params: {
       headers["Publer-Workspace-Id"] = PUBLER_WORKSPACE_ID;
     }
     
-    const response = await fetch(`${PUBLER_BASE_URL}/posts`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(postData)
-    });
+    console.log("📦 Enviando a Publer:", JSON.stringify(postData, null, 2));
+    console.log("🔗 URL:", `${PUBLER_BASE_URL}/posts`);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("❌ Error publicando:", response.status, errorText);
-      return params.platforms.map(p => ({
-        success: false,
-        error: `API error: ${response.status}`,
-        platform: p
-      }));
+    // Intentar diferentes endpoints posibles
+    const endpoints = [
+      "/posts",
+      "/post",
+      "/scheduled_posts"
+    ];
+
+    for (const endpoint of endpoints) {
+      try {
+        console.log(`🔄 Intentando endpoint: ${endpoint}`);
+        
+        const response = await fetch(`${PUBLER_BASE_URL}${endpoint}`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(postData)
+        });
+
+        const responseText = await response.text();
+        console.log(`📨 Respuesta de ${endpoint}:`, response.status, responseText.substring(0, 200));
+
+        if (response.ok) {
+          let result;
+          try {
+            result = JSON.parse(responseText);
+          } catch {
+            result = { id: "success", message: responseText };
+          }
+          
+          console.log("✅ Post creado exitosamente en:", endpoint);
+          
+          return params.platforms.map(p => ({
+            success: true,
+            postId: result.id || result._id || result.post_id || "unknown",
+            platform: p
+          }));
+        }
+      } catch (e: any) {
+        console.log(`❌ Error en ${endpoint}:`, e.message);
+      }
     }
 
-    const result = await response.json();
-    console.log("✅ Post creado:", result.id || result);
-
+    // Si ningún endpoint funcionó
     return params.platforms.map(p => ({
-      success: true,
-      postId: result.id,
+      success: false,
+      error: "All endpoints failed - check Publer API documentation",
       platform: p
     }));
 
