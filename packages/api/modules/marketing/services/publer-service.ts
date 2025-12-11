@@ -2,7 +2,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { generateWeeklyContent, generateSinglePost, adaptToTikTok } from "./content-generator-v2";
 
 const PUBLER_API_KEY = process.env.PUBLER_API_KEY;
-const PUBLER_BASE_URL = "https://app.publer.io/api/v1";
+const PUBLER_WORKSPACE_ID = process.env.PUBLER_WORKSPACE_ID; // Opcional, requerido en algunos casos
+const PUBLER_BASE_URL = "https://app.publer.com/api/v1";
 
 interface PublerAccount {
   id: string;
@@ -27,11 +28,18 @@ export async function getPublerAccounts(): Promise<PublerAccount[]> {
   }
 
   try {
+    const headers: Record<string, string> = {
+      "Authorization": `Bearer-API ${PUBLER_API_KEY}`,
+      "Content-Type": "application/json"
+    };
+    
+    // Agregar Workspace ID si está configurado
+    if (PUBLER_WORKSPACE_ID) {
+      headers["Publer-Workspace-Id"] = PUBLER_WORKSPACE_ID;
+    }
+    
     const response = await fetch(`${PUBLER_BASE_URL}/accounts`, {
-      headers: {
-        "Authorization": `Bearer ${PUBLER_API_KEY}`,
-        "Content-Type": "application/json"
-      }
+      headers
     });
 
     if (!response.ok) {
@@ -107,12 +115,19 @@ export async function publishToSocial(params: {
       postData.scheduled_at = params.scheduleAt.toISOString();
     }
 
+    const headers: Record<string, string> = {
+      "Authorization": `Bearer-API ${PUBLER_API_KEY}`,
+      "Content-Type": "application/json"
+    };
+    
+    // Agregar Workspace ID si está configurado
+    if (PUBLER_WORKSPACE_ID) {
+      headers["Publer-Workspace-Id"] = PUBLER_WORKSPACE_ID;
+    }
+    
     const response = await fetch(`${PUBLER_BASE_URL}/posts`, {
       method: "POST",
-      headers: {
-        "Authorization": `Bearer ${PUBLER_API_KEY}`,
-        "Content-Type": "application/json"
-      },
+      headers,
       body: JSON.stringify(postData)
     });
 
