@@ -147,51 +147,52 @@ export async function publishToSocial(params: {
     console.log("📦 Enviando a Publer:", JSON.stringify(postData, null, 2));
     console.log("🔗 URL:", `${PUBLER_BASE_URL}/posts`);
 
-    // Intentar diferentes endpoints posibles
-    const endpoints = [
-      "/posts",
-      "/post",
-      "/scheduled_posts"
-    ];
+    // Publer usa sistema asíncrono: POST devuelve 202 Accepted con job_id
+    const response = await fetch(`${PUBLER_BASE_URL}/posts`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(postData)
+    });
 
-    for (const endpoint of endpoints) {
+    const responseText = await response.text();
+    console.log(`📨 Respuesta de Publer:`, response.status, responseText.substring(0, 200));
+
+    // Publer devuelve 202 Accepted para operaciones asíncronas
+    if (response.status === 202 || response.ok) {
+      let result;
       try {
-        console.log(`🔄 Intentando endpoint: ${endpoint}`);
-        
-        const response = await fetch(`${PUBLER_BASE_URL}${endpoint}`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify(postData)
-        });
-
-        const responseText = await response.text();
-        console.log(`📨 Respuesta de ${endpoint}:`, response.status, responseText.substring(0, 200));
-
-        if (response.ok) {
-          let result;
-          try {
-            result = JSON.parse(responseText);
-          } catch {
-            result = { id: "success", message: responseText };
-          }
-          
-          console.log("✅ Post creado exitosamente en:", endpoint);
-          
-          return params.platforms.map(p => ({
-            success: true,
-            postId: result.id || result._id || result.post_id || "unknown",
-            platform: p
-          }));
-        }
-      } catch (e: any) {
-        console.log(`❌ Error en ${endpoint}:`, e.message);
+        result = JSON.parse(responseText);
+      } catch {
+        result = { job_id: "unknown", message: responseText };
       }
+
+      // Si hay job_id, hacer polling (opcional, por ahora devolvemos éxito)
+      if (result.job_id) {
+        console.log("✅ Post en cola (job_id):", result.job_id);
+        
+        // Opcional: hacer polling al job_status
+        // Por ahora devolvemos éxito ya que el post está en cola
+        return params.platforms.map(p => ({
+          success: true,
+          postId: result.job_id,
+          platform: p,
+          message: "Post en cola de publicación"
+        }));
+      }
+
+      // Si no hay job_id pero la respuesta es exitosa
+      return params.platforms.map(p => ({
+        success: true,
+        postId: result.id || result._id || result.post_id || "unknown",
+        platform: p
+      }));
     }
 
-    // Si ningún endpoint funcionó
+    // Si no es 202 ni 200, es un error
+    console.error("❌ Error publicando:", response.status, responseText);
     return params.platforms.map(p => ({
       success: false,
-      error: "All endpoints failed - check Publer API documentation",
+      error: `API error: ${response.status} - ${responseText.substring(0, 100)}`,
       platform: p
     }));
 
